@@ -1,32 +1,40 @@
 using Microsoft.AspNetCore.Mvc;
 using SpawnMetricsStorage.Models;
+using SpawnMetricsStorage.Services;
 
 namespace SpawnMetricsStorage.Controllers;
 
 public sealed class MetricsController
 {
+    private readonly MetricsService _metricsService;
+
+    public MetricsController(MetricsService metricsService)
+    {
+        _metricsService = metricsService;
+    }
+
     public void RegisterEndpoints(WebApplication app)
     {
         app.MapPut("/LogMetric", HandleLogMetricRequest);
 
-        app.MapGet("/GetLatestMetricValue", HandleGetLatestMetricValue);
+        app.MapGet("/GetLatestMetric", HandleGetLatestMetricByName);
 
         app.MapGet("/GetMetricDataRange", HandleGetMetricDataRange);
     }
 
-    private void HandleLogMetricRequest([FromBody] MetricRecord newMetricData)
+    private async Task HandleLogMetricRequest([FromBody] MetricRecord newMetricData)
     {
-        throw new NotImplementedException();
+        await _metricsService.WriteNewMetric(newMetricData);
     }
 
-    private MetricRecord HandleGetLatestMetricValue([FromQuery] string metricName)
+    private async Task<MetricRecord?> HandleGetLatestMetricByName([FromQuery] string metricName)
     {
-        throw new NotImplementedException();
+        return await _metricsService.GetLatestMetricByName(metricName);
     }
 
-    private List<MetricRecord> HandleGetMetricDataRange([FromQuery] string metricName, [FromQuery] DateTime rangeStart,
+    private async Task<List<MetricRecord>?> HandleGetMetricDataRange([FromQuery] string metricName, [FromQuery] DateTime rangeStart,
         [FromQuery] DateTime rangeEnd)
     {
-        throw new NotImplementedException();
+        return await _metricsService.GetMetricDataRange(metricName, rangeStart, rangeEnd);
     }
 }
