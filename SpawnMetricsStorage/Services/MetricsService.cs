@@ -23,39 +23,19 @@ public sealed class MetricsService
     {
         var queryResponse =
             await _surrealDbClient.Query(
-                $"SELECT * FROM {MetricsTableName} WHERE Name = {metricName} ORDER BY LogTime DESC LIMIT 1;");
+                $"SELECT * FROM {MetricsTableName} WHERE Name = \"{metricName}\" ORDER BY LogTime DESC LIMIT 1;");
 
-        if (queryResponse.FirstResult == null || queryResponse.FirstResult.IsError)
-        {
-            return null;
-        }
+        var list = queryResponse.GetValue<List<MetricRecord>>(0);
 
-        return queryResponse.GetValue<MetricRecord>(0);
+        return list?.FirstOrDefault();
     }
 
     public async Task<List<MetricRecord>?> GetMetricDataRange(string metricName, DateTime rangeStart, DateTime rangeEnd)
     {
         var queryResponse =
             await _surrealDbClient.Query(
-                $"SELECT * FROM {MetricsTableName} WHERE Name = {metricName} AND LogTime >= {rangeStart} AND LogTime <= {rangeEnd} ORDER BY LogTime DESC;");
+                $"SELECT * FROM {MetricsTableName} WHERE (Name = \"{metricName}\" AND LogTime >= \"{rangeStart}\" AND LogTime <= \"{rangeEnd}\") ORDER BY LogTime DESC;");
 
-        if (queryResponse.FirstResult == null || queryResponse.FirstResult.IsError)
-        {
-            return null;
-        }
-
-        var data = new List<MetricRecord>(queryResponse.Count);
-
-        for (var recordIndex = 0; recordIndex < queryResponse.Count; recordIndex++)
-        {
-            var queryValue = queryResponse.GetValue<MetricRecord>(recordIndex);
-
-            if (queryValue != null)
-            {
-                data.Add(queryValue);
-            }
-        }
-
-        return data;
+        return queryResponse.GetValue<List<MetricRecord>>(0);
     }
 }
