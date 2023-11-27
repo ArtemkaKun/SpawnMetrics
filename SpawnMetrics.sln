@@ -2,6 +2,8 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpawnMetricsStorage", "SpawnMetricsStorage\SpawnMetricsStorage.csproj", "{B6160065-2925-493A-8E0B-95F2D1FD28D9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpawnMetricsView", "SpawnMetricsView\SpawnMetricsView.csproj", "{8BBCFFF1-0F9C-4C7F-B655-30786A067BC4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +14,9 @@ Global
 		{B6160065-2925-493A-8E0B-95F2D1FD28D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B6160065-2925-493A-8E0B-95F2D1FD28D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B6160065-2925-493A-8E0B-95F2D1FD28D9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8BBCFFF1-0F9C-4C7F-B655-30786A067BC4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8BBCFFF1-0F9C-4C7F-B655-30786A067BC4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8BBCFFF1-0F9C-4C7F-B655-30786A067BC4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8BBCFFF1-0F9C-4C7F-B655-30786A067BC4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
