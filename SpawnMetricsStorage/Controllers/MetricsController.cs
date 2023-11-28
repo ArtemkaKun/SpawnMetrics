@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using SpawnMetricsStorage.Models;
 using SpawnMetricsStorage.Services;
 
@@ -22,19 +23,19 @@ public sealed class MetricsController
         app.MapGet("/GetMetricDataRange", HandleGetMetricDataRange);
     }
 
-    private async Task HandleLogMetricRequest([FromBody] MetricRecord newMetricData)
+    private async Task HandleLogMetricRequest([FromBody(EmptyBodyBehavior = EmptyBodyBehavior.Disallow)] LogMetricRequestBody newMetricData)
     {
         await _metricsService.WriteNewMetric(newMetricData);
     }
 
-    private async Task<MetricRecord?> HandleGetLatestMetricByName([FromQuery] string metricName)
+    private async Task<MetricRecord?> HandleGetLatestMetricByName([FromQuery] string projectName, [FromQuery] string metricName)
     {
-        return await _metricsService.GetLatestMetricByName(metricName);
+        return await _metricsService.GetLatestMetricByName(projectName, metricName);
     }
 
-    private async Task<List<MetricRecord>?> HandleGetMetricDataRange([FromQuery] string metricName, [FromQuery] DateTime rangeStart,
+    private async Task<List<MetricRecord>?> HandleGetMetricDataRange([FromQuery] string projectName, [FromQuery] string metricName, [FromQuery] DateTime rangeStart,
         [FromQuery] DateTime rangeEnd)
     {
-        return await _metricsService.GetMetricDataRange(metricName, rangeStart, rangeEnd);
+        return await _metricsService.GetMetricDataRange(projectName, metricName, rangeStart, rangeEnd);
     }
 }
