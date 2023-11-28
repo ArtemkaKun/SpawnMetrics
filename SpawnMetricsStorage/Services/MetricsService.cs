@@ -1,4 +1,5 @@
 using SpawnMetricsStorage.Models;
+using SpawnMetricsStorage.Models.MetricRecordFiles;
 using SurrealDb.Net;
 
 namespace SpawnMetricsStorage.Services;
