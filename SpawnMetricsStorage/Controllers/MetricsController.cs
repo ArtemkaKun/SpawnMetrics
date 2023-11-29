@@ -6,15 +6,8 @@ using SpawnMetricsStorage.Services;
 
 namespace SpawnMetricsStorage.Controllers;
 
-public sealed class MetricsController
+public sealed class MetricsController(MetricsService metricsService)
 {
-    private readonly MetricsService _metricsService;
-
-    public MetricsController(MetricsService metricsService)
-    {
-        _metricsService = metricsService;
-    }
-
     public void RegisterEndpoints(WebApplication app)
     {
         app.MapPut("/LogMetric", HandleLogMetricRequest);
@@ -26,17 +19,16 @@ public sealed class MetricsController
 
     private async Task HandleLogMetricRequest([FromBody(EmptyBodyBehavior = EmptyBodyBehavior.Disallow)] LogMetricRequestBody newMetricData)
     {
-        await _metricsService.WriteNewMetric(newMetricData);
+        await metricsService.WriteNewMetric(newMetricData);
     }
 
-    private async Task<MetricRecord?> HandleGetLatestMetricByName([FromQuery] string projectName, [FromQuery] string metricName)
+    private async Task<MetricRecord?> HandleGetLatestMetricByName([FromQuery] GetMetricRequestParameters parameters)
     {
-        return await _metricsService.GetLatestMetricByName(projectName, metricName);
+        return await metricsService.GetLatestMetricByName(parameters.ProjectName, parameters.MetricName);
     }
 
-    private async Task<List<MetricRecord>?> HandleGetMetricDataRange([FromQuery] string projectName, [FromQuery] string metricName, [FromQuery] DateTime rangeStart,
-        [FromQuery] DateTime rangeEnd)
+    private async Task<List<MetricRecord>?> HandleGetMetricDataRange([FromQuery] GetMetricDataRangeRequestParameters parameters)
     {
-        return await _metricsService.GetMetricDataRange(projectName, metricName, rangeStart, rangeEnd);
+        return await metricsService.GetMetricDataRange(parameters.ProjectName, parameters.MetricName, parameters.RangeStart, parameters.RangeEnd);
     }
 }
