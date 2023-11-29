@@ -5,6 +5,7 @@ namespace SpawnMetricsStorage.Models.MetricRecordFiles;
 public sealed class MetricRecord
 {
     [Required]
+    // TODO: Combine into one attribute since these are used in a few places
     [MinLength(MetricRecordConstants.MinMetricNameLength)]
     [MaxLength(MetricRecordConstants.MaxMetricNameLength)]
     public required string Name { get; init; }
