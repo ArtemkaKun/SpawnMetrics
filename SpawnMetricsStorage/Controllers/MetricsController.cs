@@ -14,6 +14,8 @@ public sealed class MetricsController(MetricsService metricsService)
 
         app.MapGet("/GetLatestMetric", HandleGetLatestMetricByName);
 
+        app.MapGet("/GetProjectNames", HandleGetProjectNames);
+
         app.MapGet("/GetMetricDataRange", HandleGetMetricDataRange);
     }
 
@@ -25,6 +27,11 @@ public sealed class MetricsController(MetricsService metricsService)
     private async Task<MetricRecord?> HandleGetLatestMetricByName([FromQuery] GetMetricRequestParameters parameters)
     {
         return await metricsService.GetLatestMetricByName(parameters.ProjectName, parameters.MetricName);
+    }
+
+    private async Task<List<string>?> HandleGetProjectNames()
+    {
+        return await metricsService.GetProjectNames();
     }
 
     private async Task<List<MetricRecord>?> HandleGetMetricDataRange([FromQuery] GetMetricDataRangeRequestParameters parameters)

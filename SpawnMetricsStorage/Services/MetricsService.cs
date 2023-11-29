@@ -13,20 +13,23 @@ public sealed class MetricsService(ISurrealDbClient surrealDbClient)
 
     public async Task<MetricRecord?> GetLatestMetricByName(string projectName, string metricName)
     {
-        var queryResponse =
-            await surrealDbClient.Query(
-                $"SELECT * FROM {projectName} WHERE Name = \"{metricName}\" ORDER BY LogTime DESC LIMIT 1;");
+        var queryResponse = await surrealDbClient.Query($"SELECT * FROM {projectName} WHERE Name = \"{metricName}\" ORDER BY LogTime DESC LIMIT 1;");
 
         var list = queryResponse.GetValue<List<MetricRecord>>(0);
 
         return list?.FirstOrDefault();
     }
 
+    public async Task<List<string>?> GetProjectNames()
+    {
+        var queryResponse = await surrealDbClient.Query("INFO FOR DATABASE;");
+
+        return queryResponse.GetValue<List<string>>(0);
+    }
+
     public async Task<List<MetricRecord>?> GetMetricDataRange(string projectName, string metricName, DateTime rangeStart, DateTime rangeEnd)
     {
-        var queryResponse =
-            await surrealDbClient.Query(
-                $"SELECT * FROM {projectName} WHERE (Name = \"{metricName}\" AND LogTime >= \"{rangeStart}\" AND LogTime <= \"{rangeEnd}\") ORDER BY LogTime DESC;");
+        var queryResponse = await surrealDbClient.Query($"SELECT * FROM {projectName} WHERE (Name = \"{metricName}\" AND LogTime >= \"{rangeStart}\" AND LogTime <= \"{rangeEnd}\") ORDER BY LogTime DESC;");
 
         return queryResponse.GetValue<List<MetricRecord>>(0);
     }
