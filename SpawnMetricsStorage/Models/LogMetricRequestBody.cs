@@ -5,7 +5,9 @@ namespace SpawnMetricsStorage.Models;
 
 public sealed class LogMetricRequestBody
 {
-    [Required, StringLength(100, ErrorMessage = "Project name cannot be longer than 100 characters.")]
+    [Required]
+    [MinLength(ProjectNameConstants.MinProjectNameLength)]
+    [MaxLength(ProjectNameConstants.MaxProjectNameLength)]
     public required string ProjectName { get; init; }
 
     [Required]
