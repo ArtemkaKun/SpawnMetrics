@@ -16,13 +16,14 @@ public sealed class MetricRecord
     [Required]
     [MinLength(MetricRecordConstants.ShortCommitHashLength)]
     [MaxLength(MetricRecordConstants.ShortCommitHashLength)]
-    [RegularExpression(@"^[\da-fA-F]{7,8}$", ErrorMessage = "Invalid short commit hash")]
+    [RegularExpression(@"^[\da-fA-F]{8,8}$", ErrorMessage = "Invalid short commit hash")]
     public required string ShortCommitHash { get; init; }
 
     [Required]
-    [MinLength(MetricRecordConstants.CommitGitHubUrlLength, ErrorMessage = MetricRecordConstants.CommitGitHubUrlShorterErrorMessage)]
-    [MaxLength(MetricRecordConstants.CommitGitHubUrlLength, ErrorMessage = MetricRecordConstants.CommitGitHubUrlLongerErrorMessage)]
+    [MinLength(MetricRecordConstants.MinCommitGitHubUrlLength, ErrorMessage = MetricRecordConstants.CommitGitHubUrlShorterErrorMessage)]
+    [MaxLength(MetricRecordConstants.MaxCommitGitHubUrlLength)]
     [Url]
+    [RegularExpression(@"https:\/\/github\.com\/[^\/]+\/[^\/]+\/commit\/[a-zA-Z0-9]{8}", ErrorMessage = "Invalid GitHub commit URL")]
     public required string CommitGitHubUrl { get; init; }
 
     [Required]
