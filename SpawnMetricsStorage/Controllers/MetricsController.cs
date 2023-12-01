@@ -10,7 +10,7 @@ public sealed class MetricsController(MetricsService metricsService)
 {
     public void RegisterEndpoints(WebApplication app)
     {
-        app.MapPut("/LogMetric", HandleLogMetricRequest);
+        app.MapPut(MetricsControllerConstants.LogMetricEndpoint, HandleLogMetricRequest);
 
         app.MapGet("/GetLatestMetric", HandleGetLatestMetricByName);
 
