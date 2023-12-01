@@ -53,12 +53,12 @@ public abstract class SpawnMetricsStorageTestsBase
         _surrealDbClient.Query($"REMOVE DATABASE {TestDatabaseName}");
     }
 
-    public async Task<HttpResponseMessage> PostAsync(string requestUri, object? content)
+    public async Task<HttpResponseMessage> PutAsync(string requestUri, object? content)
     {
         var jsonContent = JsonSerializer.Serialize(content);
         var stringContent = new StringContent(jsonContent, Encoding.UTF8, "application/json");
 
-        return await _httpClient.PostAsync(requestUri, stringContent);
+        return await _httpClient.PutAsync(requestUri, stringContent);
     }
     
     public async Task DoRequestAndAssertBadRequest(Task<HttpResponseMessage> requestTask)
