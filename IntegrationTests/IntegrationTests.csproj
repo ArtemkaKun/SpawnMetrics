@@ -33,4 +33,10 @@
       <ProjectReference Include="..\SpawnMetricsStorage\SpawnMetricsStorage.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <None Update="integration_test_configuration.json">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+    </ItemGroup>
+
 </Project>
