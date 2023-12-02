@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 using SpawnMetricsStorage.Models;
 using SpawnMetricsStorage.Models.MetricRecordFiles;
 using SpawnMetricsStorage.Services;
+using SpawnMetricsStorage.Utils;
 
 namespace SpawnMetricsStorage.Controllers;
 
@@ -19,12 +20,22 @@ public sealed class MetricsController(MetricsService metricsService)
         app.MapGet("/GetMetricDataRange", HandleGetMetricDataRange);
     }
 
-    private async Task HandleLogMetricRequest([FromBody(EmptyBodyBehavior = EmptyBodyBehavior.Disallow)] LogMetricRequestBody newMetricData)
+
+    private async Task<IResult> HandleLogMetricRequest([FromBody(EmptyBodyBehavior = EmptyBodyBehavior.Disallow)] LogMetricRequestBody newMetricData)
     {
+        var validationError = ModelValidator.Validate(newMetricData);
+
+        if (validationError != null)
+        {
+            return validationError;
+        }
+
         await metricsService.WriteNewMetric(newMetricData);
+
+        return Results.Ok();
     }
 
-    private async Task<MetricRecord?> HandleGetLatestMetricByName([FromQuery] GetMetricRequestParameters parameters)
+    private async Task<MetricRecord?> HandleGetLatestMetricByName([AsParameters] GetMetricRequestParameters parameters)
     {
         return await metricsService.GetLatestMetricByName(parameters.ProjectName, parameters.MetricName);
     }
@@ -34,8 +45,9 @@ public sealed class MetricsController(MetricsService metricsService)
         return await metricsService.GetProjectNames();
     }
 
-    private async Task<List<MetricRecord>?> HandleGetMetricDataRange([FromQuery] GetMetricDataRangeRequestParameters parameters)
+    private async Task<List<MetricRecord>?> HandleGetMetricDataRange([AsParameters] GetMetricDataRangeRequestParameters parameters)
     {
-        return await metricsService.GetMetricDataRange(parameters.ProjectName, parameters.MetricName, parameters.RangeStart, parameters.RangeEnd);
+        return await metricsService.GetMetricDataRange(parameters.ProjectName, parameters.MetricName,
+            parameters.RangeStart, parameters.RangeEnd);
     }
 }
