@@ -65,6 +65,6 @@ public abstract class SpawnMetricsStorageTestsBase
     {
         var response = await requestTask;
 
-        Assert.AreEqual(HttpStatusCode.BadRequest, response.StatusCode);
+        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
     }
 }
