@@ -11,7 +11,7 @@ public sealed class MetricRecord
     public required string Name { get; init; }
 
     [Required]
-    public required DateTime LogTime { get; init; }
+    public required DateTime LogTimeUtc { get; init; }
 
     [Required]
     [MinLength(MetricRecordConstants.ShortCommitHashLength)]
