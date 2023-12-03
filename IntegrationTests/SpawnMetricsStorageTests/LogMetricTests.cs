@@ -1,3 +1,4 @@
+using System.Net;
 using SpawnMetricsStorage.Controllers;
 using SpawnMetricsStorage.Models;
 using SpawnMetricsStorage.Models.MetricRecordFiles;
@@ -557,6 +558,247 @@ public class LogMetricTests : SpawnMetricsStorageTestsBase
         });
 
         await DoRequestAndAssertBadRequest(request);
+    }
+
+    [Test]
+    public async Task LogMetric_ReturnOk_AndLogMetricExists()
+    {
+        var testMetricRecord = new MetricRecord
+        {
+            Name = "TEST",
+            LogTimeUtc = DateTime.UtcNow,
+            ShortCommitHash = "12345678",
+            CommitGitHubUrl = "https://github.com/spawn/spawn/commit/12345678",
+            CommitMessage = "TEST",
+            Value = "TEST",
+            Units = "TEST"
+        };
+
+        var request = await PutAsync(MetricsControllerConstants.LogMetricEndpoint, new LogMetricRequestBody
+        {
+            ProjectName = "TEST",
+            Metric = testMetricRecord
+        });
+
+        Assert.That(request.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+
+        var queryResponse = await _surrealDbClient.Query("SELECT * FROM TEST");
+        var list = queryResponse.GetValue<List<MetricRecord>>(0);
+
+        Assert.That(list, Is.Not.Null);
+        Assert.That(list!.Count, Is.EqualTo(1));
+
+        var metric = list[0];
+
+        Assert.That(metric.Name, Is.EqualTo(testMetricRecord.Name));
+        Assert.That(metric.LogTimeUtc, Is.EqualTo(testMetricRecord.LogTimeUtc));
+        Assert.That(metric.ShortCommitHash, Is.EqualTo(testMetricRecord.ShortCommitHash));
+        Assert.That(metric.CommitGitHubUrl, Is.EqualTo(testMetricRecord.CommitGitHubUrl));
+        Assert.That(metric.CommitMessage, Is.EqualTo(testMetricRecord.CommitMessage));
+        Assert.That(metric.Value, Is.EqualTo(testMetricRecord.Value));
+        Assert.That(metric.Units, Is.EqualTo(testMetricRecord.Units));
+    }
+
+    [Test]
+    public async Task LogMetric_ReturnOk_AndLogMetricExists_WhenTwoDifferentMetricsLogged()
+    {
+        var testMetricRecord = new MetricRecord
+        {
+            Name = "TEST",
+            LogTimeUtc = DateTime.UtcNow,
+            ShortCommitHash = "12345678",
+            CommitGitHubUrl = "https://github.com/spawn/spawn/commit/12345678",
+            CommitMessage = "TEST",
+            Value = "TEST",
+            Units = "TEST"
+        };
+
+        var request = await PutAsync(MetricsControllerConstants.LogMetricEndpoint, new LogMetricRequestBody
+        {
+            ProjectName = "TEST",
+            Metric = testMetricRecord
+        });
+
+        Assert.That(request.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+
+        var testMetricRecord2 = new MetricRecord
+        {
+            Name = "TEST_ANOTHER",
+            LogTimeUtc = DateTime.UtcNow,
+            ShortCommitHash = "12345678",
+            CommitGitHubUrl = "https://github.com/spawn/spawn/commit/12345678",
+            CommitMessage = "TEST",
+            Value = "TEST",
+            Units = "TEST"
+        };
+
+        var request2 = await PutAsync(MetricsControllerConstants.LogMetricEndpoint, new LogMetricRequestBody
+        {
+            ProjectName = "TEST",
+            Metric = testMetricRecord2
+        });
+
+        Assert.That(request2.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+
+        var queryResponse = await _surrealDbClient.Query("SELECT * FROM TEST");
+        var list = queryResponse.GetValue<List<MetricRecord>>(0);
+
+        Assert.That(list, Is.Not.Null);
+        Assert.That(list!.Count, Is.EqualTo(2));
+
+        Assert.That(list.Any(metric => metric.Name == testMetricRecord.Name));
+        Assert.That(list.Any(metric => metric.LogTimeUtc == testMetricRecord.LogTimeUtc));
+        Assert.That(list.Any(metric => metric.ShortCommitHash == testMetricRecord.ShortCommitHash));
+        Assert.That(list.Any(metric => metric.CommitGitHubUrl == testMetricRecord.CommitGitHubUrl));
+        Assert.That(list.Any(metric => metric.CommitMessage == testMetricRecord.CommitMessage));
+        Assert.That(list.Any(metric => metric.Value == testMetricRecord.Value));
+        Assert.That(list.Any(metric => metric.Units == testMetricRecord.Units));
+        
+        Assert.That(list.Any(metric => metric.Name == testMetricRecord2.Name));
+        Assert.That(list.Any(metric => metric.LogTimeUtc == testMetricRecord2.LogTimeUtc));
+        Assert.That(list.Any(metric => metric.ShortCommitHash == testMetricRecord2.ShortCommitHash));
+        Assert.That(list.Any(metric => metric.CommitGitHubUrl == testMetricRecord2.CommitGitHubUrl));
+        Assert.That(list.Any(metric => metric.CommitMessage == testMetricRecord2.CommitMessage));
+        Assert.That(list.Any(metric => metric.Value == testMetricRecord2.Value));
+        Assert.That(list.Any(metric => metric.Units == testMetricRecord2.Units));
+    }
+
+    [Test]
+    public async Task LogMetric_ReturnOk_AndLogMetricExists_WhenSameMetricLoggedTwice()
+    {
+        var testMetricRecord = new MetricRecord
+        {
+            Name = "TEST",
+            LogTimeUtc = DateTime.UtcNow,
+            ShortCommitHash = "12345678",
+            CommitGitHubUrl = "https://github.com/spawn/spawn/commit/12345678",
+            CommitMessage = "TEST",
+            Value = "TEST",
+            Units = "TEST"
+        };
+
+        var request = await PutAsync(MetricsControllerConstants.LogMetricEndpoint, new LogMetricRequestBody
+        {
+            ProjectName = "TEST",
+            Metric = testMetricRecord
+        });
+
+        Assert.That(request.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+
+        var testMetricRecord2 = new MetricRecord
+        {
+            Name = "TEST",
+            LogTimeUtc = DateTime.UtcNow + TimeSpan.FromMinutes(1),
+            ShortCommitHash = "12345678",
+            CommitGitHubUrl = "https://github.com/spawn/spawn/commit/12345678",
+            CommitMessage = "TEST",
+            Value = "TEST",
+            Units = "TEST"
+        };
+
+        var request2 = await PutAsync(MetricsControllerConstants.LogMetricEndpoint, new LogMetricRequestBody
+        {
+            ProjectName = "TEST",
+            Metric = testMetricRecord2
+        });
+
+        Assert.That(request2.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+
+        var queryResponse = await _surrealDbClient.Query("SELECT * FROM TEST");
+        var list = queryResponse.GetValue<List<MetricRecord>>(0);
+
+        Assert.That(list, Is.Not.Null);
+        Assert.That(list!.Count, Is.EqualTo(2));
+
+        Assert.That(list.Any(metric => metric.Name == testMetricRecord.Name));
+        Assert.That(list.Any(metric => metric.LogTimeUtc == testMetricRecord.LogTimeUtc));
+        Assert.That(list.Any(metric => metric.ShortCommitHash == testMetricRecord.ShortCommitHash));
+        Assert.That(list.Any(metric => metric.CommitGitHubUrl == testMetricRecord.CommitGitHubUrl));
+        Assert.That(list.Any(metric => metric.CommitMessage == testMetricRecord.CommitMessage));
+        Assert.That(list.Any(metric => metric.Value == testMetricRecord.Value));
+        Assert.That(list.Any(metric => metric.Units == testMetricRecord.Units));
+        
+        Assert.That(list.Any(metric => metric.Name == testMetricRecord2.Name));
+        Assert.That(list.Any(metric => metric.LogTimeUtc == testMetricRecord2.LogTimeUtc));
+        Assert.That(list.Any(metric => metric.ShortCommitHash == testMetricRecord2.ShortCommitHash));
+        Assert.That(list.Any(metric => metric.CommitGitHubUrl == testMetricRecord2.CommitGitHubUrl));
+        Assert.That(list.Any(metric => metric.CommitMessage == testMetricRecord2.CommitMessage));
+        Assert.That(list.Any(metric => metric.Value == testMetricRecord2.Value));
+        Assert.That(list.Any(metric => metric.Units == testMetricRecord2.Units));
+    }
+
+    [Test]
+    public async Task LogMetric_ReturnOk_AndLogMetricExists_InDifferentProjects()
+    {
+        var testMetricRecord = new MetricRecord
+        {
+            Name = "TEST",
+            LogTimeUtc = DateTime.UtcNow,
+            ShortCommitHash = "12345678",
+            CommitGitHubUrl = "https://github.com/spawn/spawn/commit/12345678",
+            CommitMessage = "TEST",
+            Value = "TEST",
+            Units = "TEST"
+        };
+
+        var request = await PutAsync(MetricsControllerConstants.LogMetricEndpoint, new LogMetricRequestBody
+        {
+            ProjectName = "TEST",
+            Metric = testMetricRecord
+        });
+
+        Assert.That(request.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+
+        var testMetricRecord2 = new MetricRecord
+        {
+            Name = "TEST",
+            LogTimeUtc = DateTime.UtcNow + TimeSpan.FromMinutes(1),
+            ShortCommitHash = "12345678",
+            CommitGitHubUrl = "https://github.com/spawn/spawn/commit/12345678",
+            CommitMessage = "TEST",
+            Value = "TEST",
+            Units = "TEST"
+        };
+
+        var request2 = await PutAsync(MetricsControllerConstants.LogMetricEndpoint, new LogMetricRequestBody
+        {
+            ProjectName = "TEST_ANOTHER",
+            Metric = testMetricRecord2
+        });
+
+        Assert.That(request2.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+
+        var queryResponse = await _surrealDbClient.Query("SELECT * FROM TEST");
+        var list = queryResponse.GetValue<List<MetricRecord>>(0);
+
+        Assert.That(list, Is.Not.Null);
+        Assert.That(list!.Count, Is.EqualTo(1));
+
+        var metric = list[0];
+
+        Assert.That(metric.Name, Is.EqualTo(testMetricRecord.Name));
+        Assert.That(metric.LogTimeUtc, Is.EqualTo(testMetricRecord.LogTimeUtc));
+        Assert.That(metric.ShortCommitHash, Is.EqualTo(testMetricRecord.ShortCommitHash));
+        Assert.That(metric.CommitGitHubUrl, Is.EqualTo(testMetricRecord.CommitGitHubUrl));
+        Assert.That(metric.CommitMessage, Is.EqualTo(testMetricRecord.CommitMessage));
+        Assert.That(metric.Value, Is.EqualTo(testMetricRecord.Value));
+        Assert.That(metric.Units, Is.EqualTo(testMetricRecord.Units));
+
+        var queryResponse2 = await _surrealDbClient.Query("SELECT * FROM TEST_ANOTHER");
+        var list2 = queryResponse2.GetValue<List<MetricRecord>>(0);
+
+        Assert.That(list2, Is.Not.Null);
+        Assert.That(list2!.Count, Is.EqualTo(1));
+
+        var metric2 = list2[0];
+
+        Assert.That(metric2.Name, Is.EqualTo(testMetricRecord2.Name));
+        Assert.That(metric2.LogTimeUtc, Is.EqualTo(testMetricRecord2.LogTimeUtc));
+        Assert.That(metric2.ShortCommitHash, Is.EqualTo(testMetricRecord2.ShortCommitHash));
+        Assert.That(metric2.CommitGitHubUrl, Is.EqualTo(testMetricRecord2.CommitGitHubUrl));
+        Assert.That(metric2.CommitMessage, Is.EqualTo(testMetricRecord2.CommitMessage));
+        Assert.That(metric2.Value, Is.EqualTo(testMetricRecord2.Value));
+        Assert.That(metric2.Units, Is.EqualTo(testMetricRecord2.Units));
     }
 
     private class InvalidableLogMetricRequestBody
