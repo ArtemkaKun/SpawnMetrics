@@ -9,10 +9,10 @@ namespace IntegrationTests.SpawnMetricsStorageTests;
 
 public abstract class SpawnMetricsStorageTestsBase
 {
-    private const string TestDatabaseName = "TEST_DATABASE";
+    private const string TestDatabaseName = "TEST";
 
     private HttpClient _httpClient = null!;
-    private ISurrealDbClient _surrealDbClient = null!;
+    protected ISurrealDbClient _surrealDbClient = null!;
 
     [OneTimeSetUp]
     public virtual void SetupEnvironment()
@@ -26,6 +26,7 @@ public abstract class SpawnMetricsStorageTestsBase
         var surrealDbOptions = SurrealDbOptions
             .Create()
             .WithEndpoint(configuration["SURREAL_DB_ENDPOINT"])
+            .WithNamespace(configuration["SURREAL_DB_NAMESPACE"])
             .WithDatabase(TestDatabaseName)
             .WithUsername(configuration["SURREAL_DB_USER"])
             .WithPassword(configuration["SURREAL_DB_PASS"])
