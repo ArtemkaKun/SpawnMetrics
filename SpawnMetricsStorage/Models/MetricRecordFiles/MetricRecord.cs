@@ -14,12 +14,6 @@ public sealed class MetricRecord
     public required DateTime LogTimeUtc { get; init; }
 
     [Required]
-    [MinLength(MetricRecordConstants.ShortCommitHashLength)]
-    [MaxLength(MetricRecordConstants.ShortCommitHashLength)]
-    [RegularExpression(@"^[\da-fA-F]{8}$", ErrorMessage = "Invalid short commit hash")]
-    public required string ShortCommitHash { get; init; }
-
-    [Required]
     [MinLength(MetricRecordConstants.MinCommitGitHubUrlLength, ErrorMessage = MetricRecordConstants.CommitGitHubUrlShorterErrorMessage)]
     [MaxLength(MetricRecordConstants.MaxCommitGitHubUrlLength)]
     [Url]

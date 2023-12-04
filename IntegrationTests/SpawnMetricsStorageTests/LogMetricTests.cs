@@ -33,7 +33,6 @@ public class LogMetricTests : SpawnMetricsStorageTestsBase
             {
                 Name = "TEST",
                 LogTimeUtc = DateTime.UtcNow,
-                ShortCommitHash = "12345678",
                 CommitGitHubUrl = "https://github.com/spawn/spawn/commit/12345678",
                 CommitMessage = "TEST",
                 Value = "TEST",
@@ -54,7 +53,6 @@ public class LogMetricTests : SpawnMetricsStorageTestsBase
             {
                 Name = "TEST",
                 LogTimeUtc = DateTime.UtcNow,
-                ShortCommitHash = "12345678",
                 CommitGitHubUrl = "https://github.com/spawn/spawn/commit/12345678",
                 CommitMessage = "TEST",
                 Value = "TEST",
@@ -75,7 +73,6 @@ public class LogMetricTests : SpawnMetricsStorageTestsBase
             {
                 Name = "TEST",
                 LogTimeUtc = DateTime.UtcNow,
-                ShortCommitHash = "12345678",
                 CommitGitHubUrl = "https://github.com/spawn/spawn/commit/12345678",
                 CommitMessage = "TEST",
                 Value = "TEST",
@@ -96,7 +93,6 @@ public class LogMetricTests : SpawnMetricsStorageTestsBase
             {
                 Name = "TEST",
                 LogTimeUtc = DateTime.UtcNow,
-                ShortCommitHash = "12345678",
                 CommitGitHubUrl = "https://github.com/spawn/spawn/commit/12345678",
                 CommitMessage = "TEST",
                 Value = "TEST",
@@ -129,7 +125,6 @@ public class LogMetricTests : SpawnMetricsStorageTestsBase
             {
                 Name = null,
                 LogTimeUtc = DateTime.UtcNow,
-                ShortCommitHash = "12345678",
                 CommitGitHubUrl = "https://github.com/spawn/spawn/commit/12345678",
                 CommitMessage = "TEST",
                 Value = "TEST",
@@ -150,7 +145,6 @@ public class LogMetricTests : SpawnMetricsStorageTestsBase
             {
                 Name = "",
                 LogTimeUtc = DateTime.UtcNow,
-                ShortCommitHash = "12345678",
                 CommitGitHubUrl = "https://github.com/spawn/spawn/commit/12345678",
                 CommitMessage = "TEST",
                 Value = "TEST",
@@ -171,7 +165,6 @@ public class LogMetricTests : SpawnMetricsStorageTestsBase
             {
                 Name = new string('A', MetricRecordConstants.MinMetricNameLength - 1),
                 LogTimeUtc = DateTime.UtcNow,
-                ShortCommitHash = "12345678",
                 CommitGitHubUrl = "https://github.com/spawn/spawn/commit/12345678",
                 CommitMessage = "TEST",
                 Value = "TEST",
@@ -192,7 +185,6 @@ public class LogMetricTests : SpawnMetricsStorageTestsBase
             {
                 Name = new string('A', MetricRecordConstants.MaxMetricNameLength + 1),
                 LogTimeUtc = DateTime.UtcNow,
-                ShortCommitHash = "12345678",
                 CommitGitHubUrl = "https://github.com/spawn/spawn/commit/12345678",
                 CommitMessage = "TEST",
                 Value = "TEST",
@@ -213,91 +205,6 @@ public class LogMetricTests : SpawnMetricsStorageTestsBase
             {
                 Name = "TEST",
                 LogTimeUtc = null,
-                ShortCommitHash = "12345678",
-                CommitGitHubUrl = "https://github.com/spawn/spawn/commit/12345678",
-                CommitMessage = "TEST",
-                Value = "TEST",
-                Units = "TEST"
-            }
-        });
-
-        await DoRequestAndAssertBadRequest(request);
-    }
-
-    [Test]
-    public async Task LogMetric_WithNullShortCommitHash_ReturnsBadRequest()
-    {
-        var request = PutAsync(MetricsControllerConstants.LogMetricEndpoint, new InvalidableLogMetricRequestBody
-        {
-            ProjectName = "TEST",
-            Metric = new InvalidableMetricRecord
-            {
-                Name = "TEST",
-                LogTimeUtc = DateTime.UtcNow,
-                ShortCommitHash = null,
-                CommitGitHubUrl = "https://github.com/spawn/spawn/commit/12345678",
-                CommitMessage = "TEST",
-                Value = "TEST",
-                Units = "TEST"
-            }
-        });
-
-        await DoRequestAndAssertBadRequest(request);
-    }
-
-    [Test]
-    public async Task LogMetric_WithTooShortShortCommitHash_ReturnsBadRequest()
-    {
-        var request = PutAsync(MetricsControllerConstants.LogMetricEndpoint, new InvalidableLogMetricRequestBody
-        {
-            ProjectName = "TEST",
-            Metric = new InvalidableMetricRecord
-            {
-                Name = "TEST",
-                LogTimeUtc = DateTime.UtcNow,
-                ShortCommitHash = new string('A', MetricRecordConstants.ShortCommitHashLength - 1),
-                CommitGitHubUrl = "https://github.com/spawn/spawn/commit/12345678",
-                CommitMessage = "TEST",
-                Value = "TEST",
-                Units = "TEST"
-            }
-        });
-
-        await DoRequestAndAssertBadRequest(request);
-    }
-
-    [Test]
-    public async Task LogMetric_WithTooLongShortCommitHash_ReturnsBadRequest()
-    {
-        var request = PutAsync(MetricsControllerConstants.LogMetricEndpoint, new InvalidableLogMetricRequestBody
-        {
-            ProjectName = "TEST",
-            Metric = new InvalidableMetricRecord
-            {
-                Name = "TEST",
-                LogTimeUtc = DateTime.UtcNow,
-                ShortCommitHash = new string('A', MetricRecordConstants.ShortCommitHashLength + 1),
-                CommitGitHubUrl = "https://github.com/spawn/spawn/commit/12345678",
-                CommitMessage = "TEST",
-                Value = "TEST",
-                Units = "TEST"
-            }
-        });
-
-        await DoRequestAndAssertBadRequest(request);
-    }
-
-    [Test]
-    public async Task LogMetric_WithInvalidShortCommitHash_ReturnsBadRequest()
-    {
-        var request = PutAsync(MetricsControllerConstants.LogMetricEndpoint, new InvalidableLogMetricRequestBody
-        {
-            ProjectName = "TEST",
-            Metric = new InvalidableMetricRecord
-            {
-                Name = "TEST",
-                LogTimeUtc = DateTime.UtcNow,
-                ShortCommitHash = new string('_', MetricRecordConstants.ShortCommitHashLength),
                 CommitGitHubUrl = "https://github.com/spawn/spawn/commit/12345678",
                 CommitMessage = "TEST",
                 Value = "TEST",
@@ -318,7 +225,6 @@ public class LogMetricTests : SpawnMetricsStorageTestsBase
             {
                 Name = "TEST",
                 LogTimeUtc = DateTime.UtcNow,
-                ShortCommitHash = "12345678",
                 CommitGitHubUrl = null,
                 CommitMessage = "TEST",
                 Value = "TEST",
@@ -339,7 +245,6 @@ public class LogMetricTests : SpawnMetricsStorageTestsBase
             {
                 Name = "TEST",
                 LogTimeUtc = DateTime.UtcNow,
-                ShortCommitHash = "12345678",
                 CommitGitHubUrl = new string('A', MetricRecordConstants.MinCommitGitHubUrlLength - 1),
                 CommitMessage = "TEST",
                 Value = "TEST",
@@ -360,7 +265,6 @@ public class LogMetricTests : SpawnMetricsStorageTestsBase
             {
                 Name = "TEST",
                 LogTimeUtc = DateTime.UtcNow,
-                ShortCommitHash = "12345678",
                 CommitGitHubUrl = new string('A', MetricRecordConstants.MaxCommitGitHubUrlLength + 1),
                 CommitMessage = "TEST",
                 Value = "TEST",
@@ -381,7 +285,6 @@ public class LogMetricTests : SpawnMetricsStorageTestsBase
             {
                 Name = "TEST",
                 LogTimeUtc = DateTime.UtcNow,
-                ShortCommitHash = "12345678",
                 CommitGitHubUrl = new string('A', MetricRecordConstants.MaxCommitGitHubUrlLength),
                 CommitMessage = "TEST",
                 Value = "TEST",
@@ -402,8 +305,87 @@ public class LogMetricTests : SpawnMetricsStorageTestsBase
             {
                 Name = "TEST",
                 LogTimeUtc = DateTime.UtcNow,
-                ShortCommitHash = "12345678",
                 CommitGitHubUrl = "https://goooooooooooooooooooooogle.com",
+                CommitMessage = "TEST",
+                Value = "TEST",
+                Units = "TEST"
+            }
+        });
+
+        await DoRequestAndAssertBadRequest(request);
+    }
+
+    [Test]
+    public async Task LogMetric_WithCommitGitHubUrlNullShortCommitHash_ReturnsBadRequest()
+    {
+        var request = PutAsync(MetricsControllerConstants.LogMetricEndpoint, new InvalidableLogMetricRequestBody
+        {
+            ProjectName = "TEST",
+            Metric = new InvalidableMetricRecord
+            {
+                Name = "TEST",
+                LogTimeUtc = DateTime.UtcNow,
+                CommitGitHubUrl = "https://github.com/spawn/spawn/commit",
+                CommitMessage = "TEST",
+                Value = "TEST",
+                Units = "TEST"
+            }
+        });
+
+        await DoRequestAndAssertBadRequest(request);
+    }
+
+    [Test]
+    public async Task LogMetric_WithCommitGitHubUrlTooShortShortCommitHash_ReturnsBadRequest()
+    {
+        var request = PutAsync(MetricsControllerConstants.LogMetricEndpoint, new InvalidableLogMetricRequestBody
+        {
+            ProjectName = "TEST",
+            Metric = new InvalidableMetricRecord
+            {
+                Name = "TEST",
+                LogTimeUtc = DateTime.UtcNow,
+                CommitGitHubUrl = $"https://github.com/spawn/spawn/commit/{new string('A', MetricRecordConstants.ShortCommitHashLength - 1)}",
+                CommitMessage = "TEST",
+                Value = "TEST",
+                Units = "TEST"
+            }
+        });
+
+        await DoRequestAndAssertBadRequest(request);
+    }
+
+    [Test]
+    public async Task LogMetric_WithCommitGitHubUrlTooLongShortCommitHash_ReturnsBadRequest()
+    {
+        var request = PutAsync(MetricsControllerConstants.LogMetricEndpoint, new InvalidableLogMetricRequestBody
+        {
+            ProjectName = "TEST",
+            Metric = new InvalidableMetricRecord
+            {
+                Name = "TEST",
+                LogTimeUtc = DateTime.UtcNow,
+                CommitGitHubUrl = $"https://github.com/spawn/spawn/commit/{new string('A', MetricRecordConstants.ShortCommitHashLength + 1)}",
+                CommitMessage = "TEST",
+                Value = "TEST",
+                Units = "TEST"
+            }
+        });
+
+        await DoRequestAndAssertBadRequest(request);
+    }
+
+    [Test]
+    public async Task LogMetric_WithCommitGitHubUrlInvalidShortCommitHash_ReturnsBadRequest()
+    {
+        var request = PutAsync(MetricsControllerConstants.LogMetricEndpoint, new InvalidableLogMetricRequestBody
+        {
+            ProjectName = "TEST",
+            Metric = new InvalidableMetricRecord
+            {
+                Name = "TEST",
+                LogTimeUtc = DateTime.UtcNow,
+                CommitGitHubUrl = $"https://github.com/spawn/spawn/commit/{new string('_', MetricRecordConstants.ShortCommitHashLength)}",
                 CommitMessage = "TEST",
                 Value = "TEST",
                 Units = "TEST"
@@ -423,7 +405,6 @@ public class LogMetricTests : SpawnMetricsStorageTestsBase
             {
                 Name = "TEST",
                 LogTimeUtc = DateTime.UtcNow,
-                ShortCommitHash = "12345678",
                 CommitGitHubUrl = "https://github.com/spawn/spawn/commit/12345678",
                 CommitMessage = null,
                 Value = "TEST",
@@ -444,7 +425,6 @@ public class LogMetricTests : SpawnMetricsStorageTestsBase
             {
                 Name = "TEST",
                 LogTimeUtc = DateTime.UtcNow,
-                ShortCommitHash = "12345678",
                 CommitGitHubUrl = "https://github.com/spawn/spawn/commit/12345678",
                 CommitMessage = new string('A', MetricRecordConstants.MinStringLength - 1),
                 Value = "TEST",
@@ -465,7 +445,6 @@ public class LogMetricTests : SpawnMetricsStorageTestsBase
             {
                 Name = "TEST",
                 LogTimeUtc = DateTime.UtcNow,
-                ShortCommitHash = "12345678",
                 CommitGitHubUrl = "https://github.com/spawn/spawn/commit/12345678",
                 CommitMessage = new string('A', MetricRecordConstants.MaxCommitMessageLength + 1),
                 Value = "TEST",
@@ -486,7 +465,6 @@ public class LogMetricTests : SpawnMetricsStorageTestsBase
             {
                 Name = "TEST",
                 LogTimeUtc = DateTime.UtcNow,
-                ShortCommitHash = "12345678",
                 CommitGitHubUrl = "https://github.com/spawn/spawn/commit/12345678",
                 CommitMessage = "TEST",
                 Value = null,
@@ -507,7 +485,6 @@ public class LogMetricTests : SpawnMetricsStorageTestsBase
             {
                 Name = "TEST",
                 LogTimeUtc = DateTime.UtcNow,
-                ShortCommitHash = "12345678",
                 CommitGitHubUrl = "https://github.com/spawn/spawn/commit/12345678",
                 CommitMessage = "TEST",
                 Value = new string('A', MetricRecordConstants.MinStringLength - 1),
@@ -528,7 +505,6 @@ public class LogMetricTests : SpawnMetricsStorageTestsBase
             {
                 Name = "TEST",
                 LogTimeUtc = DateTime.UtcNow,
-                ShortCommitHash = "12345678",
                 CommitGitHubUrl = "https://github.com/spawn/spawn/commit/12345678",
                 CommitMessage = "TEST",
                 Value = "TEST",
@@ -549,7 +525,6 @@ public class LogMetricTests : SpawnMetricsStorageTestsBase
             {
                 Name = "TEST",
                 LogTimeUtc = DateTime.UtcNow,
-                ShortCommitHash = "12345678",
                 CommitGitHubUrl = "https://github.com/spawn/spawn/commit/12345678",
                 CommitMessage = "TEST",
                 Value = "TEST",
@@ -567,7 +542,6 @@ public class LogMetricTests : SpawnMetricsStorageTestsBase
         {
             Name = "TEST",
             LogTimeUtc = DateTime.UtcNow,
-            ShortCommitHash = "12345678",
             CommitGitHubUrl = "https://github.com/spawn/spawn/commit/12345678",
             CommitMessage = "TEST",
             Value = "TEST",
@@ -592,7 +566,6 @@ public class LogMetricTests : SpawnMetricsStorageTestsBase
 
         Assert.That(metric.Name, Is.EqualTo(testMetricRecord.Name));
         Assert.That(metric.LogTimeUtc, Is.EqualTo(testMetricRecord.LogTimeUtc));
-        Assert.That(metric.ShortCommitHash, Is.EqualTo(testMetricRecord.ShortCommitHash));
         Assert.That(metric.CommitGitHubUrl, Is.EqualTo(testMetricRecord.CommitGitHubUrl));
         Assert.That(metric.CommitMessage, Is.EqualTo(testMetricRecord.CommitMessage));
         Assert.That(metric.Value, Is.EqualTo(testMetricRecord.Value));
@@ -606,7 +579,6 @@ public class LogMetricTests : SpawnMetricsStorageTestsBase
         {
             Name = "TEST",
             LogTimeUtc = DateTime.UtcNow,
-            ShortCommitHash = "12345678",
             CommitGitHubUrl = "https://github.com/spawn/spawn/commit/12345678",
             CommitMessage = "TEST",
             Value = "TEST",
@@ -625,7 +597,6 @@ public class LogMetricTests : SpawnMetricsStorageTestsBase
         {
             Name = "TEST_ANOTHER",
             LogTimeUtc = DateTime.UtcNow,
-            ShortCommitHash = "12345678",
             CommitGitHubUrl = "https://github.com/spawn/spawn/commit/12345678",
             CommitMessage = "TEST",
             Value = "TEST",
@@ -648,15 +619,13 @@ public class LogMetricTests : SpawnMetricsStorageTestsBase
 
         Assert.That(list.Any(metric => metric.Name == testMetricRecord.Name));
         Assert.That(list.Any(metric => metric.LogTimeUtc == testMetricRecord.LogTimeUtc));
-        Assert.That(list.Any(metric => metric.ShortCommitHash == testMetricRecord.ShortCommitHash));
         Assert.That(list.Any(metric => metric.CommitGitHubUrl == testMetricRecord.CommitGitHubUrl));
         Assert.That(list.Any(metric => metric.CommitMessage == testMetricRecord.CommitMessage));
         Assert.That(list.Any(metric => metric.Value == testMetricRecord.Value));
         Assert.That(list.Any(metric => metric.Units == testMetricRecord.Units));
-        
+
         Assert.That(list.Any(metric => metric.Name == testMetricRecord2.Name));
         Assert.That(list.Any(metric => metric.LogTimeUtc == testMetricRecord2.LogTimeUtc));
-        Assert.That(list.Any(metric => metric.ShortCommitHash == testMetricRecord2.ShortCommitHash));
         Assert.That(list.Any(metric => metric.CommitGitHubUrl == testMetricRecord2.CommitGitHubUrl));
         Assert.That(list.Any(metric => metric.CommitMessage == testMetricRecord2.CommitMessage));
         Assert.That(list.Any(metric => metric.Value == testMetricRecord2.Value));
@@ -670,7 +639,6 @@ public class LogMetricTests : SpawnMetricsStorageTestsBase
         {
             Name = "TEST",
             LogTimeUtc = DateTime.UtcNow,
-            ShortCommitHash = "12345678",
             CommitGitHubUrl = "https://github.com/spawn/spawn/commit/12345678",
             CommitMessage = "TEST",
             Value = "TEST",
@@ -689,7 +657,6 @@ public class LogMetricTests : SpawnMetricsStorageTestsBase
         {
             Name = "TEST",
             LogTimeUtc = DateTime.UtcNow + TimeSpan.FromMinutes(1),
-            ShortCommitHash = "12345678",
             CommitGitHubUrl = "https://github.com/spawn/spawn/commit/12345678",
             CommitMessage = "TEST",
             Value = "TEST",
@@ -712,15 +679,13 @@ public class LogMetricTests : SpawnMetricsStorageTestsBase
 
         Assert.That(list.Any(metric => metric.Name == testMetricRecord.Name));
         Assert.That(list.Any(metric => metric.LogTimeUtc == testMetricRecord.LogTimeUtc));
-        Assert.That(list.Any(metric => metric.ShortCommitHash == testMetricRecord.ShortCommitHash));
         Assert.That(list.Any(metric => metric.CommitGitHubUrl == testMetricRecord.CommitGitHubUrl));
         Assert.That(list.Any(metric => metric.CommitMessage == testMetricRecord.CommitMessage));
         Assert.That(list.Any(metric => metric.Value == testMetricRecord.Value));
         Assert.That(list.Any(metric => metric.Units == testMetricRecord.Units));
-        
+
         Assert.That(list.Any(metric => metric.Name == testMetricRecord2.Name));
         Assert.That(list.Any(metric => metric.LogTimeUtc == testMetricRecord2.LogTimeUtc));
-        Assert.That(list.Any(metric => metric.ShortCommitHash == testMetricRecord2.ShortCommitHash));
         Assert.That(list.Any(metric => metric.CommitGitHubUrl == testMetricRecord2.CommitGitHubUrl));
         Assert.That(list.Any(metric => metric.CommitMessage == testMetricRecord2.CommitMessage));
         Assert.That(list.Any(metric => metric.Value == testMetricRecord2.Value));
@@ -734,7 +699,6 @@ public class LogMetricTests : SpawnMetricsStorageTestsBase
         {
             Name = "TEST",
             LogTimeUtc = DateTime.UtcNow,
-            ShortCommitHash = "12345678",
             CommitGitHubUrl = "https://github.com/spawn/spawn/commit/12345678",
             CommitMessage = "TEST",
             Value = "TEST",
@@ -753,7 +717,6 @@ public class LogMetricTests : SpawnMetricsStorageTestsBase
         {
             Name = "TEST",
             LogTimeUtc = DateTime.UtcNow + TimeSpan.FromMinutes(1),
-            ShortCommitHash = "12345678",
             CommitGitHubUrl = "https://github.com/spawn/spawn/commit/12345678",
             CommitMessage = "TEST",
             Value = "TEST",
@@ -778,7 +741,6 @@ public class LogMetricTests : SpawnMetricsStorageTestsBase
 
         Assert.That(metric.Name, Is.EqualTo(testMetricRecord.Name));
         Assert.That(metric.LogTimeUtc, Is.EqualTo(testMetricRecord.LogTimeUtc));
-        Assert.That(metric.ShortCommitHash, Is.EqualTo(testMetricRecord.ShortCommitHash));
         Assert.That(metric.CommitGitHubUrl, Is.EqualTo(testMetricRecord.CommitGitHubUrl));
         Assert.That(metric.CommitMessage, Is.EqualTo(testMetricRecord.CommitMessage));
         Assert.That(metric.Value, Is.EqualTo(testMetricRecord.Value));
@@ -794,7 +756,6 @@ public class LogMetricTests : SpawnMetricsStorageTestsBase
 
         Assert.That(metric2.Name, Is.EqualTo(testMetricRecord2.Name));
         Assert.That(metric2.LogTimeUtc, Is.EqualTo(testMetricRecord2.LogTimeUtc));
-        Assert.That(metric2.ShortCommitHash, Is.EqualTo(testMetricRecord2.ShortCommitHash));
         Assert.That(metric2.CommitGitHubUrl, Is.EqualTo(testMetricRecord2.CommitGitHubUrl));
         Assert.That(metric2.CommitMessage, Is.EqualTo(testMetricRecord2.CommitMessage));
         Assert.That(metric2.Value, Is.EqualTo(testMetricRecord2.Value));
@@ -812,7 +773,6 @@ public class LogMetricTests : SpawnMetricsStorageTestsBase
     {
         public string? Name { get; init; }
         public DateTime? LogTimeUtc { get; init; }
-        public string? ShortCommitHash { get; init; }
         public string? CommitGitHubUrl { get; init; }
         public string? CommitMessage { get; init; }
         public string? Value { get; init; }
