@@ -1,4 +1,4 @@
-namespace SpawnMetricsStorage.Models;
+namespace SpawnMetricsStorage.Models.ProjectName;
 
 public static class ProjectNameConstants
 {

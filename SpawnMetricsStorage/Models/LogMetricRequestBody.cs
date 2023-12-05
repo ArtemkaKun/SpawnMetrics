@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using SpawnMetricsStorage.Models.MetricRecordFiles;
+using SpawnMetricsStorage.Models.ProjectName;
 
 namespace SpawnMetricsStorage.Models;
 
@@ -8,8 +9,7 @@ namespace SpawnMetricsStorage.Models;
 public sealed class LogMetricRequestBody
 {
     [Required]
-    [MinLength(ProjectNameConstants.MinProjectNameLength)]
-    [MaxLength(ProjectNameConstants.MaxProjectNameLength)]
+    [IsValidProjectName]
     public required string ProjectName { get; init; }
 
     [Required]

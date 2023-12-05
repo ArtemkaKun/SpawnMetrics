@@ -2,6 +2,7 @@ using System.Net;
 using SpawnMetricsStorage.Controllers;
 using SpawnMetricsStorage.Models;
 using SpawnMetricsStorage.Models.MetricRecordFiles;
+using SpawnMetricsStorage.Models.ProjectName;
 
 namespace IntegrationTests.SpawnMetricsStorageTests;
 
