@@ -538,15 +538,7 @@ public class LogMetricTests : SpawnMetricsStorageTestsBase
     [Test]
     public async Task LogMetric_ReturnOk_AndLogMetricExists()
     {
-        var testMetricRecord = new MetricRecord
-        {
-            Name = "TEST",
-            LogTimeUtc = DateTime.UtcNow,
-            CommitGitHubUrl = "https://github.com/spawn/spawn/commit/12345678",
-            CommitMessage = "TEST",
-            Value = "TEST",
-            Units = "TEST"
-        };
+        var testMetricRecord = new MetricRecord("TEST", DateTime.UtcNow, "https://github.com/spawn/spawn/commit/12345678", "TEST", "TEST", "TEST");
 
         var request = await PutAsync(MetricsControllerConstants.LogMetricEndpoint, new LogMetricRequestBody
         {
@@ -575,15 +567,7 @@ public class LogMetricTests : SpawnMetricsStorageTestsBase
     [Test]
     public async Task LogMetric_ReturnOk_AndLogMetricExists_WhenTwoDifferentMetricsLogged()
     {
-        var testMetricRecord = new MetricRecord
-        {
-            Name = "TEST",
-            LogTimeUtc = DateTime.UtcNow,
-            CommitGitHubUrl = "https://github.com/spawn/spawn/commit/12345678",
-            CommitMessage = "TEST",
-            Value = "TEST",
-            Units = "TEST"
-        };
+        var testMetricRecord = new MetricRecord("TEST", DateTime.UtcNow, "https://github.com/spawn/spawn/commit/12345678", "TEST", "TEST", "TEST");
 
         var request = await PutAsync(MetricsControllerConstants.LogMetricEndpoint, new LogMetricRequestBody
         {
@@ -593,15 +577,7 @@ public class LogMetricTests : SpawnMetricsStorageTestsBase
 
         Assert.That(request.StatusCode, Is.EqualTo(HttpStatusCode.OK));
 
-        var testMetricRecord2 = new MetricRecord
-        {
-            Name = "TEST_ANOTHER",
-            LogTimeUtc = DateTime.UtcNow,
-            CommitGitHubUrl = "https://github.com/spawn/spawn/commit/12345678",
-            CommitMessage = "TEST",
-            Value = "TEST",
-            Units = "TEST"
-        };
+        var testMetricRecord2 = new MetricRecord("TEST_ANOTHER", DateTime.UtcNow, "https://github.com/spawn/spawn/commit/12345678", "TEST", "TEST", "TEST");
 
         var request2 = await PutAsync(MetricsControllerConstants.LogMetricEndpoint, new LogMetricRequestBody
         {
@@ -635,15 +611,7 @@ public class LogMetricTests : SpawnMetricsStorageTestsBase
     [Test]
     public async Task LogMetric_ReturnOk_AndLogMetricExists_WhenSameMetricLoggedTwice()
     {
-        var testMetricRecord = new MetricRecord
-        {
-            Name = "TEST",
-            LogTimeUtc = DateTime.UtcNow,
-            CommitGitHubUrl = "https://github.com/spawn/spawn/commit/12345678",
-            CommitMessage = "TEST",
-            Value = "TEST",
-            Units = "TEST"
-        };
+        var testMetricRecord = new MetricRecord("TEST", DateTime.UtcNow, "https://github.com/spawn/spawn/commit/12345678", "TEST", "TEST", "TEST");
 
         var request = await PutAsync(MetricsControllerConstants.LogMetricEndpoint, new LogMetricRequestBody
         {
@@ -653,15 +621,7 @@ public class LogMetricTests : SpawnMetricsStorageTestsBase
 
         Assert.That(request.StatusCode, Is.EqualTo(HttpStatusCode.OK));
 
-        var testMetricRecord2 = new MetricRecord
-        {
-            Name = "TEST",
-            LogTimeUtc = DateTime.UtcNow + TimeSpan.FromMinutes(1),
-            CommitGitHubUrl = "https://github.com/spawn/spawn/commit/12345678",
-            CommitMessage = "TEST",
-            Value = "TEST",
-            Units = "TEST"
-        };
+        var testMetricRecord2 = new MetricRecord("TEST", DateTime.UtcNow + TimeSpan.FromMinutes(1), "https://github.com/spawn/spawn/commit/12345678", "TEST", "TEST", "TEST");
 
         var request2 = await PutAsync(MetricsControllerConstants.LogMetricEndpoint, new LogMetricRequestBody
         {
@@ -695,15 +655,7 @@ public class LogMetricTests : SpawnMetricsStorageTestsBase
     [Test]
     public async Task LogMetric_ReturnOk_AndLogMetricExists_InDifferentProjects()
     {
-        var testMetricRecord = new MetricRecord
-        {
-            Name = "TEST",
-            LogTimeUtc = DateTime.UtcNow,
-            CommitGitHubUrl = "https://github.com/spawn/spawn/commit/12345678",
-            CommitMessage = "TEST",
-            Value = "TEST",
-            Units = "TEST"
-        };
+        var testMetricRecord = new MetricRecord("TEST", DateTime.UtcNow, "https://github.com/spawn/spawn/commit/12345678", "TEST", "TEST", "TEST");
 
         var request = await PutAsync(MetricsControllerConstants.LogMetricEndpoint, new LogMetricRequestBody
         {
@@ -713,15 +665,7 @@ public class LogMetricTests : SpawnMetricsStorageTestsBase
 
         Assert.That(request.StatusCode, Is.EqualTo(HttpStatusCode.OK));
 
-        var testMetricRecord2 = new MetricRecord
-        {
-            Name = "TEST",
-            LogTimeUtc = DateTime.UtcNow + TimeSpan.FromMinutes(1),
-            CommitGitHubUrl = "https://github.com/spawn/spawn/commit/12345678",
-            CommitMessage = "TEST",
-            Value = "TEST",
-            Units = "TEST"
-        };
+        var testMetricRecord2 = new MetricRecord("TEST", DateTime.UtcNow, "https://github.com/spawn/spawn/commit/12345678", "TEST", "TEST", "TEST");
 
         var request2 = await PutAsync(MetricsControllerConstants.LogMetricEndpoint, new LogMetricRequestBody
         {
