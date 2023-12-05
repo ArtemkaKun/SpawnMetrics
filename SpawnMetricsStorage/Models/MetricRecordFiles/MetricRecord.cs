@@ -9,9 +9,7 @@ namespace SpawnMetricsStorage.Models.MetricRecordFiles;
 public readonly struct MetricRecord(string name, DateTime logTimeUtc, string commitGitHubUrl, string commitMessage, string value, string units)
 {
     [Required]
-    // TODO: Combine into one attribute since these are used in a few places
-    [MinLength(MetricRecordConstants.MinMetricNameLength)]
-    [MaxLength(MetricRecordConstants.MaxMetricNameLength)]
+    [IsValidMetricName]
     public string Name { get; } = name;
 
     [Required]

@@ -11,7 +11,6 @@ public class GetMetricRequestParameters
     public required string ProjectName { get; init; }
 
     [Required]
-    [MinLength(MetricRecordConstants.MinMetricNameLength)]
-    [MaxLength(MetricRecordConstants.MaxMetricNameLength)]
+    [IsValidMetricName]
     public required string MetricName { get; init; }
 }
