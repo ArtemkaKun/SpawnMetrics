@@ -27,78 +27,33 @@ public class LogMetricTests : SpawnMetricsStorageTestsBase
     [Test]
     public async Task LogMetric_WithNullProjectName_ReturnsBadRequest()
     {
-        var request = PutAsync(MetricsControllerConstants.MetricEndpoint, new InvalidableLogMetricRequestBody
-        {
-            ProjectName = null,
-            Metric = new InvalidableMetricRecord
-            {
-                Name = "TEST",
-                LogTimeUtc = DateTime.UtcNow,
-                CommitGitHubUrl = "https://github.com/spawn/spawn/commit/12345678",
-                CommitMessage = "TEST",
-                Value = "TEST",
-                Units = "TEST"
-            }
-        });
-
-        await DoRequestAndAssertBadRequest(request);
+        await TestLogMetricRequestWithBadProjectName(null);
     }
 
     [Test]
     public async Task LogMetric_WithEmptyProjectName_ReturnsBadRequest()
     {
-        var request = PutAsync(MetricsControllerConstants.MetricEndpoint, new InvalidableLogMetricRequestBody
-        {
-            ProjectName = "",
-            Metric = new InvalidableMetricRecord
-            {
-                Name = "TEST",
-                LogTimeUtc = DateTime.UtcNow,
-                CommitGitHubUrl = "https://github.com/spawn/spawn/commit/12345678",
-                CommitMessage = "TEST",
-                Value = "TEST",
-                Units = "TEST"
-            }
-        });
-
-        await DoRequestAndAssertBadRequest(request);
+        await TestLogMetricRequestWithBadProjectName("");
     }
 
     [Test]
     public async Task LogMetric_WithTooShortProjectName_ReturnsBadRequest()
     {
-        var request = PutAsync(MetricsControllerConstants.MetricEndpoint, new InvalidableLogMetricRequestBody
-        {
-            ProjectName = new string('A', ProjectNameConstants.MinProjectNameLength - 1),
-            Metric = new InvalidableMetricRecord
-            {
-                Name = "TEST",
-                LogTimeUtc = DateTime.UtcNow,
-                CommitGitHubUrl = "https://github.com/spawn/spawn/commit/12345678",
-                CommitMessage = "TEST",
-                Value = "TEST",
-                Units = "TEST"
-            }
-        });
-
-        await DoRequestAndAssertBadRequest(request);
+        await TestLogMetricRequestWithBadProjectName(new string('A', ProjectNameConstants.MinProjectNameLength - 1));
     }
 
     [Test]
     public async Task LogMetric_WithTooLongProjectName_ReturnsBadRequest()
     {
+        await TestLogMetricRequestWithBadProjectName(new string('A', ProjectNameConstants.MaxProjectNameLength + 1));
+    }
+
+    private async Task TestLogMetricRequestWithBadProjectName(string? projectName)
+    {
         var request = PutAsync(MetricsControllerConstants.MetricEndpoint, new InvalidableLogMetricRequestBody
         {
-            ProjectName = new string('A', ProjectNameConstants.MaxProjectNameLength + 1),
-            Metric = new InvalidableMetricRecord
-            {
-                Name = "TEST",
-                LogTimeUtc = DateTime.UtcNow,
-                CommitGitHubUrl = "https://github.com/spawn/spawn/commit/12345678",
-                CommitMessage = "TEST",
-                Value = "TEST",
-                Units = "TEST"
-            }
+            ProjectName = projectName,
+            Metric = new InvalidableMetricRecordBuilder().Build()
         });
 
         await DoRequestAndAssertBadRequest(request);
@@ -107,430 +62,191 @@ public class LogMetricTests : SpawnMetricsStorageTestsBase
     [Test]
     public async Task LogMetric_WithNullMetric_ReturnsBadRequest()
     {
-        var request = PutAsync(MetricsControllerConstants.MetricEndpoint, new InvalidableLogMetricRequestBody
-        {
-            ProjectName = "TEST",
-            Metric = null
-        });
-
-        await DoRequestAndAssertBadRequest(request);
+        await TestLogMetricRequestWithBadMetricRecord(null);
     }
 
     [Test]
     public async Task LogMetric_WithNullMetricName_ReturnsBadRequest()
     {
-        var request = PutAsync(MetricsControllerConstants.MetricEndpoint, new InvalidableLogMetricRequestBody
-        {
-            ProjectName = "TEST",
-            Metric = new InvalidableMetricRecord
-            {
-                Name = null,
-                LogTimeUtc = DateTime.UtcNow,
-                CommitGitHubUrl = "https://github.com/spawn/spawn/commit/12345678",
-                CommitMessage = "TEST",
-                Value = "TEST",
-                Units = "TEST"
-            }
-        });
+        var metric = new InvalidableMetricRecordBuilder().WithName(null).Build();
 
-        await DoRequestAndAssertBadRequest(request);
+        await TestLogMetricRequestWithBadMetricRecord(metric);
     }
 
     [Test]
     public async Task LogMetric_WithEmptyMetricName_ReturnsBadRequest()
     {
-        var request = PutAsync(MetricsControllerConstants.MetricEndpoint, new InvalidableLogMetricRequestBody
-        {
-            ProjectName = "TEST",
-            Metric = new InvalidableMetricRecord
-            {
-                Name = "",
-                LogTimeUtc = DateTime.UtcNow,
-                CommitGitHubUrl = "https://github.com/spawn/spawn/commit/12345678",
-                CommitMessage = "TEST",
-                Value = "TEST",
-                Units = "TEST"
-            }
-        });
+        var metric = new InvalidableMetricRecordBuilder().WithName("").Build();
 
-        await DoRequestAndAssertBadRequest(request);
+        await TestLogMetricRequestWithBadMetricRecord(metric);
     }
 
     [Test]
     public async Task LogMetric_WithTooShortMetricName_ReturnsBadRequest()
     {
-        var request = PutAsync(MetricsControllerConstants.MetricEndpoint, new InvalidableLogMetricRequestBody
-        {
-            ProjectName = "TEST",
-            Metric = new InvalidableMetricRecord
-            {
-                Name = new string('A', MetricRecordConstants.MinMetricNameLength - 1),
-                LogTimeUtc = DateTime.UtcNow,
-                CommitGitHubUrl = "https://github.com/spawn/spawn/commit/12345678",
-                CommitMessage = "TEST",
-                Value = "TEST",
-                Units = "TEST"
-            }
-        });
+        var metric = new InvalidableMetricRecordBuilder().WithName(new string('A', MetricRecordConstants.MinMetricNameLength - 1)).Build();
 
-        await DoRequestAndAssertBadRequest(request);
+        await TestLogMetricRequestWithBadMetricRecord(metric);
     }
 
     [Test]
     public async Task LogMetric_WithTooLongMetricName_ReturnsBadRequest()
     {
-        var request = PutAsync(MetricsControllerConstants.MetricEndpoint, new InvalidableLogMetricRequestBody
-        {
-            ProjectName = "TEST",
-            Metric = new InvalidableMetricRecord
-            {
-                Name = new string('A', MetricRecordConstants.MaxMetricNameLength + 1),
-                LogTimeUtc = DateTime.UtcNow,
-                CommitGitHubUrl = "https://github.com/spawn/spawn/commit/12345678",
-                CommitMessage = "TEST",
-                Value = "TEST",
-                Units = "TEST"
-            }
-        });
+        var metric = new InvalidableMetricRecordBuilder().WithName(new string('A', MetricRecordConstants.MaxMetricNameLength + 1)).Build();
 
-        await DoRequestAndAssertBadRequest(request);
+        await TestLogMetricRequestWithBadMetricRecord(metric);
     }
 
     [Test]
     public async Task LogMetric_WithNullMetricLogTime_ReturnsBadRequest()
     {
-        var request = PutAsync(MetricsControllerConstants.MetricEndpoint, new InvalidableLogMetricRequestBody
-        {
-            ProjectName = "TEST",
-            Metric = new InvalidableMetricRecord
-            {
-                Name = "TEST",
-                LogTimeUtc = null,
-                CommitGitHubUrl = "https://github.com/spawn/spawn/commit/12345678",
-                CommitMessage = "TEST",
-                Value = "TEST",
-                Units = "TEST"
-            }
-        });
+        var metric = new InvalidableMetricRecordBuilder().WithLogTimeUtc(null).Build();
 
-        await DoRequestAndAssertBadRequest(request);
+        await TestLogMetricRequestWithBadMetricRecord(metric);
     }
 
     [Test]
     public async Task LogMetric_WithNullCommitGitHubUrl_ReturnsBadRequest()
     {
-        var request = PutAsync(MetricsControllerConstants.MetricEndpoint, new InvalidableLogMetricRequestBody
-        {
-            ProjectName = "TEST",
-            Metric = new InvalidableMetricRecord
-            {
-                Name = "TEST",
-                LogTimeUtc = DateTime.UtcNow,
-                CommitGitHubUrl = null,
-                CommitMessage = "TEST",
-                Value = "TEST",
-                Units = "TEST"
-            }
-        });
+        var metric = new InvalidableMetricRecordBuilder().WithCommitGitHubUrl(null).Build();
 
-        await DoRequestAndAssertBadRequest(request);
+        await TestLogMetricRequestWithBadMetricRecord(metric);
     }
 
     [Test]
     public async Task LogMetric_WithTooShortCommitGitHubUrl_ReturnsBadRequest()
     {
-        var request = PutAsync(MetricsControllerConstants.MetricEndpoint, new InvalidableLogMetricRequestBody
-        {
-            ProjectName = "TEST",
-            Metric = new InvalidableMetricRecord
-            {
-                Name = "TEST",
-                LogTimeUtc = DateTime.UtcNow,
-                CommitGitHubUrl = new string('A', MetricRecordConstants.MinCommitGitHubUrlLength - 1),
-                CommitMessage = "TEST",
-                Value = "TEST",
-                Units = "TEST"
-            }
-        });
+        var metric = new InvalidableMetricRecordBuilder().WithCommitGitHubUrl(new string('A', MetricRecordConstants.MinCommitGitHubUrlLength - 1)).Build();
 
-        await DoRequestAndAssertBadRequest(request);
+        await TestLogMetricRequestWithBadMetricRecord(metric);
     }
 
     [Test]
     public async Task LogMetric_WithTooLongCommitGitHubUrl_ReturnsBadRequest()
     {
-        var request = PutAsync(MetricsControllerConstants.MetricEndpoint, new InvalidableLogMetricRequestBody
-        {
-            ProjectName = "TEST",
-            Metric = new InvalidableMetricRecord
-            {
-                Name = "TEST",
-                LogTimeUtc = DateTime.UtcNow,
-                CommitGitHubUrl = new string('A', MetricRecordConstants.MaxCommitGitHubUrlLength + 1),
-                CommitMessage = "TEST",
-                Value = "TEST",
-                Units = "TEST"
-            }
-        });
+        var metric = new InvalidableMetricRecordBuilder().WithCommitGitHubUrl(new string('A', MetricRecordConstants.MaxCommitGitHubUrlLength + 1)).Build();
 
-        await DoRequestAndAssertBadRequest(request);
+        await TestLogMetricRequestWithBadMetricRecord(metric);
     }
 
     [Test]
     public async Task LogMetric_WithNotALinkCommitGitHubUrl_ReturnsBadRequest()
     {
-        var request = PutAsync(MetricsControllerConstants.MetricEndpoint, new InvalidableLogMetricRequestBody
-        {
-            ProjectName = "TEST",
-            Metric = new InvalidableMetricRecord
-            {
-                Name = "TEST",
-                LogTimeUtc = DateTime.UtcNow,
-                CommitGitHubUrl = new string('A', MetricRecordConstants.MaxCommitGitHubUrlLength),
-                CommitMessage = "TEST",
-                Value = "TEST",
-                Units = "TEST"
-            }
-        });
+        var metric = new InvalidableMetricRecordBuilder().WithCommitGitHubUrl(new string('A', MetricRecordConstants.MaxCommitGitHubUrlLength)).Build();
 
-        await DoRequestAndAssertBadRequest(request);
+        await TestLogMetricRequestWithBadMetricRecord(metric);
     }
 
     [Test]
     public async Task LogMetric_WithNotAGitHubLinkCommitGitHubUrl_ReturnsBadRequest()
     {
-        var request = PutAsync(MetricsControllerConstants.MetricEndpoint, new InvalidableLogMetricRequestBody
-        {
-            ProjectName = "TEST",
-            Metric = new InvalidableMetricRecord
-            {
-                Name = "TEST",
-                LogTimeUtc = DateTime.UtcNow,
-                CommitGitHubUrl = "https://goooooooooooooooooooooogle.com",
-                CommitMessage = "TEST",
-                Value = "TEST",
-                Units = "TEST"
-            }
-        });
+        var metric = new InvalidableMetricRecordBuilder().WithCommitGitHubUrl("https://goooooooooooooooooooooogle.com").Build();
 
-        await DoRequestAndAssertBadRequest(request);
+        await TestLogMetricRequestWithBadMetricRecord(metric);
     }
 
     [Test]
     public async Task LogMetric_WithCommitGitHubUrlNullShortCommitHash_ReturnsBadRequest()
     {
-        var request = PutAsync(MetricsControllerConstants.MetricEndpoint, new InvalidableLogMetricRequestBody
-        {
-            ProjectName = "TEST",
-            Metric = new InvalidableMetricRecord
-            {
-                Name = "TEST",
-                LogTimeUtc = DateTime.UtcNow,
-                CommitGitHubUrl = "https://github.com/spawn/spawn/commit",
-                CommitMessage = "TEST",
-                Value = "TEST",
-                Units = "TEST"
-            }
-        });
+        var metric = new InvalidableMetricRecordBuilder().WithCommitGitHubUrl("https://github.com/spawn/spawn/commit").Build();
 
-        await DoRequestAndAssertBadRequest(request);
+        await TestLogMetricRequestWithBadMetricRecord(metric);
     }
 
     [Test]
     public async Task LogMetric_WithCommitGitHubUrlTooShortShortCommitHash_ReturnsBadRequest()
     {
-        var request = PutAsync(MetricsControllerConstants.MetricEndpoint, new InvalidableLogMetricRequestBody
-        {
-            ProjectName = "TEST",
-            Metric = new InvalidableMetricRecord
-            {
-                Name = "TEST",
-                LogTimeUtc = DateTime.UtcNow,
-                CommitGitHubUrl = $"https://github.com/spawn/spawn/commit/{new string('A', MetricRecordConstants.ShortCommitHashLength - 1)}",
-                CommitMessage = "TEST",
-                Value = "TEST",
-                Units = "TEST"
-            }
-        });
+        var metric = new InvalidableMetricRecordBuilder().WithCommitGitHubUrl($"https://github.com/spawn/spawn/commit/{new string('A', MetricRecordConstants.ShortCommitHashLength - 1)}").Build();
 
-        await DoRequestAndAssertBadRequest(request);
+        await TestLogMetricRequestWithBadMetricRecord(metric);
     }
 
     [Test]
     public async Task LogMetric_WithCommitGitHubUrlTooLongShortCommitHash_ReturnsBadRequest()
     {
-        var request = PutAsync(MetricsControllerConstants.MetricEndpoint, new InvalidableLogMetricRequestBody
-        {
-            ProjectName = "TEST",
-            Metric = new InvalidableMetricRecord
-            {
-                Name = "TEST",
-                LogTimeUtc = DateTime.UtcNow,
-                CommitGitHubUrl = $"https://github.com/spawn/spawn/commit/{new string('A', MetricRecordConstants.ShortCommitHashLength + 1)}",
-                CommitMessage = "TEST",
-                Value = "TEST",
-                Units = "TEST"
-            }
-        });
+        var metric = new InvalidableMetricRecordBuilder().WithCommitGitHubUrl($"https://github.com/spawn/spawn/commit/{new string('A', MetricRecordConstants.ShortCommitHashLength + 1)}").Build();
 
-        await DoRequestAndAssertBadRequest(request);
+        await TestLogMetricRequestWithBadMetricRecord(metric);
     }
 
     [Test]
     public async Task LogMetric_WithCommitGitHubUrlInvalidShortCommitHash_ReturnsBadRequest()
     {
-        var request = PutAsync(MetricsControllerConstants.MetricEndpoint, new InvalidableLogMetricRequestBody
-        {
-            ProjectName = "TEST",
-            Metric = new InvalidableMetricRecord
-            {
-                Name = "TEST",
-                LogTimeUtc = DateTime.UtcNow,
-                CommitGitHubUrl = $"https://github.com/spawn/spawn/commit/{new string('_', MetricRecordConstants.ShortCommitHashLength)}",
-                CommitMessage = "TEST",
-                Value = "TEST",
-                Units = "TEST"
-            }
-        });
+        var metric = new InvalidableMetricRecordBuilder().WithCommitGitHubUrl($"https://github.com/spawn/spawn/commit/{new string('_', MetricRecordConstants.ShortCommitHashLength)}").Build();
 
-        await DoRequestAndAssertBadRequest(request);
+        await TestLogMetricRequestWithBadMetricRecord(metric);
     }
 
     [Test]
     public async Task LogMetric_WithNullCommitMessage_ReturnsBadRequest()
     {
-        var request = PutAsync(MetricsControllerConstants.MetricEndpoint, new InvalidableLogMetricRequestBody
-        {
-            ProjectName = "TEST",
-            Metric = new InvalidableMetricRecord
-            {
-                Name = "TEST",
-                LogTimeUtc = DateTime.UtcNow,
-                CommitGitHubUrl = "https://github.com/spawn/spawn/commit/12345678",
-                CommitMessage = null,
-                Value = "TEST",
-                Units = "TEST"
-            }
-        });
+        var metric = new InvalidableMetricRecordBuilder().WithCommitMessage(null).Build();
 
-        await DoRequestAndAssertBadRequest(request);
+        await TestLogMetricRequestWithBadMetricRecord(metric);
     }
 
     [Test]
     public async Task LogMetric_WithTooShortCommitMessage_ReturnsBadRequest()
     {
-        var request = PutAsync(MetricsControllerConstants.MetricEndpoint, new InvalidableLogMetricRequestBody
-        {
-            ProjectName = "TEST",
-            Metric = new InvalidableMetricRecord
-            {
-                Name = "TEST",
-                LogTimeUtc = DateTime.UtcNow,
-                CommitGitHubUrl = "https://github.com/spawn/spawn/commit/12345678",
-                CommitMessage = new string('A', MetricRecordConstants.MinStringLength - 1),
-                Value = "TEST",
-                Units = "TEST"
-            }
-        });
+        var metric = new InvalidableMetricRecordBuilder().WithCommitMessage(new string('A', MetricRecordConstants.MinStringLength - 1)).Build();
 
-        await DoRequestAndAssertBadRequest(request);
+        await TestLogMetricRequestWithBadMetricRecord(metric);
     }
 
     [Test]
     public async Task LogMetric_WithTooLongCommitMessage_ReturnsBadRequest()
     {
-        var request = PutAsync(MetricsControllerConstants.MetricEndpoint, new InvalidableLogMetricRequestBody
-        {
-            ProjectName = "TEST",
-            Metric = new InvalidableMetricRecord
-            {
-                Name = "TEST",
-                LogTimeUtc = DateTime.UtcNow,
-                CommitGitHubUrl = "https://github.com/spawn/spawn/commit/12345678",
-                CommitMessage = new string('A', MetricRecordConstants.MaxCommitMessageLength + 1),
-                Value = "TEST",
-                Units = "TEST"
-            }
-        });
+        var metric = new InvalidableMetricRecordBuilder().WithCommitMessage(new string('A', MetricRecordConstants.MaxCommitMessageLength + 1)).Build();
 
-        await DoRequestAndAssertBadRequest(request);
+        await TestLogMetricRequestWithBadMetricRecord(metric);
     }
 
     [Test]
     public async Task LogMetric_WithNullValue_ReturnsBadRequest()
     {
-        var request = PutAsync(MetricsControllerConstants.MetricEndpoint, new InvalidableLogMetricRequestBody
-        {
-            ProjectName = "TEST",
-            Metric = new InvalidableMetricRecord
-            {
-                Name = "TEST",
-                LogTimeUtc = DateTime.UtcNow,
-                CommitGitHubUrl = "https://github.com/spawn/spawn/commit/12345678",
-                CommitMessage = "TEST",
-                Value = null,
-                Units = "TEST"
-            }
-        });
+        var metric = new InvalidableMetricRecordBuilder().WithValue(null).Build();
 
-        await DoRequestAndAssertBadRequest(request);
+        await TestLogMetricRequestWithBadMetricRecord(metric);
     }
 
     [Test]
     public async Task LogMetric_WithTooShortValue_ReturnsBadRequest()
     {
-        var request = PutAsync(MetricsControllerConstants.MetricEndpoint, new InvalidableLogMetricRequestBody
-        {
-            ProjectName = "TEST",
-            Metric = new InvalidableMetricRecord
-            {
-                Name = "TEST",
-                LogTimeUtc = DateTime.UtcNow,
-                CommitGitHubUrl = "https://github.com/spawn/spawn/commit/12345678",
-                CommitMessage = "TEST",
-                Value = new string('A', MetricRecordConstants.MinStringLength - 1),
-                Units = "TEST"
-            }
-        });
+        var metric = new InvalidableMetricRecordBuilder().WithValue(new string('A', MetricRecordConstants.MinStringLength - 1)).Build();
 
-        await DoRequestAndAssertBadRequest(request);
+        await TestLogMetricRequestWithBadMetricRecord(metric);
     }
 
     [Test]
     public async Task LogMetric_WithNullUnits_ReturnsBadRequest()
     {
-        var request = PutAsync(MetricsControllerConstants.MetricEndpoint, new InvalidableLogMetricRequestBody
-        {
-            ProjectName = "TEST",
-            Metric = new InvalidableMetricRecord
-            {
-                Name = "TEST",
-                LogTimeUtc = DateTime.UtcNow,
-                CommitGitHubUrl = "https://github.com/spawn/spawn/commit/12345678",
-                CommitMessage = "TEST",
-                Value = "TEST",
-                Units = null
-            }
-        });
+        var metric = new InvalidableMetricRecordBuilder().WithUnits(null).Build();
 
-        await DoRequestAndAssertBadRequest(request);
+        await TestLogMetricRequestWithBadMetricRecord(metric);
     }
 
     [Test]
     public async Task LogMetric_WithTooShortUnits_ReturnsBadRequest()
     {
+        var metric = new InvalidableMetricRecordBuilder().WithUnits(new string('A', MetricRecordConstants.MinStringLength - 1)).Build();
+
+        await TestLogMetricRequestWithBadMetricRecord(metric);
+    }
+
+    [Test]
+    public async Task LogMetric_WithTooLongUnits_ReturnsBadRequest()
+    {
+        var metric = new InvalidableMetricRecordBuilder().WithUnits(new string('A', MetricRecordConstants.MaxUnitsLength + 1)).Build();
+
+        await TestLogMetricRequestWithBadMetricRecord(metric);
+    }
+
+    private async Task TestLogMetricRequestWithBadMetricRecord(InvalidableMetricRecord? metricRecord)
+    {
         var request = PutAsync(MetricsControllerConstants.MetricEndpoint, new InvalidableLogMetricRequestBody
         {
             ProjectName = "TEST",
-            Metric = new InvalidableMetricRecord
-            {
-                Name = "TEST",
-                LogTimeUtc = DateTime.UtcNow,
-                CommitGitHubUrl = "https://github.com/spawn/spawn/commit/12345678",
-                CommitMessage = "TEST",
-                Value = "TEST",
-                Units = new string('A', MetricRecordConstants.MinStringLength - 1)
-            }
+            Metric = metricRecord
         });
 
         await DoRequestAndAssertBadRequest(request);
@@ -669,15 +385,5 @@ public class LogMetricTests : SpawnMetricsStorageTestsBase
         public string? ProjectName { get; init; }
 
         public InvalidableMetricRecord? Metric { get; init; }
-    }
-
-    private class InvalidableMetricRecord
-    {
-        public string? Name { get; init; }
-        public DateTime? LogTimeUtc { get; init; }
-        public string? CommitGitHubUrl { get; init; }
-        public string? CommitMessage { get; init; }
-        public string? Value { get; init; }
-        public string? Units { get; init; }
     }
 }
