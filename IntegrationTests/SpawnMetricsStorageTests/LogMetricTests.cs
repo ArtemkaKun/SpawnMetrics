@@ -555,14 +555,7 @@ public class LogMetricTests : SpawnMetricsStorageTestsBase
         Assert.That(list, Is.Not.Null);
         Assert.That(list!.Count, Is.EqualTo(1));
 
-        var metric = list[0];
-
-        Assert.That(metric.Name, Is.EqualTo(testMetricRecord.Name));
-        Assert.That(metric.LogTimeUtc, Is.EqualTo(testMetricRecord.LogTimeUtc));
-        Assert.That(metric.CommitGitHubUrl, Is.EqualTo(testMetricRecord.CommitGitHubUrl));
-        Assert.That(metric.CommitMessage, Is.EqualTo(testMetricRecord.CommitMessage));
-        Assert.That(metric.Value, Is.EqualTo(testMetricRecord.Value));
-        Assert.That(metric.Units, Is.EqualTo(testMetricRecord.Units));
+        Assert.That(list[0], Is.EqualTo(testMetricRecord));
     }
 
     [Test]
@@ -594,19 +587,8 @@ public class LogMetricTests : SpawnMetricsStorageTestsBase
         Assert.That(list, Is.Not.Null);
         Assert.That(list!.Count, Is.EqualTo(2));
 
-        Assert.That(list.Any(metric => metric.Name == testMetricRecord.Name));
-        Assert.That(list.Any(metric => metric.LogTimeUtc == testMetricRecord.LogTimeUtc));
-        Assert.That(list.Any(metric => metric.CommitGitHubUrl == testMetricRecord.CommitGitHubUrl));
-        Assert.That(list.Any(metric => metric.CommitMessage == testMetricRecord.CommitMessage));
-        Assert.That(list.Any(metric => metric.Value == testMetricRecord.Value));
-        Assert.That(list.Any(metric => metric.Units == testMetricRecord.Units));
-
-        Assert.That(list.Any(metric => metric.Name == testMetricRecord2.Name));
-        Assert.That(list.Any(metric => metric.LogTimeUtc == testMetricRecord2.LogTimeUtc));
-        Assert.That(list.Any(metric => metric.CommitGitHubUrl == testMetricRecord2.CommitGitHubUrl));
-        Assert.That(list.Any(metric => metric.CommitMessage == testMetricRecord2.CommitMessage));
-        Assert.That(list.Any(metric => metric.Value == testMetricRecord2.Value));
-        Assert.That(list.Any(metric => metric.Units == testMetricRecord2.Units));
+        Assert.That(list.Any(metric => Equals(metric, testMetricRecord)));
+        Assert.That(list.Any(metric => Equals(metric, testMetricRecord2)));
     }
 
     [Test]
@@ -638,19 +620,8 @@ public class LogMetricTests : SpawnMetricsStorageTestsBase
         Assert.That(list, Is.Not.Null);
         Assert.That(list!.Count, Is.EqualTo(2));
 
-        Assert.That(list.Any(metric => metric.Name == testMetricRecord.Name));
-        Assert.That(list.Any(metric => metric.LogTimeUtc == testMetricRecord.LogTimeUtc));
-        Assert.That(list.Any(metric => metric.CommitGitHubUrl == testMetricRecord.CommitGitHubUrl));
-        Assert.That(list.Any(metric => metric.CommitMessage == testMetricRecord.CommitMessage));
-        Assert.That(list.Any(metric => metric.Value == testMetricRecord.Value));
-        Assert.That(list.Any(metric => metric.Units == testMetricRecord.Units));
-
-        Assert.That(list.Any(metric => metric.Name == testMetricRecord2.Name));
-        Assert.That(list.Any(metric => metric.LogTimeUtc == testMetricRecord2.LogTimeUtc));
-        Assert.That(list.Any(metric => metric.CommitGitHubUrl == testMetricRecord2.CommitGitHubUrl));
-        Assert.That(list.Any(metric => metric.CommitMessage == testMetricRecord2.CommitMessage));
-        Assert.That(list.Any(metric => metric.Value == testMetricRecord2.Value));
-        Assert.That(list.Any(metric => metric.Units == testMetricRecord2.Units));
+        Assert.That(list.Any(metric => Equals(metric, testMetricRecord)));
+        Assert.That(list.Any(metric => Equals(metric, testMetricRecord2)));
     }
 
     [Test]
@@ -682,14 +653,7 @@ public class LogMetricTests : SpawnMetricsStorageTestsBase
         Assert.That(list, Is.Not.Null);
         Assert.That(list!.Count, Is.EqualTo(1));
 
-        var metric = list[0];
-
-        Assert.That(metric.Name, Is.EqualTo(testMetricRecord.Name));
-        Assert.That(metric.LogTimeUtc, Is.EqualTo(testMetricRecord.LogTimeUtc));
-        Assert.That(metric.CommitGitHubUrl, Is.EqualTo(testMetricRecord.CommitGitHubUrl));
-        Assert.That(metric.CommitMessage, Is.EqualTo(testMetricRecord.CommitMessage));
-        Assert.That(metric.Value, Is.EqualTo(testMetricRecord.Value));
-        Assert.That(metric.Units, Is.EqualTo(testMetricRecord.Units));
+        Assert.That(list[0], Is.EqualTo(testMetricRecord));
 
         var queryResponse2 = await _surrealDbClient.Query("SELECT * FROM TEST_ANOTHER");
         var list2 = queryResponse2.GetValue<List<MetricRecord>>(0);
@@ -697,14 +661,7 @@ public class LogMetricTests : SpawnMetricsStorageTestsBase
         Assert.That(list2, Is.Not.Null);
         Assert.That(list2!.Count, Is.EqualTo(1));
 
-        var metric2 = list2[0];
-
-        Assert.That(metric2.Name, Is.EqualTo(testMetricRecord2.Name));
-        Assert.That(metric2.LogTimeUtc, Is.EqualTo(testMetricRecord2.LogTimeUtc));
-        Assert.That(metric2.CommitGitHubUrl, Is.EqualTo(testMetricRecord2.CommitGitHubUrl));
-        Assert.That(metric2.CommitMessage, Is.EqualTo(testMetricRecord2.CommitMessage));
-        Assert.That(metric2.Value, Is.EqualTo(testMetricRecord2.Value));
-        Assert.That(metric2.Units, Is.EqualTo(testMetricRecord2.Units));
+        Assert.That(list2[0], Is.EqualTo(testMetricRecord2));
     }
 
     private class InvalidableLogMetricRequestBody
