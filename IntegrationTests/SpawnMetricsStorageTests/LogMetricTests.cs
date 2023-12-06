@@ -11,7 +11,7 @@ public class LogMetricTests : SpawnMetricsStorageTestsBase
     [Test]
     public async Task LogMetric_WithEmptyBody_ReturnsBadRequest()
     {
-        var request = PutAsync(MetricsControllerConstants.LogMetricEndpoint, null);
+        var request = PutAsync(MetricsControllerConstants.MetricEndpoint, null);
 
         await DoRequestAndAssertBadRequest(request);
     }
@@ -19,7 +19,7 @@ public class LogMetricTests : SpawnMetricsStorageTestsBase
     [Test]
     public async Task LogMetric_WithWrongBodyType_ReturnsBadRequest()
     {
-        var request = PutAsync(MetricsControllerConstants.LogMetricEndpoint, "WRONG");
+        var request = PutAsync(MetricsControllerConstants.MetricEndpoint, "WRONG");
 
         await DoRequestAndAssertBadRequest(request);
     }
@@ -27,7 +27,7 @@ public class LogMetricTests : SpawnMetricsStorageTestsBase
     [Test]
     public async Task LogMetric_WithNullProjectName_ReturnsBadRequest()
     {
-        var request = PutAsync(MetricsControllerConstants.LogMetricEndpoint, new InvalidableLogMetricRequestBody
+        var request = PutAsync(MetricsControllerConstants.MetricEndpoint, new InvalidableLogMetricRequestBody
         {
             ProjectName = null,
             Metric = new InvalidableMetricRecord
@@ -47,7 +47,7 @@ public class LogMetricTests : SpawnMetricsStorageTestsBase
     [Test]
     public async Task LogMetric_WithEmptyProjectName_ReturnsBadRequest()
     {
-        var request = PutAsync(MetricsControllerConstants.LogMetricEndpoint, new InvalidableLogMetricRequestBody
+        var request = PutAsync(MetricsControllerConstants.MetricEndpoint, new InvalidableLogMetricRequestBody
         {
             ProjectName = "",
             Metric = new InvalidableMetricRecord
@@ -67,7 +67,7 @@ public class LogMetricTests : SpawnMetricsStorageTestsBase
     [Test]
     public async Task LogMetric_WithTooShortProjectName_ReturnsBadRequest()
     {
-        var request = PutAsync(MetricsControllerConstants.LogMetricEndpoint, new InvalidableLogMetricRequestBody
+        var request = PutAsync(MetricsControllerConstants.MetricEndpoint, new InvalidableLogMetricRequestBody
         {
             ProjectName = new string('A', ProjectNameConstants.MinProjectNameLength - 1),
             Metric = new InvalidableMetricRecord
@@ -87,7 +87,7 @@ public class LogMetricTests : SpawnMetricsStorageTestsBase
     [Test]
     public async Task LogMetric_WithTooLongProjectName_ReturnsBadRequest()
     {
-        var request = PutAsync(MetricsControllerConstants.LogMetricEndpoint, new InvalidableLogMetricRequestBody
+        var request = PutAsync(MetricsControllerConstants.MetricEndpoint, new InvalidableLogMetricRequestBody
         {
             ProjectName = new string('A', ProjectNameConstants.MaxProjectNameLength + 1),
             Metric = new InvalidableMetricRecord
@@ -107,7 +107,7 @@ public class LogMetricTests : SpawnMetricsStorageTestsBase
     [Test]
     public async Task LogMetric_WithNullMetric_ReturnsBadRequest()
     {
-        var request = PutAsync(MetricsControllerConstants.LogMetricEndpoint, new InvalidableLogMetricRequestBody
+        var request = PutAsync(MetricsControllerConstants.MetricEndpoint, new InvalidableLogMetricRequestBody
         {
             ProjectName = "TEST",
             Metric = null
@@ -119,7 +119,7 @@ public class LogMetricTests : SpawnMetricsStorageTestsBase
     [Test]
     public async Task LogMetric_WithNullMetricName_ReturnsBadRequest()
     {
-        var request = PutAsync(MetricsControllerConstants.LogMetricEndpoint, new InvalidableLogMetricRequestBody
+        var request = PutAsync(MetricsControllerConstants.MetricEndpoint, new InvalidableLogMetricRequestBody
         {
             ProjectName = "TEST",
             Metric = new InvalidableMetricRecord
@@ -139,7 +139,7 @@ public class LogMetricTests : SpawnMetricsStorageTestsBase
     [Test]
     public async Task LogMetric_WithEmptyMetricName_ReturnsBadRequest()
     {
-        var request = PutAsync(MetricsControllerConstants.LogMetricEndpoint, new InvalidableLogMetricRequestBody
+        var request = PutAsync(MetricsControllerConstants.MetricEndpoint, new InvalidableLogMetricRequestBody
         {
             ProjectName = "TEST",
             Metric = new InvalidableMetricRecord
@@ -159,7 +159,7 @@ public class LogMetricTests : SpawnMetricsStorageTestsBase
     [Test]
     public async Task LogMetric_WithTooShortMetricName_ReturnsBadRequest()
     {
-        var request = PutAsync(MetricsControllerConstants.LogMetricEndpoint, new InvalidableLogMetricRequestBody
+        var request = PutAsync(MetricsControllerConstants.MetricEndpoint, new InvalidableLogMetricRequestBody
         {
             ProjectName = "TEST",
             Metric = new InvalidableMetricRecord
@@ -179,7 +179,7 @@ public class LogMetricTests : SpawnMetricsStorageTestsBase
     [Test]
     public async Task LogMetric_WithTooLongMetricName_ReturnsBadRequest()
     {
-        var request = PutAsync(MetricsControllerConstants.LogMetricEndpoint, new InvalidableLogMetricRequestBody
+        var request = PutAsync(MetricsControllerConstants.MetricEndpoint, new InvalidableLogMetricRequestBody
         {
             ProjectName = "TEST",
             Metric = new InvalidableMetricRecord
@@ -199,7 +199,7 @@ public class LogMetricTests : SpawnMetricsStorageTestsBase
     [Test]
     public async Task LogMetric_WithNullMetricLogTime_ReturnsBadRequest()
     {
-        var request = PutAsync(MetricsControllerConstants.LogMetricEndpoint, new InvalidableLogMetricRequestBody
+        var request = PutAsync(MetricsControllerConstants.MetricEndpoint, new InvalidableLogMetricRequestBody
         {
             ProjectName = "TEST",
             Metric = new InvalidableMetricRecord
@@ -219,7 +219,7 @@ public class LogMetricTests : SpawnMetricsStorageTestsBase
     [Test]
     public async Task LogMetric_WithNullCommitGitHubUrl_ReturnsBadRequest()
     {
-        var request = PutAsync(MetricsControllerConstants.LogMetricEndpoint, new InvalidableLogMetricRequestBody
+        var request = PutAsync(MetricsControllerConstants.MetricEndpoint, new InvalidableLogMetricRequestBody
         {
             ProjectName = "TEST",
             Metric = new InvalidableMetricRecord
@@ -239,7 +239,7 @@ public class LogMetricTests : SpawnMetricsStorageTestsBase
     [Test]
     public async Task LogMetric_WithTooShortCommitGitHubUrl_ReturnsBadRequest()
     {
-        var request = PutAsync(MetricsControllerConstants.LogMetricEndpoint, new InvalidableLogMetricRequestBody
+        var request = PutAsync(MetricsControllerConstants.MetricEndpoint, new InvalidableLogMetricRequestBody
         {
             ProjectName = "TEST",
             Metric = new InvalidableMetricRecord
@@ -259,7 +259,7 @@ public class LogMetricTests : SpawnMetricsStorageTestsBase
     [Test]
     public async Task LogMetric_WithTooLongCommitGitHubUrl_ReturnsBadRequest()
     {
-        var request = PutAsync(MetricsControllerConstants.LogMetricEndpoint, new InvalidableLogMetricRequestBody
+        var request = PutAsync(MetricsControllerConstants.MetricEndpoint, new InvalidableLogMetricRequestBody
         {
             ProjectName = "TEST",
             Metric = new InvalidableMetricRecord
@@ -279,7 +279,7 @@ public class LogMetricTests : SpawnMetricsStorageTestsBase
     [Test]
     public async Task LogMetric_WithNotALinkCommitGitHubUrl_ReturnsBadRequest()
     {
-        var request = PutAsync(MetricsControllerConstants.LogMetricEndpoint, new InvalidableLogMetricRequestBody
+        var request = PutAsync(MetricsControllerConstants.MetricEndpoint, new InvalidableLogMetricRequestBody
         {
             ProjectName = "TEST",
             Metric = new InvalidableMetricRecord
@@ -299,7 +299,7 @@ public class LogMetricTests : SpawnMetricsStorageTestsBase
     [Test]
     public async Task LogMetric_WithNotAGitHubLinkCommitGitHubUrl_ReturnsBadRequest()
     {
-        var request = PutAsync(MetricsControllerConstants.LogMetricEndpoint, new InvalidableLogMetricRequestBody
+        var request = PutAsync(MetricsControllerConstants.MetricEndpoint, new InvalidableLogMetricRequestBody
         {
             ProjectName = "TEST",
             Metric = new InvalidableMetricRecord
@@ -319,7 +319,7 @@ public class LogMetricTests : SpawnMetricsStorageTestsBase
     [Test]
     public async Task LogMetric_WithCommitGitHubUrlNullShortCommitHash_ReturnsBadRequest()
     {
-        var request = PutAsync(MetricsControllerConstants.LogMetricEndpoint, new InvalidableLogMetricRequestBody
+        var request = PutAsync(MetricsControllerConstants.MetricEndpoint, new InvalidableLogMetricRequestBody
         {
             ProjectName = "TEST",
             Metric = new InvalidableMetricRecord
@@ -339,7 +339,7 @@ public class LogMetricTests : SpawnMetricsStorageTestsBase
     [Test]
     public async Task LogMetric_WithCommitGitHubUrlTooShortShortCommitHash_ReturnsBadRequest()
     {
-        var request = PutAsync(MetricsControllerConstants.LogMetricEndpoint, new InvalidableLogMetricRequestBody
+        var request = PutAsync(MetricsControllerConstants.MetricEndpoint, new InvalidableLogMetricRequestBody
         {
             ProjectName = "TEST",
             Metric = new InvalidableMetricRecord
@@ -359,7 +359,7 @@ public class LogMetricTests : SpawnMetricsStorageTestsBase
     [Test]
     public async Task LogMetric_WithCommitGitHubUrlTooLongShortCommitHash_ReturnsBadRequest()
     {
-        var request = PutAsync(MetricsControllerConstants.LogMetricEndpoint, new InvalidableLogMetricRequestBody
+        var request = PutAsync(MetricsControllerConstants.MetricEndpoint, new InvalidableLogMetricRequestBody
         {
             ProjectName = "TEST",
             Metric = new InvalidableMetricRecord
@@ -379,7 +379,7 @@ public class LogMetricTests : SpawnMetricsStorageTestsBase
     [Test]
     public async Task LogMetric_WithCommitGitHubUrlInvalidShortCommitHash_ReturnsBadRequest()
     {
-        var request = PutAsync(MetricsControllerConstants.LogMetricEndpoint, new InvalidableLogMetricRequestBody
+        var request = PutAsync(MetricsControllerConstants.MetricEndpoint, new InvalidableLogMetricRequestBody
         {
             ProjectName = "TEST",
             Metric = new InvalidableMetricRecord
@@ -399,7 +399,7 @@ public class LogMetricTests : SpawnMetricsStorageTestsBase
     [Test]
     public async Task LogMetric_WithNullCommitMessage_ReturnsBadRequest()
     {
-        var request = PutAsync(MetricsControllerConstants.LogMetricEndpoint, new InvalidableLogMetricRequestBody
+        var request = PutAsync(MetricsControllerConstants.MetricEndpoint, new InvalidableLogMetricRequestBody
         {
             ProjectName = "TEST",
             Metric = new InvalidableMetricRecord
@@ -419,7 +419,7 @@ public class LogMetricTests : SpawnMetricsStorageTestsBase
     [Test]
     public async Task LogMetric_WithTooShortCommitMessage_ReturnsBadRequest()
     {
-        var request = PutAsync(MetricsControllerConstants.LogMetricEndpoint, new InvalidableLogMetricRequestBody
+        var request = PutAsync(MetricsControllerConstants.MetricEndpoint, new InvalidableLogMetricRequestBody
         {
             ProjectName = "TEST",
             Metric = new InvalidableMetricRecord
@@ -439,7 +439,7 @@ public class LogMetricTests : SpawnMetricsStorageTestsBase
     [Test]
     public async Task LogMetric_WithTooLongCommitMessage_ReturnsBadRequest()
     {
-        var request = PutAsync(MetricsControllerConstants.LogMetricEndpoint, new InvalidableLogMetricRequestBody
+        var request = PutAsync(MetricsControllerConstants.MetricEndpoint, new InvalidableLogMetricRequestBody
         {
             ProjectName = "TEST",
             Metric = new InvalidableMetricRecord
@@ -459,7 +459,7 @@ public class LogMetricTests : SpawnMetricsStorageTestsBase
     [Test]
     public async Task LogMetric_WithNullValue_ReturnsBadRequest()
     {
-        var request = PutAsync(MetricsControllerConstants.LogMetricEndpoint, new InvalidableLogMetricRequestBody
+        var request = PutAsync(MetricsControllerConstants.MetricEndpoint, new InvalidableLogMetricRequestBody
         {
             ProjectName = "TEST",
             Metric = new InvalidableMetricRecord
@@ -479,7 +479,7 @@ public class LogMetricTests : SpawnMetricsStorageTestsBase
     [Test]
     public async Task LogMetric_WithTooShortValue_ReturnsBadRequest()
     {
-        var request = PutAsync(MetricsControllerConstants.LogMetricEndpoint, new InvalidableLogMetricRequestBody
+        var request = PutAsync(MetricsControllerConstants.MetricEndpoint, new InvalidableLogMetricRequestBody
         {
             ProjectName = "TEST",
             Metric = new InvalidableMetricRecord
@@ -499,7 +499,7 @@ public class LogMetricTests : SpawnMetricsStorageTestsBase
     [Test]
     public async Task LogMetric_WithNullUnits_ReturnsBadRequest()
     {
-        var request = PutAsync(MetricsControllerConstants.LogMetricEndpoint, new InvalidableLogMetricRequestBody
+        var request = PutAsync(MetricsControllerConstants.MetricEndpoint, new InvalidableLogMetricRequestBody
         {
             ProjectName = "TEST",
             Metric = new InvalidableMetricRecord
@@ -519,7 +519,7 @@ public class LogMetricTests : SpawnMetricsStorageTestsBase
     [Test]
     public async Task LogMetric_WithTooShortUnits_ReturnsBadRequest()
     {
-        var request = PutAsync(MetricsControllerConstants.LogMetricEndpoint, new InvalidableLogMetricRequestBody
+        var request = PutAsync(MetricsControllerConstants.MetricEndpoint, new InvalidableLogMetricRequestBody
         {
             ProjectName = "TEST",
             Metric = new InvalidableMetricRecord
@@ -541,7 +541,7 @@ public class LogMetricTests : SpawnMetricsStorageTestsBase
     {
         var testMetricRecord = new MetricRecord("TEST", DateTime.UtcNow, "https://github.com/spawn/spawn/commit/12345678", "TEST", "TEST", "TEST");
 
-        var request = await PutAsync(MetricsControllerConstants.LogMetricEndpoint, new LogMetricRequestBody
+        var request = await PutAsync(MetricsControllerConstants.MetricEndpoint, new LogMetricRequestBody
         {
             ProjectName = "TEST",
             Metric = testMetricRecord
@@ -570,7 +570,7 @@ public class LogMetricTests : SpawnMetricsStorageTestsBase
     {
         var testMetricRecord = new MetricRecord("TEST", DateTime.UtcNow, "https://github.com/spawn/spawn/commit/12345678", "TEST", "TEST", "TEST");
 
-        var request = await PutAsync(MetricsControllerConstants.LogMetricEndpoint, new LogMetricRequestBody
+        var request = await PutAsync(MetricsControllerConstants.MetricEndpoint, new LogMetricRequestBody
         {
             ProjectName = "TEST",
             Metric = testMetricRecord
@@ -580,7 +580,7 @@ public class LogMetricTests : SpawnMetricsStorageTestsBase
 
         var testMetricRecord2 = new MetricRecord("TEST_ANOTHER", DateTime.UtcNow, "https://github.com/spawn/spawn/commit/12345678", "TEST", "TEST", "TEST");
 
-        var request2 = await PutAsync(MetricsControllerConstants.LogMetricEndpoint, new LogMetricRequestBody
+        var request2 = await PutAsync(MetricsControllerConstants.MetricEndpoint, new LogMetricRequestBody
         {
             ProjectName = "TEST",
             Metric = testMetricRecord2
@@ -614,7 +614,7 @@ public class LogMetricTests : SpawnMetricsStorageTestsBase
     {
         var testMetricRecord = new MetricRecord("TEST", DateTime.UtcNow, "https://github.com/spawn/spawn/commit/12345678", "TEST", "TEST", "TEST");
 
-        var request = await PutAsync(MetricsControllerConstants.LogMetricEndpoint, new LogMetricRequestBody
+        var request = await PutAsync(MetricsControllerConstants.MetricEndpoint, new LogMetricRequestBody
         {
             ProjectName = "TEST",
             Metric = testMetricRecord
@@ -624,7 +624,7 @@ public class LogMetricTests : SpawnMetricsStorageTestsBase
 
         var testMetricRecord2 = new MetricRecord("TEST", DateTime.UtcNow + TimeSpan.FromMinutes(1), "https://github.com/spawn/spawn/commit/12345678", "TEST", "TEST", "TEST");
 
-        var request2 = await PutAsync(MetricsControllerConstants.LogMetricEndpoint, new LogMetricRequestBody
+        var request2 = await PutAsync(MetricsControllerConstants.MetricEndpoint, new LogMetricRequestBody
         {
             ProjectName = "TEST",
             Metric = testMetricRecord2
@@ -658,7 +658,7 @@ public class LogMetricTests : SpawnMetricsStorageTestsBase
     {
         var testMetricRecord = new MetricRecord("TEST", DateTime.UtcNow, "https://github.com/spawn/spawn/commit/12345678", "TEST", "TEST", "TEST");
 
-        var request = await PutAsync(MetricsControllerConstants.LogMetricEndpoint, new LogMetricRequestBody
+        var request = await PutAsync(MetricsControllerConstants.MetricEndpoint, new LogMetricRequestBody
         {
             ProjectName = "TEST",
             Metric = testMetricRecord
@@ -668,7 +668,7 @@ public class LogMetricTests : SpawnMetricsStorageTestsBase
 
         var testMetricRecord2 = new MetricRecord("TEST", DateTime.UtcNow, "https://github.com/spawn/spawn/commit/12345678", "TEST", "TEST", "TEST");
 
-        var request2 = await PutAsync(MetricsControllerConstants.LogMetricEndpoint, new LogMetricRequestBody
+        var request2 = await PutAsync(MetricsControllerConstants.MetricEndpoint, new LogMetricRequestBody
         {
             ProjectName = "TEST_ANOTHER",
             Metric = testMetricRecord2

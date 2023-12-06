@@ -11,13 +11,13 @@ public sealed class MetricsController(MetricsService metricsService)
 {
     public void RegisterEndpoints(WebApplication app)
     {
-        app.MapPut(MetricsControllerConstants.LogMetricEndpoint, HandleLogMetricRequest);
+        app.MapPut(MetricsControllerConstants.MetricEndpoint, HandleLogMetricRequest);
 
-        app.MapGet("/GetLatestMetric", HandleGetLatestMetricByName);
+        app.MapGet(MetricsControllerConstants.LatestMetricEndpoint, HandleGetLatestMetricByName);
 
-        app.MapGet("/GetProjectNames", HandleGetProjectNames);
+        app.MapGet(MetricsControllerConstants.ProjectNamesEndpoint, HandleGetProjectNames);
 
-        app.MapGet("/GetMetricDataRange", HandleGetMetricDataRange);
+        app.MapGet(MetricsControllerConstants.MetricDataRangeEndpoint, HandleGetMetricDataRange);
     }
 
 
