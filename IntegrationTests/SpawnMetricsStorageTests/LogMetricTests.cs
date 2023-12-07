@@ -12,46 +12,46 @@ public class LogMetricTests : SpawnMetricsStorageTestsBase
     private const string TestMetricName = "TEST";
 
     [Test]
-    public async Task LogMetric_WithEmptyBody_ReturnsBadRequest()
+    public Task LogMetric_WithEmptyBody_ReturnsBadRequest()
     {
         var request = PutAsync(MetricsControllerConstants.MetricEndpoint, null);
 
-        await DoRequestAndAssertBadRequest(request);
+        return DoRequestAndAssertBadRequest(request);
     }
 
     [Test]
-    public async Task LogMetric_WithWrongBodyType_ReturnsBadRequest()
+    public Task LogMetric_WithWrongBodyType_ReturnsBadRequest()
     {
         var request = PutAsync(MetricsControllerConstants.MetricEndpoint, "WRONG");
 
-        await DoRequestAndAssertBadRequest(request);
+        return DoRequestAndAssertBadRequest(request);
     }
 
     [Test]
-    public async Task LogMetric_WithNullProjectName_ReturnsBadRequest()
+    public Task LogMetric_WithNullProjectName_ReturnsBadRequest()
     {
-        await TestLogMetricRequestWithBadProjectName(null);
+        return TestLogMetricRequestWithBadProjectName(null);
     }
 
     [Test]
-    public async Task LogMetric_WithEmptyProjectName_ReturnsBadRequest()
+    public Task LogMetric_WithEmptyProjectName_ReturnsBadRequest()
     {
-        await TestLogMetricRequestWithBadProjectName("");
+        return TestLogMetricRequestWithBadProjectName("");
     }
 
     [Test]
-    public async Task LogMetric_WithTooShortProjectName_ReturnsBadRequest()
+    public Task LogMetric_WithTooShortProjectName_ReturnsBadRequest()
     {
-        await TestLogMetricRequestWithBadProjectName(CreateTestString(ProjectNameConstants.MinProjectNameLength - 1));
+        return TestLogMetricRequestWithBadProjectName(CreateTestString(ProjectNameConstants.MinProjectNameLength - 1));
     }
 
     [Test]
-    public async Task LogMetric_WithTooLongProjectName_ReturnsBadRequest()
+    public Task LogMetric_WithTooLongProjectName_ReturnsBadRequest()
     {
-        await TestLogMetricRequestWithBadProjectName(CreateTestString(ProjectNameConstants.MaxProjectNameLength + 1));
+        return TestLogMetricRequestWithBadProjectName(CreateTestString(ProjectNameConstants.MaxProjectNameLength + 1));
     }
 
-    private async Task TestLogMetricRequestWithBadProjectName(string? projectName)
+    private Task TestLogMetricRequestWithBadProjectName(string? projectName)
     {
         var request = PutAsync(MetricsControllerConstants.MetricEndpoint, new InvalidableLogMetricRequestBody
         {
@@ -59,189 +59,189 @@ public class LogMetricTests : SpawnMetricsStorageTestsBase
             Metric = new InvalidableMetricRecordBuilder().Build()
         });
 
-        await DoRequestAndAssertBadRequest(request);
+        return DoRequestAndAssertBadRequest(request);
     }
 
     [Test]
-    public async Task LogMetric_WithNullMetric_ReturnsBadRequest()
+    public Task LogMetric_WithNullMetric_ReturnsBadRequest()
     {
-        await TestLogMetricRequestWithBadMetricRecord(null);
+        return TestLogMetricRequestWithBadMetricRecord(null);
     }
 
     [Test]
-    public async Task LogMetric_WithNullMetricName_ReturnsBadRequest()
+    public Task LogMetric_WithNullMetricName_ReturnsBadRequest()
     {
         var metric = new InvalidableMetricRecordBuilder().WithName(null).Build();
 
-        await TestLogMetricRequestWithBadMetricRecord(metric);
+        return TestLogMetricRequestWithBadMetricRecord(metric);
     }
 
     [Test]
-    public async Task LogMetric_WithEmptyMetricName_ReturnsBadRequest()
+    public Task LogMetric_WithEmptyMetricName_ReturnsBadRequest()
     {
         var metric = new InvalidableMetricRecordBuilder().WithName("").Build();
 
-        await TestLogMetricRequestWithBadMetricRecord(metric);
+        return TestLogMetricRequestWithBadMetricRecord(metric);
     }
 
     [Test]
-    public async Task LogMetric_WithTooShortMetricName_ReturnsBadRequest()
+    public Task LogMetric_WithTooShortMetricName_ReturnsBadRequest()
     {
         var metric = new InvalidableMetricRecordBuilder().WithName(CreateTestString(MetricRecordConstants.MinMetricNameLength - 1)).Build();
 
-        await TestLogMetricRequestWithBadMetricRecord(metric);
+        return TestLogMetricRequestWithBadMetricRecord(metric);
     }
 
     [Test]
-    public async Task LogMetric_WithTooLongMetricName_ReturnsBadRequest()
+    public Task LogMetric_WithTooLongMetricName_ReturnsBadRequest()
     {
         var metric = new InvalidableMetricRecordBuilder().WithName(CreateTestString(MetricRecordConstants.MaxMetricNameLength + 1)).Build();
 
-        await TestLogMetricRequestWithBadMetricRecord(metric);
+        return TestLogMetricRequestWithBadMetricRecord(metric);
     }
 
     [Test]
-    public async Task LogMetric_WithNullMetricLogTime_ReturnsBadRequest()
+    public Task LogMetric_WithNullMetricLogTime_ReturnsBadRequest()
     {
         var metric = new InvalidableMetricRecordBuilder().WithLogTimeUtc(null).Build();
 
-        await TestLogMetricRequestWithBadMetricRecord(metric);
+        return TestLogMetricRequestWithBadMetricRecord(metric);
     }
 
     [Test]
-    public async Task LogMetric_WithNullCommitGitHubUrl_ReturnsBadRequest()
+    public Task LogMetric_WithNullCommitGitHubUrl_ReturnsBadRequest()
     {
         var metric = new InvalidableMetricRecordBuilder().WithCommitGitHubUrl(null).Build();
 
-        await TestLogMetricRequestWithBadMetricRecord(metric);
+        return TestLogMetricRequestWithBadMetricRecord(metric);
     }
 
     [Test]
-    public async Task LogMetric_WithTooShortCommitGitHubUrl_ReturnsBadRequest()
+    public Task LogMetric_WithTooShortCommitGitHubUrl_ReturnsBadRequest()
     {
         var metric = new InvalidableMetricRecordBuilder().WithCommitGitHubUrl(CreateTestString(MetricRecordConstants.MinCommitGitHubUrlLength - 1)).Build();
 
-        await TestLogMetricRequestWithBadMetricRecord(metric);
+        return TestLogMetricRequestWithBadMetricRecord(metric);
     }
 
     [Test]
-    public async Task LogMetric_WithTooLongCommitGitHubUrl_ReturnsBadRequest()
+    public Task LogMetric_WithTooLongCommitGitHubUrl_ReturnsBadRequest()
     {
         var metric = new InvalidableMetricRecordBuilder().WithCommitGitHubUrl(CreateTestString(MetricRecordConstants.MaxCommitGitHubUrlLength + 1)).Build();
 
-        await TestLogMetricRequestWithBadMetricRecord(metric);
+        return TestLogMetricRequestWithBadMetricRecord(metric);
     }
 
     [Test]
-    public async Task LogMetric_WithNotALinkCommitGitHubUrl_ReturnsBadRequest()
+    public Task LogMetric_WithNotALinkCommitGitHubUrl_ReturnsBadRequest()
     {
         var metric = new InvalidableMetricRecordBuilder().WithCommitGitHubUrl(CreateTestString(MetricRecordConstants.MaxCommitGitHubUrlLength)).Build();
 
-        await TestLogMetricRequestWithBadMetricRecord(metric);
+        return TestLogMetricRequestWithBadMetricRecord(metric);
     }
 
     [Test]
-    public async Task LogMetric_WithNotAGitHubLinkCommitGitHubUrl_ReturnsBadRequest()
+    public Task LogMetric_WithNotAGitHubLinkCommitGitHubUrl_ReturnsBadRequest()
     {
         var metric = new InvalidableMetricRecordBuilder().WithCommitGitHubUrl("https://goooooooooooooooooooooogle.com").Build();
 
-        await TestLogMetricRequestWithBadMetricRecord(metric);
+        return TestLogMetricRequestWithBadMetricRecord(metric);
     }
 
     [Test]
-    public async Task LogMetric_WithCommitGitHubUrlNullShortCommitHash_ReturnsBadRequest()
+    public Task LogMetric_WithCommitGitHubUrlNullShortCommitHash_ReturnsBadRequest()
     {
         var metric = new InvalidableMetricRecordBuilder().WithCommitGitHubUrl("https://github.com/spawn/spawn/commit").Build();
 
-        await TestLogMetricRequestWithBadMetricRecord(metric);
+        return TestLogMetricRequestWithBadMetricRecord(metric);
     }
 
     [Test]
-    public async Task LogMetric_WithCommitGitHubUrlTooShortShortCommitHash_ReturnsBadRequest()
+    public Task LogMetric_WithCommitGitHubUrlTooShortShortCommitHash_ReturnsBadRequest()
     {
         var metric = new InvalidableMetricRecordBuilder().WithCommitGitHubUrl($"https://github.com/spawn/spawn/commit/{CreateTestString(MetricRecordConstants.ShortCommitHashLength - 1)}").Build();
 
-        await TestLogMetricRequestWithBadMetricRecord(metric);
+        return TestLogMetricRequestWithBadMetricRecord(metric);
     }
 
     [Test]
-    public async Task LogMetric_WithCommitGitHubUrlTooLongShortCommitHash_ReturnsBadRequest()
+    public Task LogMetric_WithCommitGitHubUrlTooLongShortCommitHash_ReturnsBadRequest()
     {
         var metric = new InvalidableMetricRecordBuilder().WithCommitGitHubUrl($"https://github.com/spawn/spawn/commit/{CreateTestString(MetricRecordConstants.ShortCommitHashLength + 1)}").Build();
 
-        await TestLogMetricRequestWithBadMetricRecord(metric);
+        return TestLogMetricRequestWithBadMetricRecord(metric);
     }
 
     [Test]
-    public async Task LogMetric_WithCommitGitHubUrlInvalidShortCommitHash_ReturnsBadRequest()
+    public Task LogMetric_WithCommitGitHubUrlInvalidShortCommitHash_ReturnsBadRequest()
     {
         var metric = new InvalidableMetricRecordBuilder().WithCommitGitHubUrl($"https://github.com/spawn/spawn/commit/{CreateTestString(MetricRecordConstants.ShortCommitHashLength, '_')}").Build();
 
-        await TestLogMetricRequestWithBadMetricRecord(metric);
+        return TestLogMetricRequestWithBadMetricRecord(metric);
     }
 
     [Test]
-    public async Task LogMetric_WithNullCommitMessage_ReturnsBadRequest()
+    public Task LogMetric_WithNullCommitMessage_ReturnsBadRequest()
     {
         var metric = new InvalidableMetricRecordBuilder().WithCommitMessage(null).Build();
 
-        await TestLogMetricRequestWithBadMetricRecord(metric);
+        return TestLogMetricRequestWithBadMetricRecord(metric);
     }
 
     [Test]
-    public async Task LogMetric_WithTooShortCommitMessage_ReturnsBadRequest()
+    public Task LogMetric_WithTooShortCommitMessage_ReturnsBadRequest()
     {
         var metric = new InvalidableMetricRecordBuilder().WithCommitMessage(CreateTestString(MetricRecordConstants.MinStringLength - 1)).Build();
 
-        await TestLogMetricRequestWithBadMetricRecord(metric);
+        return TestLogMetricRequestWithBadMetricRecord(metric);
     }
 
     [Test]
-    public async Task LogMetric_WithTooLongCommitMessage_ReturnsBadRequest()
+    public Task LogMetric_WithTooLongCommitMessage_ReturnsBadRequest()
     {
         var metric = new InvalidableMetricRecordBuilder().WithCommitMessage(CreateTestString(MetricRecordConstants.MaxCommitMessageLength + 1)).Build();
 
-        await TestLogMetricRequestWithBadMetricRecord(metric);
+        return TestLogMetricRequestWithBadMetricRecord(metric);
     }
 
     [Test]
-    public async Task LogMetric_WithNullValue_ReturnsBadRequest()
+    public Task LogMetric_WithNullValue_ReturnsBadRequest()
     {
         var metric = new InvalidableMetricRecordBuilder().WithValue(null).Build();
 
-        await TestLogMetricRequestWithBadMetricRecord(metric);
+        return TestLogMetricRequestWithBadMetricRecord(metric);
     }
 
     [Test]
-    public async Task LogMetric_WithTooShortValue_ReturnsBadRequest()
+    public Task LogMetric_WithTooShortValue_ReturnsBadRequest()
     {
         var metric = new InvalidableMetricRecordBuilder().WithValue(CreateTestString(MetricRecordConstants.MinStringLength - 1)).Build();
 
-        await TestLogMetricRequestWithBadMetricRecord(metric);
+        return TestLogMetricRequestWithBadMetricRecord(metric);
     }
 
     [Test]
-    public async Task LogMetric_WithNullUnits_ReturnsBadRequest()
+    public Task LogMetric_WithNullUnits_ReturnsBadRequest()
     {
         var metric = new InvalidableMetricRecordBuilder().WithUnits(null).Build();
 
-        await TestLogMetricRequestWithBadMetricRecord(metric);
+        return TestLogMetricRequestWithBadMetricRecord(metric);
     }
 
     [Test]
-    public async Task LogMetric_WithTooShortUnits_ReturnsBadRequest()
+    public Task LogMetric_WithTooShortUnits_ReturnsBadRequest()
     {
         var metric = new InvalidableMetricRecordBuilder().WithUnits(CreateTestString(MetricRecordConstants.MinStringLength - 1)).Build();
 
-        await TestLogMetricRequestWithBadMetricRecord(metric);
+        return TestLogMetricRequestWithBadMetricRecord(metric);
     }
 
     [Test]
-    public async Task LogMetric_WithTooLongUnits_ReturnsBadRequest()
+    public Task LogMetric_WithTooLongUnits_ReturnsBadRequest()
     {
         var metric = new InvalidableMetricRecordBuilder().WithUnits(CreateTestString(MetricRecordConstants.MaxUnitsLength + 1)).Build();
 
-        await TestLogMetricRequestWithBadMetricRecord(metric);
+        return TestLogMetricRequestWithBadMetricRecord(metric);
     }
 
     private static string CreateTestString(int length, char mainChar = 'A')
@@ -249,7 +249,7 @@ public class LogMetricTests : SpawnMetricsStorageTestsBase
         return new string(mainChar, length);
     }
 
-    private async Task TestLogMetricRequestWithBadMetricRecord(InvalidableMetricRecord? metricRecord)
+    private Task TestLogMetricRequestWithBadMetricRecord(InvalidableMetricRecord? metricRecord)
     {
         var request = PutAsync(MetricsControllerConstants.MetricEndpoint, new InvalidableLogMetricRequestBody
         {
@@ -257,7 +257,7 @@ public class LogMetricTests : SpawnMetricsStorageTestsBase
             Metric = metricRecord
         });
 
-        await DoRequestAndAssertBadRequest(request);
+        return DoRequestAndAssertBadRequest(request);
     }
 
     [Test]

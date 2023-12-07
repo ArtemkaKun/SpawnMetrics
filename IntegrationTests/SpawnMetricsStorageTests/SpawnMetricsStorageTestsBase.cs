@@ -12,7 +12,7 @@ public abstract class SpawnMetricsStorageTestsBase
     private const string TestDatabaseName = "TEST";
 
     protected ISurrealDbClient SurrealDbClient = null!;
-    
+
     private HttpClient _httpClient = null!;
 
     [OneTimeSetUp]
@@ -46,6 +46,7 @@ public abstract class SpawnMetricsStorageTestsBase
         configurationBuilder.AddJsonFile("integration_test_configuration.json", false, true);
 
         var configuration = configurationBuilder.Build();
+
         return configuration;
     }
 
@@ -55,15 +56,15 @@ public abstract class SpawnMetricsStorageTestsBase
         SurrealDbClient.Query($"REMOVE DATABASE {TestDatabaseName}");
     }
 
-    public async Task<HttpResponseMessage> PutAsync(string requestUri, object? content)
+    protected Task<HttpResponseMessage> PutAsync(string requestUri, object? content)
     {
         var jsonContent = JsonSerializer.Serialize(content);
         var stringContent = new StringContent(jsonContent, Encoding.UTF8, "application/json");
 
-        return await _httpClient.PutAsync(requestUri, stringContent);
+        return _httpClient.PutAsync(requestUri, stringContent);
     }
-    
-    public async Task DoRequestAndAssertBadRequest(Task<HttpResponseMessage> requestTask)
+
+    protected static async Task DoRequestAndAssertBadRequest(Task<HttpResponseMessage> requestTask)
     {
         var response = await requestTask;
 
