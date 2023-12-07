@@ -53,9 +53,9 @@ public sealed class MetricsController(MetricsService metricsService, IConfigurat
         return apiKey == _validApiKey;
     }
 
-    private async Task<MetricRecord?> HandleGetLatestMetricByName([AsParameters] GetMetricRequestParameters parameters)
+    private Task<MetricRecord?> HandleGetLatestMetricByName([AsParameters] GetMetricRequestParameters parameters)
     {
-        return await metricsService.GetLatestMetricByName(parameters.ProjectName, parameters.MetricName);
+        return metricsService.GetLatestMetricByName(parameters.ProjectName, parameters.MetricName);
     }
 
     private Task<List<string>?> HandleGetProjectNames()
@@ -63,9 +63,8 @@ public sealed class MetricsController(MetricsService metricsService, IConfigurat
         return metricsService.GetProjectNames();
     }
 
-    private async Task<List<MetricRecord>?> HandleGetMetricDataRange([AsParameters] GetMetricDataRangeRequestParameters parameters)
+    private Task<List<MetricRecord>?> HandleGetMetricDataRange([AsParameters] GetMetricDataRangeRequestParameters parameters)
     {
-        return await metricsService.GetMetricDataRange(parameters.ProjectName, parameters.MetricName,
-            parameters.RangeStart, parameters.RangeEnd);
+        return metricsService.GetMetricDataRange(parameters.ProjectName, parameters.MetricName, parameters.RangeStart, parameters.RangeEnd);
     }
 }
