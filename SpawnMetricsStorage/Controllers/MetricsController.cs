@@ -58,9 +58,9 @@ public sealed class MetricsController(MetricsService metricsService, IConfigurat
         return await metricsService.GetLatestMetricByName(parameters.ProjectName, parameters.MetricName);
     }
 
-    private async Task<List<string>?> HandleGetProjectNames()
+    private Task<List<string>?> HandleGetProjectNames()
     {
-        return await metricsService.GetProjectNames();
+        return metricsService.GetProjectNames();
     }
 
     private async Task<List<MetricRecord>?> HandleGetMetricDataRange([AsParameters] GetMetricDataRangeRequestParameters parameters)

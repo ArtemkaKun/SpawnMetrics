@@ -1,3 +1,4 @@
+using System.Text.Json;
 using SpawnMetricsStorage.Models;
 using SpawnMetricsStorage.Models.MetricRecordFiles;
 using SurrealDb.Net;
@@ -23,8 +24,11 @@ public sealed class MetricsService(ISurrealDbClient surrealDbClient)
     public async Task<List<string>?> GetProjectNames()
     {
         var queryResponse = await surrealDbClient.Query("INFO FOR DATABASE;");
-
-        return queryResponse.GetValue<List<string>>(0);
+        var databaseMetadata = queryResponse.GetValue<JsonElement>(0);
+        var tablesList = databaseMetadata.GetProperty("tables");
+        var tableNameToMetadataMap = tablesList.Deserialize<Dictionary<string, string>>();
+        
+        return tableNameToMetadataMap?.Keys.ToList();
     }
 
     public async Task<List<MetricRecord>?> GetMetricDataRange(string projectName, string metricName, DateTime rangeStart, DateTime rangeEnd)

@@ -1,6 +1,7 @@
 using System.Net;
 using System.Text;
 using System.Text.Json;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Configuration;
 using SpawnMetricsStorage.Controllers;
 using SpawnMetricsStorage.Utils.SurrealDb;
@@ -80,6 +81,16 @@ public abstract class SpawnMetricsStorageTestsBase
         return _httpClient.SendAsync(requestMessage);
     }
 
+    protected Task<HttpResponseMessage> GetAsync(string requestUri, Dictionary<string, string>? queryParameters)
+    {
+        if (queryParameters != null)
+        {
+            QueryHelpers.AddQueryString(requestUri, queryParameters!);
+        }
+        
+        return _httpClient.GetAsync(requestUri);
+    }
+
     protected static Task DoRequestAndAssertBadRequest(Task<HttpResponseMessage> requestTask)
     {
         return DoRequestAndAssertHttpStatusCode(requestTask, HttpStatusCode.BadRequest);
@@ -88,6 +99,11 @@ public abstract class SpawnMetricsStorageTestsBase
     protected static Task DoRequestAndAssertUnauthorized(Task<HttpResponseMessage> requestTask)
     {
         return DoRequestAndAssertHttpStatusCode(requestTask, HttpStatusCode.Unauthorized);
+    }
+    
+    protected static Task DoRequestAndAssertOk(Task<HttpResponseMessage> requestTask)
+    {
+        return DoRequestAndAssertHttpStatusCode(requestTask, HttpStatusCode.OK);
     }
 
     private static async Task DoRequestAndAssertHttpStatusCode(Task<HttpResponseMessage> requestTask, HttpStatusCode expectedStatusCode)
