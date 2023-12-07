@@ -9,7 +9,7 @@ namespace SpawnMetricsStorage.Controllers;
 
 public sealed class MetricsController(MetricsService metricsService, IConfiguration configuration)
 {
-    private readonly string _validApiKey = configuration[MetricsControllerConstants.ApiKeyParameter] ?? throw new ArgumentException("API_KEY is not set in configuration");
+    private readonly string _validApiKey = configuration[MetricsControllerConstants.ApiKeyParameter] ?? throw new ArgumentException(MetricsControllerConstants.ApiKeyNotDefinedError);
 
     public void RegisterEndpoints(WebApplication app)
     {

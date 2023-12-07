@@ -23,7 +23,7 @@ public abstract class SpawnMetricsStorageTestsBase
         var configuration = BuildConfiguration();
 
         _testDatabaseName = configuration[SurrealDbConfigurationConstants.DatabaseConfigurationKey] ?? "TEST";
-        _validApiKey = configuration[MetricsControllerConstants.ApiKeyParameter] ?? throw new ArgumentException($"{MetricsControllerConstants.ApiKeyParameter} is not set in configuration");
+        _validApiKey = configuration[MetricsControllerConstants.ApiKeyParameter] ?? throw new ArgumentException(MetricsControllerConstants.ApiKeyNotDefinedError);
 
         var testServerAddress = configuration["MetricsStorageServerAddress"] ?? "http://localhost:5150";
 
