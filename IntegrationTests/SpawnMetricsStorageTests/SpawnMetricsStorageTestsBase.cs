@@ -2,17 +2,16 @@ using System.Net;
 using System.Text;
 using System.Text.Json;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
+using SpawnMetricsStorage.Utils.SurrealDb;
 using SurrealDb.Net;
 
 namespace IntegrationTests.SpawnMetricsStorageTests;
 
 public abstract class SpawnMetricsStorageTestsBase
 {
-    private const string TestDatabaseName = "TEST";
-
     protected ISurrealDbClient SurrealDbClient = null!;
 
+    private string _testDatabaseName = null!;
     private HttpClient _httpClient = null!;
 
     [OneTimeSetUp]
@@ -20,20 +19,13 @@ public abstract class SpawnMetricsStorageTestsBase
     {
         var configuration = BuildConfiguration();
 
+        _testDatabaseName = configuration[SurrealDbConfigurationConstants.DatabaseConfigurationKey] ?? "TEST";
+
         var testServerAddress = configuration["MetricsStorageServerAddress"] ?? "http://localhost:5150";
 
         _httpClient = new HttpClient { BaseAddress = new Uri(testServerAddress) };
 
-        var surrealDbOptions = SurrealDbOptions
-            .Create()
-            .WithEndpoint(configuration["SURREAL_DB_ENDPOINT"])
-            .WithNamespace(configuration["SURREAL_DB_NAMESPACE"])
-            .WithDatabase(TestDatabaseName)
-            .WithUsername(configuration["SURREAL_DB_USER"])
-            .WithPassword(configuration["SURREAL_DB_PASS"])
-            .Build();
-
-        SurrealDbClient = new SurrealDbClient(surrealDbOptions);
+        SurrealDbClient = SurrealDbCreator.CreateSurrealDbClient(configuration);
 
         return CleanUpDatabase();
     }
@@ -53,7 +45,7 @@ public abstract class SpawnMetricsStorageTestsBase
     [TearDown]
     public async Task CleanUpDatabase()
     {
-        await SurrealDbClient.Query($"REMOVE DATABASE {TestDatabaseName}");
+        await SurrealDbClient.Query($"REMOVE DATABASE {_testDatabaseName}");
     }
 
     protected Task<HttpResponseMessage> PutAsync(string requestUri, object? content)
