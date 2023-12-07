@@ -16,7 +16,7 @@ public abstract class SpawnMetricsStorageTestsBase
     private HttpClient _httpClient = null!;
 
     [OneTimeSetUp]
-    public virtual void SetupEnvironment()
+    public Task SetupEnvironment()
     {
         var configuration = BuildConfiguration();
 
@@ -35,7 +35,7 @@ public abstract class SpawnMetricsStorageTestsBase
 
         SurrealDbClient = new SurrealDbClient(surrealDbOptions);
 
-        CleanUpDatabase();
+        return CleanUpDatabase();
     }
 
     private static IConfigurationRoot BuildConfiguration()
@@ -51,9 +51,9 @@ public abstract class SpawnMetricsStorageTestsBase
     }
 
     [TearDown]
-    public void CleanUpDatabase()
+    public async Task CleanUpDatabase()
     {
-        SurrealDbClient.Query($"REMOVE DATABASE {TestDatabaseName}");
+        await SurrealDbClient.Query($"REMOVE DATABASE {TestDatabaseName}");
     }
 
     protected Task<HttpResponseMessage> PutAsync(string requestUri, object? content)
