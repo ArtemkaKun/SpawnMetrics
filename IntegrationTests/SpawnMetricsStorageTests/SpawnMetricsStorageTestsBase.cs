@@ -11,8 +11,9 @@ public abstract class SpawnMetricsStorageTestsBase
 {
     private const string TestDatabaseName = "TEST";
 
+    protected ISurrealDbClient SurrealDbClient = null!;
+    
     private HttpClient _httpClient = null!;
-    protected ISurrealDbClient _surrealDbClient = null!;
 
     [OneTimeSetUp]
     public virtual void SetupEnvironment()
@@ -32,7 +33,7 @@ public abstract class SpawnMetricsStorageTestsBase
             .WithPassword(configuration["SURREAL_DB_PASS"])
             .Build();
 
-        _surrealDbClient = new SurrealDbClient(surrealDbOptions);
+        SurrealDbClient = new SurrealDbClient(surrealDbOptions);
 
         CleanUpDatabase();
     }
@@ -51,7 +52,7 @@ public abstract class SpawnMetricsStorageTestsBase
     [TearDown]
     public void CleanUpDatabase()
     {
-        _surrealDbClient.Query($"REMOVE DATABASE {TestDatabaseName}");
+        SurrealDbClient.Query($"REMOVE DATABASE {TestDatabaseName}");
     }
 
     public async Task<HttpResponseMessage> PutAsync(string requestUri, object? content)

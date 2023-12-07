@@ -8,6 +8,9 @@ namespace IntegrationTests.SpawnMetricsStorageTests;
 
 public class LogMetricTests : SpawnMetricsStorageTestsBase
 {
+    private const string TestProjectName = "TEST";
+    private const string TestMetricName = "TEST";
+
     [Test]
     public async Task LogMetric_WithEmptyBody_ReturnsBadRequest()
     {
@@ -241,11 +244,16 @@ public class LogMetricTests : SpawnMetricsStorageTestsBase
         await TestLogMetricRequestWithBadMetricRecord(metric);
     }
 
+    private static string CreateTestString(int length, char mainChar = 'A')
+    {
+        return new string(mainChar, length);
+    }
+
     private async Task TestLogMetricRequestWithBadMetricRecord(InvalidableMetricRecord? metricRecord)
     {
         var request = PutAsync(MetricsControllerConstants.MetricEndpoint, new InvalidableLogMetricRequestBody
         {
-            ProjectName = "TEST",
+            ProjectName = TestProjectName,
             Metric = metricRecord
         });
 
@@ -255,134 +263,103 @@ public class LogMetricTests : SpawnMetricsStorageTestsBase
     [Test]
     public async Task LogMetric_ReturnOk_AndLogMetricExists()
     {
-        var testMetricRecord = new MetricRecord("TEST", DateTime.UtcNow, "https://github.com/spawn/spawn/commit/12345678", "TEST", "TEST", "TEST");
+        var testMetricRecord = CreateDefaultTestMetricRecord();
 
-        var request = await PutAsync(MetricsControllerConstants.MetricEndpoint, new LogMetricRequestBody
-        {
-            ProjectName = "TEST",
-            Metric = testMetricRecord
-        });
+        await LogCorrectMetric(testMetricRecord);
 
-        Assert.That(request.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+        var loggedMetrics = await GetLoggedMetrics();
 
-        var queryResponse = await _surrealDbClient.Query("SELECT * FROM TEST");
-        var list = queryResponse.GetValue<List<MetricRecord>>(0);
-
-        Assert.That(list, Is.Not.Null);
-        Assert.That(list!.Count, Is.EqualTo(1));
-
-        Assert.That(list[0], Is.EqualTo(testMetricRecord));
+        AssertExpectedLoggedMetrics(loggedMetrics!, [testMetricRecord]);
     }
 
     [Test]
     public async Task LogMetric_ReturnOk_AndLogMetricExists_WhenTwoDifferentMetricsLogged()
     {
-        var testMetricRecord = new MetricRecord("TEST", DateTime.UtcNow, "https://github.com/spawn/spawn/commit/12345678", "TEST", "TEST", "TEST");
+        var testMetricRecord = CreateDefaultTestMetricRecord();
 
-        var request = await PutAsync(MetricsControllerConstants.MetricEndpoint, new LogMetricRequestBody
-        {
-            ProjectName = "TEST",
-            Metric = testMetricRecord
-        });
+        await LogCorrectMetric(testMetricRecord);
 
-        Assert.That(request.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+        var testMetricRecord2 = CreateTestMetricRecord("TEST_ANOTHER", DateTime.UtcNow);
 
-        var testMetricRecord2 = new MetricRecord("TEST_ANOTHER", DateTime.UtcNow, "https://github.com/spawn/spawn/commit/12345678", "TEST", "TEST", "TEST");
+        await LogCorrectMetric(testMetricRecord2);
 
-        var request2 = await PutAsync(MetricsControllerConstants.MetricEndpoint, new LogMetricRequestBody
-        {
-            ProjectName = "TEST",
-            Metric = testMetricRecord2
-        });
+        var loggedMetrics = await GetLoggedMetrics();
 
-        Assert.That(request2.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-
-        var queryResponse = await _surrealDbClient.Query("SELECT * FROM TEST");
-        var list = queryResponse.GetValue<List<MetricRecord>>(0);
-
-        Assert.That(list, Is.Not.Null);
-        Assert.That(list!.Count, Is.EqualTo(2));
-
-        Assert.That(list.Any(metric => Equals(metric, testMetricRecord)));
-        Assert.That(list.Any(metric => Equals(metric, testMetricRecord2)));
+        AssertExpectedLoggedMetrics(loggedMetrics!, [testMetricRecord, testMetricRecord2]);
     }
 
     [Test]
     public async Task LogMetric_ReturnOk_AndLogMetricExists_WhenSameMetricLoggedTwice()
     {
-        var testMetricRecord = new MetricRecord("TEST", DateTime.UtcNow, "https://github.com/spawn/spawn/commit/12345678", "TEST", "TEST", "TEST");
+        var testMetricRecord = CreateDefaultTestMetricRecord();
 
-        var request = await PutAsync(MetricsControllerConstants.MetricEndpoint, new LogMetricRequestBody
-        {
-            ProjectName = "TEST",
-            Metric = testMetricRecord
-        });
+        await LogCorrectMetric(testMetricRecord);
 
-        Assert.That(request.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+        var testMetricRecord2 = CreateTestMetricRecord(TestMetricName, DateTime.UtcNow + TimeSpan.FromMinutes(1));
 
-        var testMetricRecord2 = new MetricRecord("TEST", DateTime.UtcNow + TimeSpan.FromMinutes(1), "https://github.com/spawn/spawn/commit/12345678", "TEST", "TEST", "TEST");
+        await LogCorrectMetric(testMetricRecord2);
 
-        var request2 = await PutAsync(MetricsControllerConstants.MetricEndpoint, new LogMetricRequestBody
-        {
-            ProjectName = "TEST",
-            Metric = testMetricRecord2
-        });
+        var loggedMetrics = await GetLoggedMetrics();
 
-        Assert.That(request2.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-
-        var queryResponse = await _surrealDbClient.Query("SELECT * FROM TEST");
-        var list = queryResponse.GetValue<List<MetricRecord>>(0);
-
-        Assert.That(list, Is.Not.Null);
-        Assert.That(list!.Count, Is.EqualTo(2));
-
-        Assert.That(list.Any(metric => Equals(metric, testMetricRecord)));
-        Assert.That(list.Any(metric => Equals(metric, testMetricRecord2)));
+        AssertExpectedLoggedMetrics(loggedMetrics!, [testMetricRecord, testMetricRecord2]);
     }
 
     [Test]
     public async Task LogMetric_ReturnOk_AndLogMetricExists_InDifferentProjects()
     {
-        var testMetricRecord = new MetricRecord("TEST", DateTime.UtcNow, "https://github.com/spawn/spawn/commit/12345678", "TEST", "TEST", "TEST");
+        var testMetricRecord = CreateDefaultTestMetricRecord();
 
+        await LogCorrectMetric(testMetricRecord);
+
+        var testMetricRecord2 = CreateDefaultTestMetricRecord();
+
+        const string anotherProjectName = "TEST_ANOTHER";
+
+        await LogCorrectMetric(testMetricRecord2, anotherProjectName);
+
+        var loggedMetrics = await GetLoggedMetrics();
+
+        AssertExpectedLoggedMetrics(loggedMetrics!, [testMetricRecord]);
+
+        var loggedMetrics2 = await GetLoggedMetrics(anotherProjectName);
+
+        AssertExpectedLoggedMetrics(loggedMetrics2!, [testMetricRecord2]);
+    }
+
+    private static MetricRecord CreateDefaultTestMetricRecord() => CreateTestMetricRecord(TestMetricName, DateTime.UtcNow);
+
+    private static MetricRecord CreateTestMetricRecord(string metricName, DateTime logTime) => new(metricName, logTime, "https://github.com/spawn/spawn/commit/12345678", "TEST", "TEST", "TEST");
+
+    private async Task LogCorrectMetric(MetricRecord correctMetricRecord, string projectName = TestProjectName)
+    {
         var request = await PutAsync(MetricsControllerConstants.MetricEndpoint, new LogMetricRequestBody
         {
-            ProjectName = "TEST",
-            Metric = testMetricRecord
+            ProjectName = projectName,
+            Metric = correctMetricRecord
         });
 
         Assert.That(request.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-
-        var testMetricRecord2 = new MetricRecord("TEST", DateTime.UtcNow, "https://github.com/spawn/spawn/commit/12345678", "TEST", "TEST", "TEST");
-
-        var request2 = await PutAsync(MetricsControllerConstants.MetricEndpoint, new LogMetricRequestBody
-        {
-            ProjectName = "TEST_ANOTHER",
-            Metric = testMetricRecord2
-        });
-
-        Assert.That(request2.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-
-        var queryResponse = await _surrealDbClient.Query("SELECT * FROM TEST");
-        var list = queryResponse.GetValue<List<MetricRecord>>(0);
-
-        Assert.That(list, Is.Not.Null);
-        Assert.That(list!.Count, Is.EqualTo(1));
-
-        Assert.That(list[0], Is.EqualTo(testMetricRecord));
-
-        var queryResponse2 = await _surrealDbClient.Query("SELECT * FROM TEST_ANOTHER");
-        var list2 = queryResponse2.GetValue<List<MetricRecord>>(0);
-
-        Assert.That(list2, Is.Not.Null);
-        Assert.That(list2!.Count, Is.EqualTo(1));
-
-        Assert.That(list2[0], Is.EqualTo(testMetricRecord2));
     }
 
-    private static string CreateTestString(int length, char mainChar = 'A')
+    private async Task<List<MetricRecord>?> GetLoggedMetrics(string table = TestProjectName)
     {
-        return new string(mainChar, length);
+        var queryResponse = await SurrealDbClient.Query($"SELECT * FROM {table}");
+
+        return queryResponse.GetValue<List<MetricRecord>>(0);
+    }
+
+    private static void AssertExpectedLoggedMetrics(List<MetricRecord> loggedMetrics, List<MetricRecord> expectedLoggedMetrics)
+    {
+        Assert.Multiple(() =>
+        {
+            Assert.That(CheckMetricsNotNullAndHasExpectedCount(loggedMetrics, expectedLoggedMetrics.Count));
+            Assert.That(loggedMetrics.All(metric => expectedLoggedMetrics.Any(expectedMetric => Equals(metric, expectedMetric))));
+        });
+    }
+
+    private static bool CheckMetricsNotNullAndHasExpectedCount(List<MetricRecord>? metrics, int expectedCount)
+    {
+        return metrics != null && metrics.Count == expectedCount;
     }
 
     private class InvalidableLogMetricRequestBody
