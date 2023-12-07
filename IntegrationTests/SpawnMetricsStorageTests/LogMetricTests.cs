@@ -39,13 +39,13 @@ public class LogMetricTests : SpawnMetricsStorageTestsBase
     [Test]
     public async Task LogMetric_WithTooShortProjectName_ReturnsBadRequest()
     {
-        await TestLogMetricRequestWithBadProjectName(new string('A', ProjectNameConstants.MinProjectNameLength - 1));
+        await TestLogMetricRequestWithBadProjectName(CreateTestString(ProjectNameConstants.MinProjectNameLength - 1));
     }
 
     [Test]
     public async Task LogMetric_WithTooLongProjectName_ReturnsBadRequest()
     {
-        await TestLogMetricRequestWithBadProjectName(new string('A', ProjectNameConstants.MaxProjectNameLength + 1));
+        await TestLogMetricRequestWithBadProjectName(CreateTestString(ProjectNameConstants.MaxProjectNameLength + 1));
     }
 
     private async Task TestLogMetricRequestWithBadProjectName(string? projectName)
@@ -84,7 +84,7 @@ public class LogMetricTests : SpawnMetricsStorageTestsBase
     [Test]
     public async Task LogMetric_WithTooShortMetricName_ReturnsBadRequest()
     {
-        var metric = new InvalidableMetricRecordBuilder().WithName(new string('A', MetricRecordConstants.MinMetricNameLength - 1)).Build();
+        var metric = new InvalidableMetricRecordBuilder().WithName(CreateTestString(MetricRecordConstants.MinMetricNameLength - 1)).Build();
 
         await TestLogMetricRequestWithBadMetricRecord(metric);
     }
@@ -92,7 +92,7 @@ public class LogMetricTests : SpawnMetricsStorageTestsBase
     [Test]
     public async Task LogMetric_WithTooLongMetricName_ReturnsBadRequest()
     {
-        var metric = new InvalidableMetricRecordBuilder().WithName(new string('A', MetricRecordConstants.MaxMetricNameLength + 1)).Build();
+        var metric = new InvalidableMetricRecordBuilder().WithName(CreateTestString(MetricRecordConstants.MaxMetricNameLength + 1)).Build();
 
         await TestLogMetricRequestWithBadMetricRecord(metric);
     }
@@ -116,7 +116,7 @@ public class LogMetricTests : SpawnMetricsStorageTestsBase
     [Test]
     public async Task LogMetric_WithTooShortCommitGitHubUrl_ReturnsBadRequest()
     {
-        var metric = new InvalidableMetricRecordBuilder().WithCommitGitHubUrl(new string('A', MetricRecordConstants.MinCommitGitHubUrlLength - 1)).Build();
+        var metric = new InvalidableMetricRecordBuilder().WithCommitGitHubUrl(CreateTestString(MetricRecordConstants.MinCommitGitHubUrlLength - 1)).Build();
 
         await TestLogMetricRequestWithBadMetricRecord(metric);
     }
@@ -124,7 +124,7 @@ public class LogMetricTests : SpawnMetricsStorageTestsBase
     [Test]
     public async Task LogMetric_WithTooLongCommitGitHubUrl_ReturnsBadRequest()
     {
-        var metric = new InvalidableMetricRecordBuilder().WithCommitGitHubUrl(new string('A', MetricRecordConstants.MaxCommitGitHubUrlLength + 1)).Build();
+        var metric = new InvalidableMetricRecordBuilder().WithCommitGitHubUrl(CreateTestString(MetricRecordConstants.MaxCommitGitHubUrlLength + 1)).Build();
 
         await TestLogMetricRequestWithBadMetricRecord(metric);
     }
@@ -132,7 +132,7 @@ public class LogMetricTests : SpawnMetricsStorageTestsBase
     [Test]
     public async Task LogMetric_WithNotALinkCommitGitHubUrl_ReturnsBadRequest()
     {
-        var metric = new InvalidableMetricRecordBuilder().WithCommitGitHubUrl(new string('A', MetricRecordConstants.MaxCommitGitHubUrlLength)).Build();
+        var metric = new InvalidableMetricRecordBuilder().WithCommitGitHubUrl(CreateTestString(MetricRecordConstants.MaxCommitGitHubUrlLength)).Build();
 
         await TestLogMetricRequestWithBadMetricRecord(metric);
     }
@@ -156,7 +156,7 @@ public class LogMetricTests : SpawnMetricsStorageTestsBase
     [Test]
     public async Task LogMetric_WithCommitGitHubUrlTooShortShortCommitHash_ReturnsBadRequest()
     {
-        var metric = new InvalidableMetricRecordBuilder().WithCommitGitHubUrl($"https://github.com/spawn/spawn/commit/{new string('A', MetricRecordConstants.ShortCommitHashLength - 1)}").Build();
+        var metric = new InvalidableMetricRecordBuilder().WithCommitGitHubUrl($"https://github.com/spawn/spawn/commit/{CreateTestString(MetricRecordConstants.ShortCommitHashLength - 1)}").Build();
 
         await TestLogMetricRequestWithBadMetricRecord(metric);
     }
@@ -164,7 +164,7 @@ public class LogMetricTests : SpawnMetricsStorageTestsBase
     [Test]
     public async Task LogMetric_WithCommitGitHubUrlTooLongShortCommitHash_ReturnsBadRequest()
     {
-        var metric = new InvalidableMetricRecordBuilder().WithCommitGitHubUrl($"https://github.com/spawn/spawn/commit/{new string('A', MetricRecordConstants.ShortCommitHashLength + 1)}").Build();
+        var metric = new InvalidableMetricRecordBuilder().WithCommitGitHubUrl($"https://github.com/spawn/spawn/commit/{CreateTestString(MetricRecordConstants.ShortCommitHashLength + 1)}").Build();
 
         await TestLogMetricRequestWithBadMetricRecord(metric);
     }
@@ -172,7 +172,7 @@ public class LogMetricTests : SpawnMetricsStorageTestsBase
     [Test]
     public async Task LogMetric_WithCommitGitHubUrlInvalidShortCommitHash_ReturnsBadRequest()
     {
-        var metric = new InvalidableMetricRecordBuilder().WithCommitGitHubUrl($"https://github.com/spawn/spawn/commit/{new string('_', MetricRecordConstants.ShortCommitHashLength)}").Build();
+        var metric = new InvalidableMetricRecordBuilder().WithCommitGitHubUrl($"https://github.com/spawn/spawn/commit/{CreateTestString(MetricRecordConstants.ShortCommitHashLength, '_')}").Build();
 
         await TestLogMetricRequestWithBadMetricRecord(metric);
     }
@@ -188,7 +188,7 @@ public class LogMetricTests : SpawnMetricsStorageTestsBase
     [Test]
     public async Task LogMetric_WithTooShortCommitMessage_ReturnsBadRequest()
     {
-        var metric = new InvalidableMetricRecordBuilder().WithCommitMessage(new string('A', MetricRecordConstants.MinStringLength - 1)).Build();
+        var metric = new InvalidableMetricRecordBuilder().WithCommitMessage(CreateTestString(MetricRecordConstants.MinStringLength - 1)).Build();
 
         await TestLogMetricRequestWithBadMetricRecord(metric);
     }
@@ -196,7 +196,7 @@ public class LogMetricTests : SpawnMetricsStorageTestsBase
     [Test]
     public async Task LogMetric_WithTooLongCommitMessage_ReturnsBadRequest()
     {
-        var metric = new InvalidableMetricRecordBuilder().WithCommitMessage(new string('A', MetricRecordConstants.MaxCommitMessageLength + 1)).Build();
+        var metric = new InvalidableMetricRecordBuilder().WithCommitMessage(CreateTestString(MetricRecordConstants.MaxCommitMessageLength + 1)).Build();
 
         await TestLogMetricRequestWithBadMetricRecord(metric);
     }
@@ -212,7 +212,7 @@ public class LogMetricTests : SpawnMetricsStorageTestsBase
     [Test]
     public async Task LogMetric_WithTooShortValue_ReturnsBadRequest()
     {
-        var metric = new InvalidableMetricRecordBuilder().WithValue(new string('A', MetricRecordConstants.MinStringLength - 1)).Build();
+        var metric = new InvalidableMetricRecordBuilder().WithValue(CreateTestString(MetricRecordConstants.MinStringLength - 1)).Build();
 
         await TestLogMetricRequestWithBadMetricRecord(metric);
     }
@@ -228,7 +228,7 @@ public class LogMetricTests : SpawnMetricsStorageTestsBase
     [Test]
     public async Task LogMetric_WithTooShortUnits_ReturnsBadRequest()
     {
-        var metric = new InvalidableMetricRecordBuilder().WithUnits(new string('A', MetricRecordConstants.MinStringLength - 1)).Build();
+        var metric = new InvalidableMetricRecordBuilder().WithUnits(CreateTestString(MetricRecordConstants.MinStringLength - 1)).Build();
 
         await TestLogMetricRequestWithBadMetricRecord(metric);
     }
@@ -236,7 +236,7 @@ public class LogMetricTests : SpawnMetricsStorageTestsBase
     [Test]
     public async Task LogMetric_WithTooLongUnits_ReturnsBadRequest()
     {
-        var metric = new InvalidableMetricRecordBuilder().WithUnits(new string('A', MetricRecordConstants.MaxUnitsLength + 1)).Build();
+        var metric = new InvalidableMetricRecordBuilder().WithUnits(CreateTestString(MetricRecordConstants.MaxUnitsLength + 1)).Build();
 
         await TestLogMetricRequestWithBadMetricRecord(metric);
     }
@@ -378,6 +378,11 @@ public class LogMetricTests : SpawnMetricsStorageTestsBase
         Assert.That(list2!.Count, Is.EqualTo(1));
 
         Assert.That(list2[0], Is.EqualTo(testMetricRecord2));
+    }
+
+    private static string CreateTestString(int length, char mainChar = 'A')
+    {
+        return new string(mainChar, length);
     }
 
     private class InvalidableLogMetricRequestBody
