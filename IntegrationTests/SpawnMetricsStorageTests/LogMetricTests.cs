@@ -54,11 +54,7 @@ public class LogMetricTests : SpawnMetricsStorageTestsBase
 
     private Task TestLogMetricRequestWithBadProjectName(string? projectName)
     {
-        var request = PutAsync(MetricsControllerConstants.MetricEndpoint, new InvalidableLogMetricRequestBody
-        {
-            ProjectName = projectName,
-            Metric = new InvalidableMetricRecordBuilder().Build()
-        });
+        var request = PutAsync(MetricsControllerConstants.MetricEndpoint, new InvalidableLogMetricRequestBody(projectName, new InvalidableMetricRecordBuilder().Build()));
 
         return DoRequestAndAssertBadRequest(request);
     }
@@ -252,11 +248,7 @@ public class LogMetricTests : SpawnMetricsStorageTestsBase
 
     private Task TestLogMetricRequestWithBadMetricRecord(InvalidableMetricRecord? metricRecord)
     {
-        var request = PutAsync(MetricsControllerConstants.MetricEndpoint, new InvalidableLogMetricRequestBody
-        {
-            ProjectName = TestProjectName,
-            Metric = metricRecord
-        });
+        var request = PutAsync(MetricsControllerConstants.MetricEndpoint, new InvalidableLogMetricRequestBody(TestProjectName, metricRecord));
 
         return DoRequestAndAssertBadRequest(request);
     }
@@ -367,10 +359,16 @@ public class LogMetricTests : SpawnMetricsStorageTestsBase
         return metrics != null && metrics.Count == expectedCount;
     }
 
-    private class InvalidableLogMetricRequestBody
+    private readonly struct InvalidableLogMetricRequestBody
     {
-        public string? ProjectName { get; init; }
+        public readonly string? ProjectName;
 
-        public InvalidableMetricRecord? Metric { get; init; }
+        public readonly InvalidableMetricRecord? Metric;
+
+        public InvalidableLogMetricRequestBody(string? projectName, InvalidableMetricRecord? metric)
+        {
+            ProjectName = projectName;
+            Metric = metric;
+        }
     }
 }
