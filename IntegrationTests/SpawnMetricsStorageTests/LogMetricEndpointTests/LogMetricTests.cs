@@ -1,13 +1,14 @@
 using System.Net;
+using JetBrains.Annotations;
 using SpawnMetricsStorage.Controllers;
 using SpawnMetricsStorage.Models;
 using SpawnMetricsStorage.Models.MetricRecordFiles;
 using SpawnMetricsStorage.Models.ProjectName;
 
-namespace IntegrationTests.SpawnMetricsStorageTests;
+namespace IntegrationTests.SpawnMetricsStorageTests.LogMetricEndpointTests;
 
 [NonParallelizable]
-public class LogMetricTests : SpawnMetricsStorageTestsBase
+public sealed class LogMetricTests : SpawnMetricsStorageTestsBase
 {
     private const string TestProjectName = "TEST";
     private const string TestMetricName = "TEST";
@@ -323,9 +324,15 @@ public class LogMetricTests : SpawnMetricsStorageTestsBase
         AssertExpectedLoggedMetrics(loggedMetrics2!, [testMetricRecord2]);
     }
 
-    private static MetricRecord CreateDefaultTestMetricRecord() => CreateTestMetricRecord(TestMetricName, DateTime.UtcNow);
+    private static MetricRecord CreateDefaultTestMetricRecord()
+    {
+        return CreateTestMetricRecord(TestMetricName, DateTime.UtcNow);
+    }
 
-    private static MetricRecord CreateTestMetricRecord(string metricName, DateTime logTime) => new(metricName, logTime, "https://github.com/spawn/spawn/commit/12345678", "TEST", "TEST", "TEST");
+    private static MetricRecord CreateTestMetricRecord(string metricName, DateTime logTime)
+    {
+        return new MetricRecord(metricName, logTime, "https://github.com/spawn/spawn/commit/12345678", "TEST", "TEST", "TEST");
+    }
 
     private async Task LogCorrectMetric(MetricRecord correctMetricRecord, string projectName = TestProjectName)
     {
@@ -359,16 +366,12 @@ public class LogMetricTests : SpawnMetricsStorageTestsBase
         return metrics != null && metrics.Count == expectedCount;
     }
 
-    private readonly struct InvalidableLogMetricRequestBody
+    private readonly struct InvalidableLogMetricRequestBody(string? projectName, InvalidableMetricRecord? metric)
     {
-        public readonly string? ProjectName;
+        [UsedImplicitly]
+        public readonly string? ProjectName = projectName;
 
-        public readonly InvalidableMetricRecord? Metric;
-
-        public InvalidableLogMetricRequestBody(string? projectName, InvalidableMetricRecord? metric)
-        {
-            ProjectName = projectName;
-            Metric = metric;
-        }
+        [UsedImplicitly]
+        public readonly InvalidableMetricRecord? Metric = metric;
     }
 }

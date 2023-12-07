@@ -10,9 +10,9 @@ namespace IntegrationTests.SpawnMetricsStorageTests;
 public abstract class SpawnMetricsStorageTestsBase
 {
     protected ISurrealDbClient SurrealDbClient = null!;
-
-    private string _testDatabaseName = null!;
+    
     private HttpClient _httpClient = null!;
+    private string _testDatabaseName = null!;
 
     [OneTimeSetUp]
     public Task SetupEnvironment()

@@ -1,4 +1,4 @@
-namespace IntegrationTests.SpawnMetricsStorageTests;
+namespace IntegrationTests.SpawnMetricsStorageTests.LogMetricEndpointTests;
 
 public sealed class InvalidableMetricRecordBuilder
 {
@@ -46,5 +46,8 @@ public sealed class InvalidableMetricRecordBuilder
         return this;
     }
 
-    public InvalidableMetricRecord Build() => _record;
+    public InvalidableMetricRecord Build()
+    {
+        return _record;
+    }
 }
