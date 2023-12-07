@@ -25,9 +25,15 @@ public sealed class MetricsService(ISurrealDbClient surrealDbClient)
     {
         var queryResponse = await surrealDbClient.Query("INFO FOR DATABASE;");
         var databaseMetadata = queryResponse.GetValue<JsonElement>(0);
+
+        return GetProjectNamesFromDatabaseMetadata(databaseMetadata);
+    }
+
+    private static List<string>? GetProjectNamesFromDatabaseMetadata(JsonElement databaseMetadata)
+    {
         var tablesList = databaseMetadata.GetProperty("tables");
         var tableNameToMetadataMap = tablesList.Deserialize<Dictionary<string, string>>();
-        
+
         return tableNameToMetadataMap?.Keys.ToList();
     }
 

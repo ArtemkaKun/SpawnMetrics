@@ -6,60 +6,44 @@ namespace IntegrationTests.SpawnMetricsStorageTests.GetProjectNamesEndpointTests
 public class GetProjectNamesTests : SpawnMetricsStorageTestsBase
 {
     [Test]
-    public async Task EmptyDatabaseReturnsEmptyList()
+    public Task EmptyDatabaseReturnsEmptyList()
     {
-        var request = GetAsync(MetricsControllerConstants.ProjectNamesEndpoint, null);
-
-        await DoRequestAndAssertOk(request);
-
-        var response = await request;
-        var responseContent = await response.Content.ReadAsStringAsync();
-        var projectNames = JsonSerializer.Deserialize<List<string>>(responseContent);
-
-        Assert.That(projectNames, Is.Null.Or.Empty);
+        return RequestProjectNamesAndCheckResults([]);
     }
 
     [Test]
     public async Task DatabaseWithOneProjectReturnsOneProjectName()
     {
-        await SurrealDbClient.Query("DEFINE TABLE TEST;");
+        await DefineTable("TEST");
 
-        var request = GetAsync(MetricsControllerConstants.ProjectNamesEndpoint, null);
-
-        await DoRequestAndAssertOk(request);
-
-        var response = await request;
-
-        var responseContent = await response.Content.ReadAsStringAsync();
-
-        var projectNames = JsonSerializer.Deserialize<List<string>>(responseContent);
-
-        Assert.That(projectNames, Is.Not.Null.And.Not.Empty);
-        Assert.That(projectNames!.Count, Is.EqualTo(1));
-        Assert.That(projectNames[0], Is.EqualTo("TEST"));
+        await RequestProjectNamesAndCheckResults(["TEST"]);
     }
 
     [Test]
     public async Task DatabaseWithMultipleProjectsReturnsMultipleProjectNames()
     {
-        await SurrealDbClient.Query("DEFINE TABLE TEST;");
-        await SurrealDbClient.Query("DEFINE TABLE TEST2;");
-        await SurrealDbClient.Query("DEFINE TABLE TEST3;");
+        await DefineTable("TEST");
+        await DefineTable("TEST1");
+        await DefineTable("TEST2");
 
+        await RequestProjectNamesAndCheckResults(["TEST", "TEST1", "TEST2"]);
+    }
+
+    private async Task DefineTable(string tableName)
+    {
+        await SurrealDbClient.Query($"DEFINE TABLE {tableName};");
+    }
+
+    private async Task RequestProjectNamesAndCheckResults(List<string> expectedNames)
+    {
         var request = GetAsync(MetricsControllerConstants.ProjectNamesEndpoint, null);
 
         await DoRequestAndAssertOk(request);
 
         var response = await request;
-
         var responseContent = await response.Content.ReadAsStringAsync();
-
         var projectNames = JsonSerializer.Deserialize<List<string>>(responseContent);
 
-        Assert.That(projectNames, Is.Not.Null.And.Not.Empty);
-        Assert.That(projectNames!.Count, Is.EqualTo(3));
-        Assert.That(projectNames[0], Is.EqualTo("TEST"));
-        Assert.That(projectNames[1], Is.EqualTo("TEST2"));
-        Assert.That(projectNames[2], Is.EqualTo("TEST3"));
+        Assert.That(projectNames, Is.EqualTo(expectedNames));
     }
 }

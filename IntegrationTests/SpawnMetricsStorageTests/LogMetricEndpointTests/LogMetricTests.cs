@@ -363,15 +363,15 @@ public sealed class LogMetricTests : SpawnMetricsStorageTestsBase
         return new MetricRecord(metricName, logTime, "https://github.com/spawn/spawn/commit/12345678", "TEST", "TEST", "TEST");
     }
 
-    private async Task LogCorrectMetric(MetricRecord correctMetricRecord, string projectName = TestProjectName)
+    private Task LogCorrectMetric(MetricRecord correctMetricRecord, string projectName = TestProjectName)
     {
-        var request = await PutAsync(MetricsControllerConstants.MetricEndpoint, CreateHeadersWithApiKey(), new LogMetricRequestBody
+        var request = PutAsync(MetricsControllerConstants.MetricEndpoint, CreateHeadersWithApiKey(), new LogMetricRequestBody
         {
             ProjectName = projectName,
             Metric = correctMetricRecord
         });
 
-        Assert.That(request.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+        return DoRequestAndAssertOk(request);
     }
 
     private async Task<List<MetricRecord>?> GetLoggedMetrics(string table = TestProjectName)
