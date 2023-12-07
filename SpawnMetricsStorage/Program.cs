@@ -8,6 +8,6 @@ var app = builder.Build();
 
 var surrealDbClient = SurrealDbCreator.CreateSurrealDbClient(builder.Configuration);
 var metricsService = new MetricsService(surrealDbClient);
-new MetricsController(metricsService).RegisterEndpoints(app);
+new MetricsController(metricsService, builder.Configuration).RegisterEndpoints(app);
 
 app.Run();

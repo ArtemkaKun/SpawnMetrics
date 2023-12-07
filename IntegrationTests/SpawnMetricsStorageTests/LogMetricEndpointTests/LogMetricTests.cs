@@ -14,9 +14,38 @@ public sealed class LogMetricTests : SpawnMetricsStorageTestsBase
     private const string TestMetricName = "TEST";
 
     [Test]
+    public Task NoAuthKeyProvidedReturnsUnauthorized()
+    {
+        var body = new LogMetricRequestBody
+        {
+            ProjectName = TestProjectName,
+            Metric = CreateDefaultTestMetricRecord()
+        };
+
+        var request = PutAsync(MetricsControllerConstants.MetricEndpoint, null, body);
+
+        return DoRequestAndAssertUnauthorized(request);
+    }
+
+    [Test]
+    public Task WrongAuthKeyProvidedReturnsUnauthorized()
+    {
+        var body = new LogMetricRequestBody
+        {
+            ProjectName = TestProjectName,
+            Metric = CreateDefaultTestMetricRecord()
+        };
+
+        var request = PutAsync(MetricsControllerConstants.MetricEndpoint, new Dictionary<string, string> { { MetricsControllerConstants.ApiKeyParameter, "WRONG KEY" } }, body);
+
+        return DoRequestAndAssertUnauthorized(request);
+    }
+
+
+    [Test]
     public Task EmptyBodyReturnsBadRequest()
     {
-        var request = PutAsync(MetricsControllerConstants.MetricEndpoint, null);
+        var request = PutAsync(MetricsControllerConstants.MetricEndpoint, CreateHeadersWithApiKey(), null);
 
         return DoRequestAndAssertBadRequest(request);
     }
@@ -24,7 +53,7 @@ public sealed class LogMetricTests : SpawnMetricsStorageTestsBase
     [Test]
     public Task WrongBodyTypeReturnsBadRequest()
     {
-        var request = PutAsync(MetricsControllerConstants.MetricEndpoint, "WRONG");
+        var request = PutAsync(MetricsControllerConstants.MetricEndpoint, CreateHeadersWithApiKey(), "WRONG");
 
         return DoRequestAndAssertBadRequest(request);
     }
@@ -55,7 +84,7 @@ public sealed class LogMetricTests : SpawnMetricsStorageTestsBase
 
     private Task TestLogMetricRequestWithBadProjectName(string? projectName)
     {
-        var request = PutAsync(MetricsControllerConstants.MetricEndpoint, new InvalidableLogMetricRequestBody(projectName, new InvalidableMetricRecordBuilder().Build()));
+        var request = PutAsync(MetricsControllerConstants.MetricEndpoint, CreateHeadersWithApiKey(), new InvalidableLogMetricRequestBody(projectName, new InvalidableMetricRecordBuilder().Build()));
 
         return DoRequestAndAssertBadRequest(request);
     }
@@ -249,7 +278,7 @@ public sealed class LogMetricTests : SpawnMetricsStorageTestsBase
 
     private Task TestLogMetricRequestWithBadMetricRecord(InvalidableMetricRecord? metricRecord)
     {
-        var request = PutAsync(MetricsControllerConstants.MetricEndpoint, new InvalidableLogMetricRequestBody(TestProjectName, metricRecord));
+        var request = PutAsync(MetricsControllerConstants.MetricEndpoint, CreateHeadersWithApiKey(), new InvalidableLogMetricRequestBody(TestProjectName, metricRecord));
 
         return DoRequestAndAssertBadRequest(request);
     }
@@ -336,7 +365,7 @@ public sealed class LogMetricTests : SpawnMetricsStorageTestsBase
 
     private async Task LogCorrectMetric(MetricRecord correctMetricRecord, string projectName = TestProjectName)
     {
-        var request = await PutAsync(MetricsControllerConstants.MetricEndpoint, new LogMetricRequestBody
+        var request = await PutAsync(MetricsControllerConstants.MetricEndpoint, CreateHeadersWithApiKey(), new LogMetricRequestBody
         {
             ProjectName = projectName,
             Metric = correctMetricRecord

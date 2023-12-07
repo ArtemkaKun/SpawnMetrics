@@ -7,8 +7,10 @@ using SpawnMetricsStorage.Utils;
 
 namespace SpawnMetricsStorage.Controllers;
 
-public sealed class MetricsController(MetricsService metricsService)
+public sealed class MetricsController(MetricsService metricsService, IConfiguration configuration)
 {
+    private readonly string _validApiKey = configuration[MetricsControllerConstants.ApiKeyParameter] ?? throw new ArgumentException("API_KEY is not set in configuration");
+
     public void RegisterEndpoints(WebApplication app)
     {
         app.MapPut(MetricsControllerConstants.MetricEndpoint, HandleLogMetricRequest);
@@ -20,9 +22,13 @@ public sealed class MetricsController(MetricsService metricsService)
         app.MapGet(MetricsControllerConstants.MetricDataRangeEndpoint, HandleGetMetricDataRange);
     }
 
-
-    private async Task<IResult> HandleLogMetricRequest([FromBody(EmptyBodyBehavior = EmptyBodyBehavior.Disallow)] LogMetricRequestBody newMetricData)
+    private async Task<IResult> HandleLogMetricRequest([FromBody(EmptyBodyBehavior = EmptyBodyBehavior.Disallow)] LogMetricRequestBody newMetricData, HttpContext context)
     {
+        if (IsAuthorizedWithApiKey(context) == false)
+        {
+            return Results.Unauthorized();
+        }
+
         var validationError = ModelValidator.Validate(newMetricData);
 
         if (validationError != null)
@@ -33,6 +39,18 @@ public sealed class MetricsController(MetricsService metricsService)
         await metricsService.WriteNewMetric(newMetricData);
 
         return Results.Ok();
+    }
+
+    private bool IsAuthorizedWithApiKey(HttpContext context)
+    {
+        var apiKey = context.Request.Headers[MetricsControllerConstants.ApiKeyParameter];
+
+        if (string.IsNullOrWhiteSpace(apiKey))
+        {
+            return false;
+        }
+
+        return apiKey == _validApiKey;
     }
 
     private async Task<MetricRecord?> HandleGetLatestMetricByName([AsParameters] GetMetricRequestParameters parameters)

@@ -2,6 +2,7 @@ using System.Net;
 using System.Text;
 using System.Text.Json;
 using Microsoft.Extensions.Configuration;
+using SpawnMetricsStorage.Controllers;
 using SpawnMetricsStorage.Utils.SurrealDb;
 using SurrealDb.Net;
 
@@ -10,9 +11,10 @@ namespace IntegrationTests.SpawnMetricsStorageTests;
 public abstract class SpawnMetricsStorageTestsBase
 {
     protected ISurrealDbClient SurrealDbClient = null!;
-    
+
     private HttpClient _httpClient = null!;
     private string _testDatabaseName = null!;
+    private string _validApiKey = null!;
 
     [OneTimeSetUp]
     public Task SetupEnvironment()
@@ -20,6 +22,7 @@ public abstract class SpawnMetricsStorageTestsBase
         var configuration = BuildConfiguration();
 
         _testDatabaseName = configuration[SurrealDbConfigurationConstants.DatabaseConfigurationKey] ?? "TEST";
+        _validApiKey = configuration[MetricsControllerConstants.ApiKeyParameter] ?? throw new ArgumentException($"{MetricsControllerConstants.ApiKeyParameter} is not set in configuration");
 
         var testServerAddress = configuration["MetricsStorageServerAddress"] ?? "http://localhost:5150";
 
@@ -48,18 +51,49 @@ public abstract class SpawnMetricsStorageTestsBase
         await SurrealDbClient.Query($"REMOVE DATABASE {_testDatabaseName}");
     }
 
-    protected Task<HttpResponseMessage> PutAsync(string requestUri, object? content)
+    protected Dictionary<string, string> CreateHeadersWithApiKey()
+    {
+        return new Dictionary<string, string>
+        {
+            { MetricsControllerConstants.ApiKeyParameter, _validApiKey }
+        };
+    }
+
+    protected Task<HttpResponseMessage> PutAsync(string requestUri, Dictionary<string, string>? headers, object? content)
     {
         var jsonContent = JsonSerializer.Serialize(content);
         var stringContent = new StringContent(jsonContent, Encoding.UTF8, "application/json");
 
-        return _httpClient.PutAsync(requestUri, stringContent);
+        var requestMessage = new HttpRequestMessage(HttpMethod.Put, requestUri)
+        {
+            Content = stringContent
+        };
+
+        if (headers != null)
+        {
+            foreach (var header in headers)
+            {
+                requestMessage.Headers.Add(header.Key, header.Value);
+            }
+        }
+
+        return _httpClient.SendAsync(requestMessage);
     }
 
-    protected static async Task DoRequestAndAssertBadRequest(Task<HttpResponseMessage> requestTask)
+    protected static Task DoRequestAndAssertBadRequest(Task<HttpResponseMessage> requestTask)
+    {
+        return DoRequestAndAssertHttpStatusCode(requestTask, HttpStatusCode.BadRequest);
+    }
+
+    protected static Task DoRequestAndAssertUnauthorized(Task<HttpResponseMessage> requestTask)
+    {
+        return DoRequestAndAssertHttpStatusCode(requestTask, HttpStatusCode.Unauthorized);
+    }
+
+    private static async Task DoRequestAndAssertHttpStatusCode(Task<HttpResponseMessage> requestTask, HttpStatusCode expectedStatusCode)
     {
         var response = await requestTask;
 
-        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+        Assert.That(response.StatusCode, Is.EqualTo(expectedStatusCode));
     }
 }
