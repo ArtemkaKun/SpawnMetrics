@@ -53,9 +53,18 @@ public sealed class MetricsController(MetricsService metricsService, IConfigurat
         return apiKey == _validApiKey;
     }
 
-    private Task<MetricRecord?> HandleGetLatestMetricByName([AsParameters] GetMetricRequestParameters parameters)
+    private async Task<IResult> HandleGetLatestMetricByName([AsParameters] GetMetricRequestParameters parameters)
     {
-        return metricsService.GetLatestMetricByName(parameters.ProjectName, parameters.MetricName);
+        var validationError = ModelValidator.Validate(parameters);
+
+        if (validationError != null)
+        {
+            return validationError;
+        }
+
+        var latestMetric = await metricsService.GetLatestMetricByName(parameters.ProjectName, parameters.MetricName);
+
+        return Results.Ok(latestMetric);
     }
 
     private Task<List<string>?> HandleGetProjectNames()

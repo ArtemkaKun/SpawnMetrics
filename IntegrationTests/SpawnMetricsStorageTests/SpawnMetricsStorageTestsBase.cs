@@ -85,9 +85,9 @@ public abstract class SpawnMetricsStorageTestsBase
     {
         if (queryParameters != null)
         {
-            QueryHelpers.AddQueryString(requestUri, queryParameters!);
+            requestUri = QueryHelpers.AddQueryString(requestUri, queryParameters!);
         }
-        
+
         return _httpClient.GetAsync(requestUri);
     }
 
@@ -100,7 +100,7 @@ public abstract class SpawnMetricsStorageTestsBase
     {
         return DoRequestAndAssertHttpStatusCode(requestTask, HttpStatusCode.Unauthorized);
     }
-    
+
     protected static Task DoRequestAndAssertOk(Task<HttpResponseMessage> requestTask)
     {
         return DoRequestAndAssertHttpStatusCode(requestTask, HttpStatusCode.OK);
