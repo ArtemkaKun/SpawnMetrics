@@ -1,4 +1,5 @@
 using System.Text.Json;
+using Humanizer;
 using SpawnMetricsStorage.Models;
 using SpawnMetricsStorage.Models.MetricRecordFiles;
 using SurrealDb.Net;
@@ -14,7 +15,7 @@ public sealed class MetricsService(ISurrealDbClient surrealDbClient)
 
     public async Task<MetricRecord?> GetLatestMetricByName(string projectName, string metricName)
     {
-        var queryResponse = await surrealDbClient.Query($"SELECT * FROM {projectName} WHERE name = '{metricName}' ORDER BY LogTime DESC LIMIT 1;");
+        var queryResponse = await surrealDbClient.Query($"SELECT * FROM {projectName} WHERE {nameof(MetricRecord.Name).Underscore()} = '{metricName}' ORDER BY {nameof(MetricRecord.LogTimeUtc).Underscore()} DESC LIMIT 1;");
 
         var list = queryResponse.GetValue<List<MetricRecord>>(0);
 
