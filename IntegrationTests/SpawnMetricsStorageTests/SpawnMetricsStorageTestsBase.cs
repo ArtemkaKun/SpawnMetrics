@@ -128,4 +128,9 @@ public abstract class SpawnMetricsStorageTestsBase
     {
         return new MetricRecord(metricName, logTime, "https://github.com/spawn/spawn/commit/12345678", "TEST", "TEST", "TEST");
     }
+
+    protected static string CreateTestString(int length, char mainChar = 'A')
+    {
+        return new string(mainChar, length);
+    }
 }

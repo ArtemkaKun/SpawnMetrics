@@ -267,11 +267,6 @@ public sealed class LogMetricTests : SpawnMetricsStorageTestsBase
         return TestLogMetricRequestWithBadMetricRecord(metric);
     }
 
-    private static string CreateTestString(int length, char mainChar = 'A')
-    {
-        return new string(mainChar, length);
-    }
-
     private Task TestLogMetricRequestWithBadMetricRecord(InvalidableMetricRecord? metricRecord)
     {
         var request = PutAsync(MetricsControllerConstants.MetricEndpoint, CreateHeadersWithApiKey(), new InvalidableLogMetricRequestBody(TestProjectName, metricRecord));

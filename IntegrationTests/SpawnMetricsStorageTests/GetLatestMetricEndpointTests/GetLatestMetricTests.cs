@@ -49,7 +49,7 @@ public sealed class GetLatestMetricTests : SpawnMetricsStorageTestsBase
     {
         var parameters = new Dictionary<string, string>
         {
-            { nameof(GetMetricRequestParameters.ProjectName), new string('A', ProjectNameConstants.MinProjectNameLength - 1) },
+            { nameof(GetMetricRequestParameters.ProjectName), CreateTestString(ProjectNameConstants.MinProjectNameLength - 1) },
             { nameof(GetMetricRequestParameters.MetricName), TestMetricName }
         };
 
@@ -63,7 +63,7 @@ public sealed class GetLatestMetricTests : SpawnMetricsStorageTestsBase
     {
         var parameters = new Dictionary<string, string>
         {
-            { nameof(GetMetricRequestParameters.ProjectName), new string('A', ProjectNameConstants.MaxProjectNameLength + 1) },
+            { nameof(GetMetricRequestParameters.ProjectName), CreateTestString(ProjectNameConstants.MaxProjectNameLength + 1) },
             { nameof(GetMetricRequestParameters.MetricName), TestMetricName }
         };
 
@@ -106,7 +106,7 @@ public sealed class GetLatestMetricTests : SpawnMetricsStorageTestsBase
         var parameters = new Dictionary<string, string>
         {
             { nameof(GetMetricRequestParameters.ProjectName), TestProjectName },
-            { nameof(GetMetricRequestParameters.MetricName), new string('A', MetricRecordConstants.MinStringLength - 1) }
+            { nameof(GetMetricRequestParameters.MetricName), CreateTestString(MetricRecordConstants.MinStringLength - 1) }
         };
 
         var request = GetAsync(MetricsControllerConstants.LatestMetricEndpoint, parameters);
@@ -121,7 +121,7 @@ public sealed class GetLatestMetricTests : SpawnMetricsStorageTestsBase
         var parameters = new Dictionary<string, string>
         {
             { nameof(GetMetricRequestParameters.ProjectName), TestProjectName },
-            { nameof(GetMetricRequestParameters.MetricName), new string('A', MetricRecordConstants.MaxMetricNameLength + 1) }
+            { nameof(GetMetricRequestParameters.MetricName), CreateTestString(MetricRecordConstants.MaxMetricNameLength + 1) }
         };
 
         var request = GetAsync(MetricsControllerConstants.LatestMetricEndpoint, parameters);
