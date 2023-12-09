@@ -12,9 +12,7 @@ namespace IntegrationTests.SpawnMetricsStorageTests;
 
 public abstract class SpawnMetricsStorageTestsBase
 {
-    protected const string TestProjectName = "TEST_PROJECT";
     protected const string AnotherProjectName = "TEST_PROJECT_ANOTHER";
-    protected const string TestMetricName = "TEST_METRIC";
     protected const string AnotherMetricName = "TEST_METRIC_ANOTHER";
 
     protected ISurrealDbClient SurrealDbClient = null!;
@@ -121,7 +119,7 @@ public abstract class SpawnMetricsStorageTestsBase
 
     protected static MetricRecord CreateDefaultTestMetricRecord()
     {
-        return CreateTestMetricRecord(TestMetricName, DateTime.UtcNow);
+        return CreateTestMetricRecord(SpawnMetricsStorageTestsConstants.TestMetricName, DateTime.UtcNow);
     }
 
     protected static MetricRecord CreateTestMetricRecord(string metricName, DateTime logTime)

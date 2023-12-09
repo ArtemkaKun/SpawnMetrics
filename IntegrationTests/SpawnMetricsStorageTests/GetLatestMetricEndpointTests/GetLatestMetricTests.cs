@@ -22,7 +22,7 @@ public sealed class GetLatestMetricTests : SpawnMetricsStorageTestsBase
     {
         var parameters = new Dictionary<string, string>
         {
-            { nameof(GetMetricRequestParameters.MetricName), TestMetricName }
+            { nameof(GetMetricRequestParameters.MetricName), SpawnMetricsStorageTestsConstants.TestMetricName }
         };
 
         var request = GetAsync(MetricsControllerConstants.LatestMetricEndpoint, parameters);
@@ -33,12 +33,7 @@ public sealed class GetLatestMetricTests : SpawnMetricsStorageTestsBase
     [Test]
     public Task EmptyProjectNameParameterReturnsError()
     {
-        var parameters = new Dictionary<string, string>
-        {
-            { nameof(GetMetricRequestParameters.ProjectName), "" },
-            { nameof(GetMetricRequestParameters.MetricName), TestMetricName }
-        };
-
+        var parameters = new QueryParametersBuilder().WithProjectName("").Build();
         var request = GetAsync(MetricsControllerConstants.LatestMetricEndpoint, parameters);
 
         return DoRequestAndAssertBadRequest(request);
@@ -47,12 +42,7 @@ public sealed class GetLatestMetricTests : SpawnMetricsStorageTestsBase
     [Test]
     public Task TooShortProjectNameParameterReturnsError()
     {
-        var parameters = new Dictionary<string, string>
-        {
-            { nameof(GetMetricRequestParameters.ProjectName), CreateTestString(ProjectNameConstants.MinProjectNameLength - 1) },
-            { nameof(GetMetricRequestParameters.MetricName), TestMetricName }
-        };
-
+        var parameters = new QueryParametersBuilder().WithProjectName(CreateTestString(ProjectNameConstants.MinProjectNameLength - 1)).Build();
         var request = GetAsync(MetricsControllerConstants.LatestMetricEndpoint, parameters);
 
         return DoRequestAndAssertBadRequest(request);
@@ -61,12 +51,7 @@ public sealed class GetLatestMetricTests : SpawnMetricsStorageTestsBase
     [Test]
     public Task TooLongProjectNameParameterReturnsError()
     {
-        var parameters = new Dictionary<string, string>
-        {
-            { nameof(GetMetricRequestParameters.ProjectName), CreateTestString(ProjectNameConstants.MaxProjectNameLength + 1) },
-            { nameof(GetMetricRequestParameters.MetricName), TestMetricName }
-        };
-
+        var parameters = new QueryParametersBuilder().WithProjectName(CreateTestString(ProjectNameConstants.MaxProjectNameLength + 1)).Build();
         var request = GetAsync(MetricsControllerConstants.LatestMetricEndpoint, parameters);
 
         return DoRequestAndAssertBadRequest(request);
@@ -77,7 +62,7 @@ public sealed class GetLatestMetricTests : SpawnMetricsStorageTestsBase
     {
         var parameters = new Dictionary<string, string>
         {
-            { nameof(GetMetricRequestParameters.ProjectName), TestProjectName }
+            { nameof(GetMetricRequestParameters.ProjectName), SpawnMetricsStorageTestsConstants.TestProjectName }
         };
 
         var request = GetAsync(MetricsControllerConstants.LatestMetricEndpoint, parameters);
@@ -88,42 +73,25 @@ public sealed class GetLatestMetricTests : SpawnMetricsStorageTestsBase
     [Test]
     public Task EmptyMetricNameParameterReturnsError()
     {
-        var parameters = new Dictionary<string, string>
-        {
-            { nameof(GetMetricRequestParameters.ProjectName), TestProjectName },
-            { nameof(GetMetricRequestParameters.MetricName), "" }
-        };
-
+        var parameters = new QueryParametersBuilder().WithMetricName("").Build();
         var request = GetAsync(MetricsControllerConstants.LatestMetricEndpoint, parameters);
 
         return DoRequestAndAssertBadRequest(request);
     }
 
     [Test]
-    [NonParallelizable]
     public Task TooShortMetricNameParameterReturnsError()
     {
-        var parameters = new Dictionary<string, string>
-        {
-            { nameof(GetMetricRequestParameters.ProjectName), TestProjectName },
-            { nameof(GetMetricRequestParameters.MetricName), CreateTestString(MetricRecordConstants.MinStringLength - 1) }
-        };
-
+        var parameters = new QueryParametersBuilder().WithMetricName(CreateTestString(MetricRecordConstants.MinStringLength - 1)).Build();
         var request = GetAsync(MetricsControllerConstants.LatestMetricEndpoint, parameters);
 
         return DoRequestAndAssertBadRequest(request);
     }
 
     [Test]
-    [NonParallelizable]
     public Task TooLongMetricNameParameterReturnsError()
     {
-        var parameters = new Dictionary<string, string>
-        {
-            { nameof(GetMetricRequestParameters.ProjectName), TestProjectName },
-            { nameof(GetMetricRequestParameters.MetricName), CreateTestString(MetricRecordConstants.MaxMetricNameLength + 1) }
-        };
-
+        var parameters = new QueryParametersBuilder().WithMetricName(CreateTestString(MetricRecordConstants.MaxMetricNameLength + 1)).Build();
         var request = GetAsync(MetricsControllerConstants.LatestMetricEndpoint, parameters);
 
         return DoRequestAndAssertBadRequest(request);
@@ -133,12 +101,7 @@ public sealed class GetLatestMetricTests : SpawnMetricsStorageTestsBase
     [NonParallelizable]
     public Task EmptyDatabaseReturnsEmptyLatestMetric()
     {
-        var parameters = new Dictionary<string, string>
-        {
-            { nameof(GetMetricRequestParameters.ProjectName), TestProjectName },
-            { nameof(GetMetricRequestParameters.MetricName), TestMetricName }
-        };
-
+        var parameters = new QueryParametersBuilder().Build();
         return RequestLatestMetricAndCheckResults(null, parameters);
     }
 
@@ -148,14 +111,9 @@ public sealed class GetLatestMetricTests : SpawnMetricsStorageTestsBase
     {
         var testMetric = CreateDefaultTestMetricRecord();
 
-        await SurrealDbClient.Create(TestProjectName, testMetric);
+        await SurrealDbClient.Create(SpawnMetricsStorageTestsConstants.TestProjectName, testMetric);
 
-        var parameters = new Dictionary<string, string>
-        {
-            { nameof(GetMetricRequestParameters.ProjectName), TestProjectName },
-            { nameof(GetMetricRequestParameters.MetricName), TestMetricName }
-        };
-
+        var parameters = new QueryParametersBuilder().Build();
         await RequestLatestMetricAndCheckResults(testMetric, parameters);
     }
 
@@ -165,15 +123,10 @@ public sealed class GetLatestMetricTests : SpawnMetricsStorageTestsBase
     {
         var testMetric = CreateDefaultTestMetricRecord();
 
-        await SurrealDbClient.Create(TestProjectName, testMetric);
+        await SurrealDbClient.Create(SpawnMetricsStorageTestsConstants.TestProjectName, testMetric);
         await SurrealDbClient.Create(AnotherProjectName, testMetric);
 
-        var parameters = new Dictionary<string, string>
-        {
-            { nameof(GetMetricRequestParameters.ProjectName), TestProjectName },
-            { nameof(GetMetricRequestParameters.MetricName), TestMetricName }
-        };
-
+        var parameters = new QueryParametersBuilder().Build();
         await RequestLatestMetricAndCheckResults(testMetric, parameters);
     }
 
@@ -184,15 +137,10 @@ public sealed class GetLatestMetricTests : SpawnMetricsStorageTestsBase
         var testMetric = CreateDefaultTestMetricRecord();
         var latestTestMetric = CreateTestMetricRecord(AnotherMetricName, DateTime.UtcNow + TimeSpan.FromMinutes(1));
 
-        await SurrealDbClient.Create(TestProjectName, testMetric);
-        await SurrealDbClient.Create(TestProjectName, latestTestMetric);
+        await SurrealDbClient.Create(SpawnMetricsStorageTestsConstants.TestProjectName, testMetric);
+        await SurrealDbClient.Create(SpawnMetricsStorageTestsConstants.TestProjectName, latestTestMetric);
 
-        var parameters = new Dictionary<string, string>
-        {
-            { nameof(GetMetricRequestParameters.ProjectName), TestProjectName },
-            { nameof(GetMetricRequestParameters.MetricName), TestMetricName }
-        };
-
+        var parameters = new QueryParametersBuilder().Build();
         await RequestLatestMetricAndCheckResults(testMetric, parameters);
     }
 
@@ -201,17 +149,12 @@ public sealed class GetLatestMetricTests : SpawnMetricsStorageTestsBase
     public async Task MultipleMetricsInDifferentProjectsReturnsLatestMetric()
     {
         var testMetric = CreateDefaultTestMetricRecord();
-        var latestTestMetric = CreateTestMetricRecord(TestMetricName, DateTime.UtcNow + TimeSpan.FromMinutes(1));
+        var latestTestMetric = CreateTestMetricRecord(SpawnMetricsStorageTestsConstants.TestMetricName, DateTime.UtcNow + TimeSpan.FromMinutes(1));
 
-        await SurrealDbClient.Create(TestProjectName, testMetric);
+        await SurrealDbClient.Create(SpawnMetricsStorageTestsConstants.TestProjectName, testMetric);
         await SurrealDbClient.Create(AnotherProjectName, latestTestMetric);
 
-        var parameters = new Dictionary<string, string>
-        {
-            { nameof(GetMetricRequestParameters.ProjectName), TestProjectName },
-            { nameof(GetMetricRequestParameters.MetricName), TestMetricName }
-        };
-
+        var parameters = new QueryParametersBuilder().Build();
         await RequestLatestMetricAndCheckResults(testMetric, parameters);
     }
 
@@ -220,17 +163,12 @@ public sealed class GetLatestMetricTests : SpawnMetricsStorageTestsBase
     public async Task TwoSameMetricsReturnsLatestMetric()
     {
         var testMetric = CreateDefaultTestMetricRecord();
-        var latestTestMetric = CreateTestMetricRecord(TestMetricName, DateTime.UtcNow + TimeSpan.FromMinutes(1));
+        var latestTestMetric = CreateTestMetricRecord(SpawnMetricsStorageTestsConstants.TestMetricName, DateTime.UtcNow + TimeSpan.FromMinutes(1));
 
-        await SurrealDbClient.Create(TestProjectName, testMetric);
-        await SurrealDbClient.Create(TestProjectName, latestTestMetric);
+        await SurrealDbClient.Create(SpawnMetricsStorageTestsConstants.TestProjectName, testMetric);
+        await SurrealDbClient.Create(SpawnMetricsStorageTestsConstants.TestProjectName, latestTestMetric);
 
-        var parameters = new Dictionary<string, string>
-        {
-            { nameof(GetMetricRequestParameters.ProjectName), TestProjectName },
-            { nameof(GetMetricRequestParameters.MetricName), TestMetricName }
-        };
-
+        var parameters = new QueryParametersBuilder().Build();
         await RequestLatestMetricAndCheckResults(latestTestMetric, parameters);
     }
 

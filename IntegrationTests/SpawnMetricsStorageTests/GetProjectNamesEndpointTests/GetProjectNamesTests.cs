@@ -14,21 +14,21 @@ public sealed class GetProjectNamesTests : SpawnMetricsStorageTestsBase
     [Test]
     public async Task DatabaseWithOneProjectReturnsOneProjectName()
     {
-        await DefineTable(TestProjectName);
+        await DefineTable(SpawnMetricsStorageTestsConstants.TestProjectName);
 
-        await RequestProjectNamesAndCheckResults([TestProjectName]);
+        await RequestProjectNamesAndCheckResults([SpawnMetricsStorageTestsConstants.TestProjectName]);
     }
 
     [Test]
     public async Task DatabaseWithMultipleProjectsReturnsMultipleProjectNames()
     {
-        const string testProjectName2 = TestProjectName + "2";
-        
-        await DefineTable(TestProjectName);
+        const string testProjectName2 = SpawnMetricsStorageTestsConstants.TestProjectName + "2";
+
+        await DefineTable(SpawnMetricsStorageTestsConstants.TestProjectName);
         await DefineTable(AnotherProjectName);
         await DefineTable(testProjectName2);
 
-        await RequestProjectNamesAndCheckResults([TestProjectName, AnotherProjectName, testProjectName2]);
+        await RequestProjectNamesAndCheckResults([SpawnMetricsStorageTestsConstants.TestProjectName, AnotherProjectName, testProjectName2]);
     }
 
     private async Task DefineTable(string tableName)

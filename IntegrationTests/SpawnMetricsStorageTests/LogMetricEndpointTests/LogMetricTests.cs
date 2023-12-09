@@ -14,7 +14,7 @@ public sealed class LogMetricTests : SpawnMetricsStorageTestsBase
     {
         var body = new LogMetricRequestBody
         {
-            ProjectName = TestProjectName,
+            ProjectName = SpawnMetricsStorageTestsConstants.TestProjectName,
             Metric = CreateDefaultTestMetricRecord()
         };
 
@@ -28,7 +28,7 @@ public sealed class LogMetricTests : SpawnMetricsStorageTestsBase
     {
         var body = new LogMetricRequestBody
         {
-            ProjectName = TestProjectName,
+            ProjectName = SpawnMetricsStorageTestsConstants.TestProjectName,
             Metric = CreateDefaultTestMetricRecord()
         };
 
@@ -269,7 +269,7 @@ public sealed class LogMetricTests : SpawnMetricsStorageTestsBase
 
     private Task TestLogMetricRequestWithBadMetricRecord(InvalidableMetricRecord? metricRecord)
     {
-        var request = PutAsync(MetricsControllerConstants.MetricEndpoint, CreateHeadersWithApiKey(), new InvalidableLogMetricRequestBody(TestProjectName, metricRecord));
+        var request = PutAsync(MetricsControllerConstants.MetricEndpoint, CreateHeadersWithApiKey(), new InvalidableLogMetricRequestBody(SpawnMetricsStorageTestsConstants.TestProjectName, metricRecord));
 
         return DoRequestAndAssertBadRequest(request);
     }
@@ -312,7 +312,7 @@ public sealed class LogMetricTests : SpawnMetricsStorageTestsBase
 
         await LogCorrectMetric(testMetricRecord);
 
-        var testMetricRecord2 = CreateTestMetricRecord(TestMetricName, DateTime.UtcNow + TimeSpan.FromMinutes(1));
+        var testMetricRecord2 = CreateTestMetricRecord(SpawnMetricsStorageTestsConstants.TestMetricName, DateTime.UtcNow + TimeSpan.FromMinutes(1));
 
         await LogCorrectMetric(testMetricRecord2);
 
@@ -342,7 +342,7 @@ public sealed class LogMetricTests : SpawnMetricsStorageTestsBase
         AssertExpectedLoggedMetrics(loggedMetrics2!, [testMetricRecord2]);
     }
 
-    private Task LogCorrectMetric(MetricRecord correctMetricRecord, string projectName = TestProjectName)
+    private Task LogCorrectMetric(MetricRecord correctMetricRecord, string projectName = SpawnMetricsStorageTestsConstants.TestProjectName)
     {
         var request = PutAsync(MetricsControllerConstants.MetricEndpoint, CreateHeadersWithApiKey(), new LogMetricRequestBody
         {
@@ -353,7 +353,7 @@ public sealed class LogMetricTests : SpawnMetricsStorageTestsBase
         return DoRequestAndAssertOk(request);
     }
 
-    private async Task<List<MetricRecord>?> GetLoggedMetrics(string table = TestProjectName)
+    private async Task<List<MetricRecord>?> GetLoggedMetrics(string table = SpawnMetricsStorageTestsConstants.TestProjectName)
     {
         var queryResponse = await SurrealDbClient.Query($"SELECT * FROM {table}");
 

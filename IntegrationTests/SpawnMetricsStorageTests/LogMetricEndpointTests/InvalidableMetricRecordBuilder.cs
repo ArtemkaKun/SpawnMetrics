@@ -2,7 +2,7 @@ namespace IntegrationTests.SpawnMetricsStorageTests.LogMetricEndpointTests;
 
 public sealed class InvalidableMetricRecordBuilder
 {
-    private InvalidableMetricRecord _record = new("TEST", DateTime.UtcNow, "https://github.com/spawn/spawn/commit/12345678", "TEST", "TEST", "TEST");
+    private InvalidableMetricRecord _record = new(SpawnMetricsStorageTestsConstants.TestMetricName, DateTime.UtcNow, "https://github.com/spawn/spawn/commit/12345678", "TEST", "TEST", "TEST");
 
     public InvalidableMetricRecordBuilder WithName(string? name)
     {
