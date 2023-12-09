@@ -264,14 +264,4 @@ public sealed class GetLatestMetricTests : SpawnMetricsStorageTestsBase
 
         Assert.That(latestMetric.Value, Is.EqualTo(expectedMetric.Value));
     }
-
-    private static MetricRecord CreateDefaultTestMetricRecord()
-    {
-        return CreateTestMetricRecord(TestMetricName, DateTime.UtcNow);
-    }
-
-    private static MetricRecord CreateTestMetricRecord(string metricName, DateTime logTime)
-    {
-        return new MetricRecord(metricName, logTime, "https://github.com/spawn/spawn/commit/12345678", "TEST", "TEST", "TEST");
-    }
 }

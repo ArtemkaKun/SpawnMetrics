@@ -4,6 +4,7 @@ using System.Text.Json;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Configuration;
 using SpawnMetricsStorage.Controllers;
+using SpawnMetricsStorage.Models.MetricRecordFiles;
 using SpawnMetricsStorage.Utils.SurrealDb;
 using SurrealDb.Net;
 
@@ -15,7 +16,7 @@ public abstract class SpawnMetricsStorageTestsBase
     protected const string AnotherProjectName = "TEST_PROJECT_ANOTHER";
     protected const string TestMetricName = "TEST_METRIC";
     protected const string AnotherMetricName = "TEST_METRIC_ANOTHER";
-    
+
     protected ISurrealDbClient SurrealDbClient = null!;
 
     private HttpClient _httpClient = null!;
@@ -116,5 +117,15 @@ public abstract class SpawnMetricsStorageTestsBase
         var response = await requestTask;
 
         Assert.That(response.StatusCode, Is.EqualTo(expectedStatusCode));
+    }
+
+    protected static MetricRecord CreateDefaultTestMetricRecord()
+    {
+        return CreateTestMetricRecord(TestMetricName, DateTime.UtcNow);
+    }
+
+    protected static MetricRecord CreateTestMetricRecord(string metricName, DateTime logTime)
+    {
+        return new MetricRecord(metricName, logTime, "https://github.com/spawn/spawn/commit/12345678", "TEST", "TEST", "TEST");
     }
 }

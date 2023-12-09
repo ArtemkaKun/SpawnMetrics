@@ -347,16 +347,6 @@ public sealed class LogMetricTests : SpawnMetricsStorageTestsBase
         AssertExpectedLoggedMetrics(loggedMetrics2!, [testMetricRecord2]);
     }
 
-    private static MetricRecord CreateDefaultTestMetricRecord()
-    {
-        return CreateTestMetricRecord(TestMetricName, DateTime.UtcNow);
-    }
-
-    private static MetricRecord CreateTestMetricRecord(string metricName, DateTime logTime)
-    {
-        return new MetricRecord(metricName, logTime, "https://github.com/spawn/spawn/commit/12345678", "TEST", "TEST", "TEST");
-    }
-
     private Task LogCorrectMetric(MetricRecord correctMetricRecord, string projectName = TestProjectName)
     {
         var request = PutAsync(MetricsControllerConstants.MetricEndpoint, CreateHeadersWithApiKey(), new LogMetricRequestBody
