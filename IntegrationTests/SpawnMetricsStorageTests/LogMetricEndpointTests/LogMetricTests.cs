@@ -1,4 +1,3 @@
-using System.Net;
 using JetBrains.Annotations;
 using SpawnMetricsStorage.Controllers;
 using SpawnMetricsStorage.Models;
@@ -10,9 +9,6 @@ namespace IntegrationTests.SpawnMetricsStorageTests.LogMetricEndpointTests;
 [NonParallelizable]
 public sealed class LogMetricTests : SpawnMetricsStorageTestsBase
 {
-    private const string TestProjectName = "TEST";
-    private const string TestMetricName = "TEST";
-
     [Test]
     public Task NoAuthKeyProvidedReturnsUnauthorized()
     {
@@ -304,7 +300,7 @@ public sealed class LogMetricTests : SpawnMetricsStorageTestsBase
 
         await LogCorrectMetric(testMetricRecord);
 
-        var testMetricRecord2 = CreateTestMetricRecord("TEST_ANOTHER", DateTime.UtcNow);
+        var testMetricRecord2 = CreateTestMetricRecord(AnotherMetricName, DateTime.UtcNow);
 
         await LogCorrectMetric(testMetricRecord2);
 
@@ -340,15 +336,13 @@ public sealed class LogMetricTests : SpawnMetricsStorageTestsBase
 
         var testMetricRecord2 = CreateDefaultTestMetricRecord();
 
-        const string anotherProjectName = "TEST_ANOTHER";
-
-        await LogCorrectMetric(testMetricRecord2, anotherProjectName);
+        await LogCorrectMetric(testMetricRecord2, AnotherProjectName);
 
         var loggedMetrics = await GetLoggedMetrics();
 
         AssertExpectedLoggedMetrics(loggedMetrics!, [testMetricRecord]);
 
-        var loggedMetrics2 = await GetLoggedMetrics(anotherProjectName);
+        var loggedMetrics2 = await GetLoggedMetrics(AnotherProjectName);
 
         AssertExpectedLoggedMetrics(loggedMetrics2!, [testMetricRecord2]);
     }

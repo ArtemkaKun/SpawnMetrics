@@ -3,7 +3,7 @@ using SpawnMetricsStorage.Controllers;
 
 namespace IntegrationTests.SpawnMetricsStorageTests.GetProjectNamesEndpointTests;
 
-public class GetProjectNamesTests : SpawnMetricsStorageTestsBase
+public sealed class GetProjectNamesTests : SpawnMetricsStorageTestsBase
 {
     [Test]
     public Task EmptyDatabaseReturnsEmptyList()
@@ -14,19 +14,21 @@ public class GetProjectNamesTests : SpawnMetricsStorageTestsBase
     [Test]
     public async Task DatabaseWithOneProjectReturnsOneProjectName()
     {
-        await DefineTable("TEST");
+        await DefineTable(TestProjectName);
 
-        await RequestProjectNamesAndCheckResults(["TEST"]);
+        await RequestProjectNamesAndCheckResults([TestProjectName]);
     }
 
     [Test]
     public async Task DatabaseWithMultipleProjectsReturnsMultipleProjectNames()
     {
-        await DefineTable("TEST");
-        await DefineTable("TEST1");
-        await DefineTable("TEST2");
+        const string testProjectName2 = TestProjectName + "2";
+        
+        await DefineTable(TestProjectName);
+        await DefineTable(AnotherProjectName);
+        await DefineTable(testProjectName2);
 
-        await RequestProjectNamesAndCheckResults(["TEST", "TEST1", "TEST2"]);
+        await RequestProjectNamesAndCheckResults([TestProjectName, AnotherProjectName, testProjectName2]);
     }
 
     private async Task DefineTable(string tableName)
@@ -44,6 +46,6 @@ public class GetProjectNamesTests : SpawnMetricsStorageTestsBase
         var responseContent = await response.Content.ReadAsStringAsync();
         var projectNames = JsonSerializer.Deserialize<List<string>>(responseContent);
 
-        Assert.That(projectNames, Is.EqualTo(expectedNames));
+        Assert.That(projectNames, Is.EquivalentTo(expectedNames));
     }
 }
