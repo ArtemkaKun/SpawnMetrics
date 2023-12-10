@@ -72,8 +72,17 @@ public sealed class MetricsController(MetricsService metricsService, IConfigurat
         return metricsService.GetProjectNames();
     }
 
-    private Task<List<MetricRecord>?> HandleGetMetricDataRange([AsParameters] GetMetricDataRangeRequestParameters parameters)
+    private async Task<IResult> HandleGetMetricDataRange([AsParameters] GetMetricDataRangeRequestParameters parameters)
     {
-        return metricsService.GetMetricDataRange(parameters.ProjectName, parameters.MetricName, parameters.RangeStart, parameters.RangeEnd);
+        var validationError = ModelValidator.Validate(parameters);
+
+        if (validationError != null)
+        {
+            return validationError;
+        }
+
+        var metrics = await metricsService.GetMetricDataRange(parameters.ProjectName, parameters.MetricName, parameters.RangeStart, parameters.RangeEnd);
+
+        return Results.Ok(metrics);
     }
 }
