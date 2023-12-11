@@ -48,9 +48,18 @@ public sealed class MetricsService(ISurrealDbClient surrealDbClient)
 
     public async Task<List<MetricRecord>?> GetMetricDataRange(string projectName, string metricName, DateTime rangeStart, DateTime rangeEnd)
     {
-        var queryResponse = await surrealDbClient.Query(
-            $"SELECT * FROM {projectName} WHERE ({_metricRecordNameDbFriendly} = '{metricName}' AND {_metricRecordLogTimeUtcDbFriendly} >= '{rangeStart}' AND {_metricRecordLogTimeUtcDbFriendly} <= '{rangeEnd}') ORDER BY {_metricRecordLogTimeUtcDbFriendly} DESC;");
+        var query =
+            $"SELECT * FROM {projectName} WHERE ({_metricRecordNameDbFriendly} = '{metricName}' AND {_metricRecordLogTimeUtcDbFriendly} >= \"{rangeStart:O}\" AND {_metricRecordLogTimeUtcDbFriendly} <= \"{rangeEnd:O}\") ORDER BY {_metricRecordLogTimeUtcDbFriendly} DESC;";
 
-        return queryResponse.GetValue<List<MetricRecord>>(0);
+        var queryResponse = await surrealDbClient.Query(query);
+
+        var list = queryResponse.GetValue<List<MetricRecord>>(0);
+
+        if (list?.Count == 0)
+        {
+            return null;
+        }
+
+        return list;
     }
 }
