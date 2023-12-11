@@ -25,10 +25,10 @@ public sealed class GetProjectNamesTests : SpawnMetricsStorageTestsBase
         const string testProjectName2 = SpawnMetricsStorageTestsConstants.TestProjectName + "2";
 
         await DefineTable(SpawnMetricsStorageTestsConstants.TestProjectName);
-        await DefineTable(AnotherProjectName);
+        await DefineTable(SpawnMetricsStorageTestsConstants.AnotherProjectName);
         await DefineTable(testProjectName2);
 
-        await RequestProjectNamesAndCheckResults([SpawnMetricsStorageTestsConstants.TestProjectName, AnotherProjectName, testProjectName2]);
+        await RequestProjectNamesAndCheckResults([SpawnMetricsStorageTestsConstants.TestProjectName, SpawnMetricsStorageTestsConstants.AnotherProjectName, testProjectName2]);
     }
 
     private async Task DefineTable(string tableName)

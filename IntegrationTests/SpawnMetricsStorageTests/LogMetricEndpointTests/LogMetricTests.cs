@@ -295,7 +295,7 @@ public sealed class LogMetricTests : SpawnMetricsStorageTestsBase
 
         await LogCorrectMetric(testMetricRecord);
 
-        var testMetricRecord2 = CreateTestMetricRecord(AnotherMetricName, DateTime.UtcNow);
+        var testMetricRecord2 = CreateTestMetricRecord(SpawnMetricsStorageTestsConstants.AnotherMetricName, DateTime.UtcNow);
 
         await LogCorrectMetric(testMetricRecord2);
 
@@ -331,13 +331,13 @@ public sealed class LogMetricTests : SpawnMetricsStorageTestsBase
 
         var testMetricRecord2 = CreateDefaultTestMetricRecord();
 
-        await LogCorrectMetric(testMetricRecord2, AnotherProjectName);
+        await LogCorrectMetric(testMetricRecord2, SpawnMetricsStorageTestsConstants.AnotherProjectName);
 
         var loggedMetrics = await GetLoggedMetrics();
 
         AssertExpectedLoggedMetrics(loggedMetrics!, [testMetricRecord]);
 
-        var loggedMetrics2 = await GetLoggedMetrics(AnotherProjectName);
+        var loggedMetrics2 = await GetLoggedMetrics(SpawnMetricsStorageTestsConstants.AnotherProjectName);
 
         AssertExpectedLoggedMetrics(loggedMetrics2!, [testMetricRecord2]);
     }

@@ -124,7 +124,7 @@ public sealed class GetLatestMetricTests : SpawnMetricsStorageTestsBase
         var testMetric = CreateDefaultTestMetricRecord();
 
         await SurrealDbClient.Create(SpawnMetricsStorageTestsConstants.TestProjectName, testMetric);
-        await SurrealDbClient.Create(AnotherProjectName, testMetric);
+        await SurrealDbClient.Create(SpawnMetricsStorageTestsConstants.AnotherProjectName, testMetric);
 
         var parameters = new QueryParametersBuilder().Build();
         await RequestLatestMetricAndCheckResults(testMetric, parameters);
@@ -135,7 +135,7 @@ public sealed class GetLatestMetricTests : SpawnMetricsStorageTestsBase
     public async Task MultipleMetricsInSameProjectReturnsLatestMetric()
     {
         var testMetric = CreateDefaultTestMetricRecord();
-        var latestTestMetric = CreateTestMetricRecord(AnotherMetricName, DateTime.UtcNow + TimeSpan.FromMinutes(1));
+        var latestTestMetric = CreateTestMetricRecord(SpawnMetricsStorageTestsConstants.AnotherMetricName, DateTime.UtcNow + TimeSpan.FromMinutes(1));
 
         await SurrealDbClient.Create(SpawnMetricsStorageTestsConstants.TestProjectName, testMetric);
         await SurrealDbClient.Create(SpawnMetricsStorageTestsConstants.TestProjectName, latestTestMetric);
@@ -152,7 +152,7 @@ public sealed class GetLatestMetricTests : SpawnMetricsStorageTestsBase
         var latestTestMetric = CreateTestMetricRecord(SpawnMetricsStorageTestsConstants.TestMetricName, DateTime.UtcNow + TimeSpan.FromMinutes(1));
 
         await SurrealDbClient.Create(SpawnMetricsStorageTestsConstants.TestProjectName, testMetric);
-        await SurrealDbClient.Create(AnotherProjectName, latestTestMetric);
+        await SurrealDbClient.Create(SpawnMetricsStorageTestsConstants.AnotherProjectName, latestTestMetric);
 
         var parameters = new QueryParametersBuilder().Build();
         await RequestLatestMetricAndCheckResults(testMetric, parameters);

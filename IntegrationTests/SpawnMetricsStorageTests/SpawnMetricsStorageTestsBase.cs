@@ -12,9 +12,6 @@ namespace IntegrationTests.SpawnMetricsStorageTests;
 
 public abstract class SpawnMetricsStorageTestsBase
 {
-    protected const string AnotherProjectName = "TEST_PROJECT_ANOTHER";
-    protected const string AnotherMetricName = "TEST_METRIC_ANOTHER";
-
     protected ISurrealDbClient SurrealDbClient = null!;
 
     private HttpClient _httpClient = null!;
