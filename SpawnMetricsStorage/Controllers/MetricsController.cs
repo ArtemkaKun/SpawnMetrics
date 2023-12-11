@@ -15,8 +15,6 @@ public sealed class MetricsController(MetricsService metricsService, IConfigurat
     {
         app.MapPut(MetricsControllerConstants.MetricEndpoint, HandleLogMetricRequest);
 
-        app.MapGet(MetricsControllerConstants.LatestMetricEndpoint, HandleGetLatestMetricByName);
-
         app.MapGet(MetricsControllerConstants.ProjectNamesEndpoint, HandleGetProjectNames);
 
         app.MapGet(MetricsControllerConstants.MetricDataRangeEndpoint, HandleGetMetricDataRange);
@@ -51,20 +49,6 @@ public sealed class MetricsController(MetricsService metricsService, IConfigurat
         }
 
         return apiKey == _validApiKey;
-    }
-
-    private async Task<IResult> HandleGetLatestMetricByName([AsParameters] GetMetricRequestParameters parameters)
-    {
-        var validationError = ModelValidator.Validate(parameters);
-
-        if (validationError != null)
-        {
-            return validationError;
-        }
-
-        var latestMetric = await metricsService.GetLatestMetricByName(parameters.ProjectName, parameters.MetricName);
-
-        return Results.Ok(latestMetric);
     }
 
     private Task<List<string>?> HandleGetProjectNames()

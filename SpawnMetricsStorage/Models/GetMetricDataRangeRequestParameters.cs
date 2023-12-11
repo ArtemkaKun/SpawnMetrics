@@ -1,11 +1,21 @@
 using System.ComponentModel.DataAnnotations;
+using SpawnMetricsStorage.Models.MetricRecordFiles;
+using SpawnMetricsStorage.Models.ProjectName;
 
 namespace SpawnMetricsStorage.Models;
 
-public sealed class GetMetricDataRangeRequestParameters : GetMetricRequestParameters
+public sealed class GetMetricDataRangeRequestParameters
 {
     private const string RangeStartPropertyName = nameof(RangeStart);
     private const string RangeEndPropertyName = nameof(RangeEnd);
+
+    [Required]
+    [IsValidProjectName]
+    public required string ProjectName { get; init; }
+
+    [Required]
+    [IsValidMetricName]
+    public required string MetricName { get; init; }
 
     [Required]
     [DateComparison(RangeEndPropertyName, DateComparisonRule.Earlier, ErrorMessage = $"{RangeStartPropertyName} must be earlier than {RangeEndPropertyName}")]

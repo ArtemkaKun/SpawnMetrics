@@ -16,20 +16,6 @@ public sealed class MetricsService(ISurrealDbClient surrealDbClient)
         await surrealDbClient.Create(newMetricData.ProjectName, newMetricData.Metric);
     }
 
-    public async Task<MetricRecord?> GetLatestMetricByName(string projectName, string metricName)
-    {
-        var queryResponse = await surrealDbClient.Query($"SELECT * FROM {projectName} WHERE {_metricRecordNameDbFriendly} = '{metricName}' ORDER BY {_metricRecordLogTimeUtcDbFriendly} DESC LIMIT 1;");
-
-        var list = queryResponse.GetValue<List<MetricRecord>>(0);
-
-        if (list?.Count == 0)
-        {
-            return null;
-        }
-
-        return list?.First();
-    }
-
     public async Task<List<string>?> GetProjectNames()
     {
         var queryResponse = await surrealDbClient.Query("INFO FOR DATABASE;");
