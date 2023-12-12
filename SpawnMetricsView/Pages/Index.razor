@@ -3,47 +3,65 @@
 <PageTitle>Spawn Metrics</PageTitle>
 
 <RadzenLayout>
+    <RadzenHeader>
+        <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0.5em">
+            <RadzenSidebarToggle Click="@(() => _isSidebarExpanded = !_isSidebarExpanded)"/>
+
+            @foreach (var projectName in _projectNames)
+            {
+                <RadzenButton Icon="dashboard" IconPosition="IconPosition.Left" Text="@projectName"/>
+            }
+        </RadzenStack>
+    </RadzenHeader>
+    <RadzenSidebar @bind-Expanded="@_isSidebarExpanded">
+        <RadzenPanelMenu>
+            <RadzenPanelMenuItem Text="Fancy data" Icon="grade"/>
+            <RadzenPanelMenuItem Text="Raw data" Icon="code"/>
+        </RadzenPanelMenu>
+    </RadzenSidebar>
     <RadzenBody>
-        <RadzenRow AlignItems="AlignItems.Start">
-            <RadzenColumn Size="3" Style="min-width: 450px; max-width: 450px">
-                <RadzenCard>
-                    <RadzenStack Orientation="Orientation.Vertical">
-                        <RadzenStack Orientation="Orientation.Vertical" AlignItems="AlignItems.Center">
-                            <RadzenText TextStyle="TextStyle.H1">10000</RadzenText>
-                            <RadzenText>Lines of code</RadzenText>
-                        </RadzenStack>
-                        <RadzenRow Style="border-top: solid 1px gray;">
-                            <RadzenStack Orientation="Orientation.Vertical" AlignItems="AlignItems.Center" Style="margin: 1em">
-                                <RadzenText TextStyle="TextStyle.H3">10000</RadzenText>
-                                <RadzenText>Lines of code (AVG)</RadzenText>
-                            </RadzenStack>
-                            <RadzenStack Orientation="Orientation.Vertical" AlignItems="AlignItems.Center" Style="margin: 1em">
-                                <RadzenText TextStyle="TextStyle.H3">10000</RadzenText>
-                                <RadzenText>Lines of code (Median)</RadzenText>
-                            </RadzenStack>
-                        </RadzenRow>
-                    </RadzenStack>
-                </RadzenCard>
-            </RadzenColumn>
-            <RadzenColumn>
-                <RadzenCard Style="min-width: 1000px; max-width: 1500px; min-height: 348px;">
-                    <RadzenChart ColorScheme="ColorScheme.Palette">
-                        <RadzenLineSeries Data="@revenue2020" Title="Spawn compiler (LOC)" CategoryProperty="Date" ValueProperty="Revenue">
-                            <RadzenMarkers MarkerType="MarkerType.Circle"/>
-                        </RadzenLineSeries>
-                        <RadzenCategoryAxis Padding="20"/>
-                        <RadzenValueAxis>
-                            <RadzenGridLines Visible="true"/>
-                            <RadzenAxisTitle Text="Lines of code"/>
-                        </RadzenValueAxis>
-                    </RadzenChart>
-                </RadzenCard>
-            </RadzenColumn>
-        </RadzenRow>
+        @* <RadzenRow AlignItems="AlignItems.Start"> *@
+        @*     <RadzenColumn Size="3" Style="min-width: 450px; max-width: 450px"> *@
+        @*         <RadzenCard> *@
+        @*             <RadzenStack Orientation="Orientation.Vertical"> *@
+        @*                 <RadzenStack Orientation="Orientation.Vertical" AlignItems="AlignItems.Center"> *@
+        @*                     <RadzenText TextStyle="TextStyle.H1">10000</RadzenText> *@
+        @*                     <RadzenText>Lines of code</RadzenText> *@
+        @*                 </RadzenStack> *@
+        @*                 <RadzenRow Style="border-top: solid 1px gray;"> *@
+        @*                     <RadzenStack Orientation="Orientation.Vertical" AlignItems="AlignItems.Center" Style="margin: 1em"> *@
+        @*                         <RadzenText TextStyle="TextStyle.H3">10000</RadzenText> *@
+        @*                         <RadzenText>Lines of code (AVG)</RadzenText> *@
+        @*                     </RadzenStack> *@
+        @*                     <RadzenStack Orientation="Orientation.Vertical" AlignItems="AlignItems.Center" Style="margin: 1em"> *@
+        @*                         <RadzenText TextStyle="TextStyle.H3">10000</RadzenText> *@
+        @*                         <RadzenText>Lines of code (Median)</RadzenText> *@
+        @*                     </RadzenStack> *@
+        @*                 </RadzenRow> *@
+        @*             </RadzenStack> *@
+        @*         </RadzenCard> *@
+        @*     </RadzenColumn> *@
+        @*     <RadzenColumn> *@
+        @*         <RadzenCard Style="min-width: 1000px; max-width: 1500px; min-height: 348px;"> *@
+        @*             <RadzenChart ColorScheme="ColorScheme.Palette"> *@
+        @*                 <RadzenLineSeries Data="@revenue2020" Title="Spawn compiler (LOC)" CategoryProperty="Date" ValueProperty="Revenue"> *@
+        @*                     <RadzenMarkers MarkerType="MarkerType.Circle"/> *@
+        @*                 </RadzenLineSeries> *@
+        @*                 <RadzenCategoryAxis Padding="20"/> *@
+        @*                 <RadzenValueAxis> *@
+        @*                     <RadzenGridLines Visible="true"/> *@
+        @*                     <RadzenAxisTitle Text="Lines of code"/> *@
+        @*                 </RadzenValueAxis> *@
+        @*             </RadzenChart> *@
+        @*         </RadzenCard> *@
+        @*     </RadzenColumn> *@
+        @* </RadzenRow> *@
     </RadzenBody>
 </RadzenLayout>
 
 @code {
+    private List<string> _projectNames = new List<string> { "Spawn", "Spawn.Metrics", "Spawn.Metrics.Server", "Spawn.Metrics.Web" };
+    private bool _isSidebarExpanded;
 
     class DataItem
     {
