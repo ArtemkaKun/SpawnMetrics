@@ -1,4 +1,4 @@
-namespace SpawnMetricsStorage.Models.MetricRecordFiles;
+namespace MetricRecordModel;
 
 public static class MetricRecordConstants
 {

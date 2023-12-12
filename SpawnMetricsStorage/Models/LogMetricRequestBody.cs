@@ -1,5 +1,5 @@
 using System.ComponentModel.DataAnnotations;
-using SpawnMetricsStorage.Models.MetricRecordFiles;
+using MetricRecordModel;
 using SpawnMetricsStorage.Models.ProjectName;
 
 namespace SpawnMetricsStorage.Models;

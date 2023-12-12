@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace SpawnMetricsStorage.Utils;
+namespace MetricRecordModel;
 
 public abstract class NameValidationAttributeBase(int minLength, int maxLength) : ValidationAttribute
 {

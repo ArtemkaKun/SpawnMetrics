@@ -1,4 +1,4 @@
-using SpawnMetricsStorage.Utils;
+using MetricRecordModel;
 
 namespace SpawnMetricsStorage.Models.ProjectName;
 

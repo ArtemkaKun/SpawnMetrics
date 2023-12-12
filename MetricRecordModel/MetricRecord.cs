@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 using JetBrains.Annotations;
 
-namespace SpawnMetricsStorage.Models.MetricRecordFiles;
+namespace MetricRecordModel;
 
 // NOTE: This structure can have readonly fields instead of readonly properties, which will be more convenient and easier to read.
 // Unfortunately, MiniValidation lib, that used to validate this structure, doesn't support DataAnnotations attributes for fields.

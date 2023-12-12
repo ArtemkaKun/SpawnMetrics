@@ -1,7 +1,7 @@
 using JetBrains.Annotations;
+using MetricRecordModel;
 using SpawnMetricsStorage.Controllers;
 using SpawnMetricsStorage.Models;
-using SpawnMetricsStorage.Models.MetricRecordFiles;
 
 namespace IntegrationTests.SpawnMetricsStorageTests.LogMetricEndpointTests;
 

@@ -1,10 +1,10 @@
 using System.Net;
 using System.Text;
 using System.Text.Json;
+using MetricRecordModel;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Configuration;
 using SpawnMetricsStorage.Controllers;
-using SpawnMetricsStorage.Models.MetricRecordFiles;
 using SpawnMetricsStorage.Models.ProjectName;
 using SpawnMetricsStorage.Utils.SurrealDb;
 using SurrealDb.Net;

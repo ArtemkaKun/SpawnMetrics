@@ -1,6 +1,6 @@
 using System.Text.Json;
+using MetricRecordModel;
 using SpawnMetricsStorage.Controllers;
-using SpawnMetricsStorage.Models.MetricRecordFiles;
 
 namespace IntegrationTests.SpawnMetricsStorageTests.GetMetricDataRangeEndpointTests;
 
@@ -49,7 +49,7 @@ public sealed class GetMetricDataRangeTests : SpawnMetricsStorageTestsBase
 
         return DoRequestAndAssertBadRequest(request);
     }
-    
+
     [Test]
     public Task NoRangeStartParameterReturnsError()
     {

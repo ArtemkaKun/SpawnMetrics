@@ -1,7 +1,7 @@
 using System.Text.Json;
 using Humanizer;
+using MetricRecordModel;
 using SpawnMetricsStorage.Models;
-using SpawnMetricsStorage.Models.MetricRecordFiles;
 using SurrealDb.Net;
 
 namespace SpawnMetricsStorage.Services;
