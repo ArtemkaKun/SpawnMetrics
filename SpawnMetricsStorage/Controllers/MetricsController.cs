@@ -64,7 +64,7 @@ public sealed class MetricsController(MetricsService metricsService, IConfigurat
             return validationError;
         }
 
-        var metrics = await metricsService.GetMetricDataRange(parameters.ProjectName, parameters.MetricName, parameters.RangeStart, parameters.RangeEnd);
+        var metrics = await metricsService.GetMetricDataRange(parameters.ProjectName, parameters.RangeStart, parameters.RangeEnd);
 
         return Results.Ok(metrics);
     }

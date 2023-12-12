@@ -7,7 +7,6 @@ public sealed class QueryParametersBuilder
     private readonly Dictionary<string, string> _parameters = new()
     {
         { nameof(GetMetricDataRangeRequestParameters.ProjectName), SpawnMetricsStorageTestsConstants.TestProjectName },
-        { nameof(GetMetricDataRangeRequestParameters.MetricName), SpawnMetricsStorageTestsConstants.TestMetricName },
         { nameof(GetMetricDataRangeRequestParameters.RangeStart), DateTimeToString(DateTime.UtcNow) },
         { nameof(GetMetricDataRangeRequestParameters.RangeEnd), DateTimeToString(DateTime.UtcNow + TimeSpan.FromHours(1)) }
     };
@@ -22,20 +21,6 @@ public sealed class QueryParametersBuilder
     public QueryParametersBuilder WithoutProjectName()
     {
         _parameters.Remove(nameof(GetMetricDataRangeRequestParameters.ProjectName));
-
-        return this;
-    }
-
-    public QueryParametersBuilder WithMetricName(string metricName)
-    {
-        _parameters[nameof(GetMetricDataRangeRequestParameters.MetricName)] = metricName;
-
-        return this;
-    }
-
-    public QueryParametersBuilder WithoutMetricName()
-    {
-        _parameters.Remove(nameof(GetMetricDataRangeRequestParameters.MetricName));
 
         return this;
     }

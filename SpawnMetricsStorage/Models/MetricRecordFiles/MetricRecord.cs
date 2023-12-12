@@ -11,6 +11,8 @@ public readonly struct MetricRecord(string name, DateTime logTimeUtc, string com
 {
     [Required]
     [IsValidMetricName]
+    // NOTE: Used as structure for request/DB data, so this field serialized by JSON serializers.
+    [UsedImplicitly]
     public string Name { get; } = name;
 
     [Required]

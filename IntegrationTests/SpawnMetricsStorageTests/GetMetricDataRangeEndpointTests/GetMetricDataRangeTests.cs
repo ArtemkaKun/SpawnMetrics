@@ -49,43 +49,7 @@ public sealed class GetMetricDataRangeTests : SpawnMetricsStorageTestsBase
 
         return DoRequestAndAssertBadRequest(request);
     }
-
-    [Test]
-    public Task NoMetricNameParameterReturnsError()
-    {
-        var parameters = new QueryParametersBuilder().WithoutMetricName().Build();
-        var request = GetAsync(MetricsControllerConstants.MetricDataRangeEndpoint, parameters);
-
-        return DoRequestAndAssertBadRequest(request);
-    }
-
-    [Test]
-    public Task EmptyMetricNameParameterReturnsError()
-    {
-        var parameters = new QueryParametersBuilder().WithMetricName("").Build();
-        var request = GetAsync(MetricsControllerConstants.MetricDataRangeEndpoint, parameters);
-
-        return DoRequestAndAssertBadRequest(request);
-    }
-
-    [Test]
-    public Task TooShortMetricNameParameterReturnsError()
-    {
-        var parameters = new QueryParametersBuilder().WithMetricName(CreateTooShortMetricName()).Build();
-        var request = GetAsync(MetricsControllerConstants.MetricDataRangeEndpoint, parameters);
-
-        return DoRequestAndAssertBadRequest(request);
-    }
-
-    [Test]
-    public Task TooLongMetricNameParameterReturnsError()
-    {
-        var parameters = new QueryParametersBuilder().WithMetricName(CreateTooLongMetricName()).Build();
-        var request = GetAsync(MetricsControllerConstants.MetricDataRangeEndpoint, parameters);
-
-        return DoRequestAndAssertBadRequest(request);
-    }
-
+    
     [Test]
     public Task NoRangeStartParameterReturnsError()
     {
@@ -163,20 +127,6 @@ public sealed class GetMetricDataRangeTests : SpawnMetricsStorageTestsBase
         var createdMetrics = await CreateMultipleMetricsWithLogTimeShift(metricsCount, timeNow);
 
         var parameters = new QueryParametersBuilder().WithRangeStart(timeNow).WithRangeEnd(timeNow + TimeSpan.FromMinutes(metricsCount - 1)).Build();
-        await RequestMetricDataRangeAndCheckResults(createdMetrics, parameters);
-    }
-
-    [Test]
-    [NonParallelizable]
-    public async Task MultipleDifferentMetricsReturnsMultipleMetrics()
-    {
-        const int metricsCount = 3;
-        var timeNow = DateTime.UtcNow;
-
-        var createdMetrics = await CreateMultipleMetricsWithLogTimeShift(metricsCount, timeNow);
-        await CreateMultipleMetricsWithLogTimeShift(metricsCount, timeNow, SpawnMetricsStorageTestsConstants.AnotherMetricName);
-
-        var parameters = new QueryParametersBuilder().WithRangeStart(timeNow).WithRangeEnd(timeNow + TimeSpan.FromMinutes(metricsCount)).Build();
         await RequestMetricDataRangeAndCheckResults(createdMetrics, parameters);
     }
 

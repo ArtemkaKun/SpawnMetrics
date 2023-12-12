@@ -20,10 +20,6 @@ public sealed class GetMetricDataRangeRequestParameters
     public required string ProjectName { get; init; }
 
     [Required]
-    [IsValidMetricName]
-    public required string MetricName { get; init; }
-
-    [Required]
     [DateComparison(RangeEndPropertyName, DateComparisonRule.Earlier, ErrorMessage = $"{RangeStartPropertyName} must be earlier than {RangeEndPropertyName}")]
     public required DateTime RangeStart { get; init; }
 
