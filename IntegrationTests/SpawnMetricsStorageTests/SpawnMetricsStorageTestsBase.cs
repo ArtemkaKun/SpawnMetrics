@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Configuration;
 using SpawnMetricsStorage.Controllers;
 using SpawnMetricsStorage.Models.MetricRecordFiles;
+using SpawnMetricsStorage.Models.ProjectName;
 using SpawnMetricsStorage.Utils.SurrealDb;
 using SurrealDb.Net;
 
@@ -127,5 +128,25 @@ public abstract class SpawnMetricsStorageTestsBase
     protected static string CreateTestString(int length, char mainChar = 'A')
     {
         return new string(mainChar, length);
+    }
+
+    protected static string CreateTooShortProjectName()
+    {
+        return CreateTestString(ProjectNameConstants.MinProjectNameLength - 1);
+    }
+
+    protected static string CreateTooLongProjectName()
+    {
+        return CreateTestString(ProjectNameConstants.MaxProjectNameLength + 1);
+    }
+
+    protected static string CreateTooShortMetricName()
+    {
+        return CreateTestString(MetricRecordConstants.MinMetricNameLength - 1);
+    }
+
+    protected static string CreateTooLongMetricName()
+    {
+        return CreateTestString(MetricRecordConstants.MaxMetricNameLength + 1);
     }
 }

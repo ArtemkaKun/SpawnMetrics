@@ -1,8 +1,6 @@
 using System.Text.Json;
 using SpawnMetricsStorage.Controllers;
-using SpawnMetricsStorage.Models;
 using SpawnMetricsStorage.Models.MetricRecordFiles;
-using SpawnMetricsStorage.Models.ProjectName;
 
 namespace IntegrationTests.SpawnMetricsStorageTests.GetMetricDataRangeEndpointTests;
 
@@ -19,13 +17,7 @@ public sealed class GetMetricDataRangeTests : SpawnMetricsStorageTestsBase
     [Test]
     public Task NoProjectNameParameterReturnsError()
     {
-        var parameters = new Dictionary<string, string>
-        {
-            { nameof(GetMetricDataRangeRequestParameters.MetricName), SpawnMetricsStorageTestsConstants.TestMetricName },
-            { nameof(GetMetricDataRangeRequestParameters.RangeStart), DateTime.UtcNow.ToString("O") },
-            { nameof(GetMetricDataRangeRequestParameters.RangeEnd), (DateTime.UtcNow + TimeSpan.FromHours(1)).ToString("O") }
-        };
-
+        var parameters = new QueryParametersBuilder().WithoutProjectName().Build();
         var request = GetAsync(MetricsControllerConstants.MetricDataRangeEndpoint, parameters);
 
         return DoRequestAndAssertBadRequest(request);
@@ -43,7 +35,7 @@ public sealed class GetMetricDataRangeTests : SpawnMetricsStorageTestsBase
     [Test]
     public Task TooShortProjectNameParameterReturnsError()
     {
-        var parameters = new QueryParametersBuilder().WithProjectName(CreateTestString(ProjectNameConstants.MinProjectNameLength - 1)).Build();
+        var parameters = new QueryParametersBuilder().WithProjectName(CreateTooShortProjectName()).Build();
         var request = GetAsync(MetricsControllerConstants.MetricDataRangeEndpoint, parameters);
 
         return DoRequestAndAssertBadRequest(request);
@@ -52,7 +44,7 @@ public sealed class GetMetricDataRangeTests : SpawnMetricsStorageTestsBase
     [Test]
     public Task TooLongProjectNameParameterReturnsError()
     {
-        var parameters = new QueryParametersBuilder().WithProjectName(CreateTestString(ProjectNameConstants.MaxProjectNameLength + 1)).Build();
+        var parameters = new QueryParametersBuilder().WithProjectName(CreateTooLongProjectName()).Build();
         var request = GetAsync(MetricsControllerConstants.MetricDataRangeEndpoint, parameters);
 
         return DoRequestAndAssertBadRequest(request);
@@ -61,13 +53,7 @@ public sealed class GetMetricDataRangeTests : SpawnMetricsStorageTestsBase
     [Test]
     public Task NoMetricNameParameterReturnsError()
     {
-        var parameters = new Dictionary<string, string>
-        {
-            { nameof(GetMetricDataRangeRequestParameters.ProjectName), SpawnMetricsStorageTestsConstants.TestProjectName },
-            { nameof(GetMetricDataRangeRequestParameters.RangeStart), DateTime.UtcNow.ToString("O") },
-            { nameof(GetMetricDataRangeRequestParameters.RangeEnd), (DateTime.UtcNow + TimeSpan.FromHours(1)).ToString("O") }
-        };
-
+        var parameters = new QueryParametersBuilder().WithoutMetricName().Build();
         var request = GetAsync(MetricsControllerConstants.MetricDataRangeEndpoint, parameters);
 
         return DoRequestAndAssertBadRequest(request);
@@ -85,7 +71,7 @@ public sealed class GetMetricDataRangeTests : SpawnMetricsStorageTestsBase
     [Test]
     public Task TooShortMetricNameParameterReturnsError()
     {
-        var parameters = new QueryParametersBuilder().WithMetricName(CreateTestString(MetricRecordConstants.MinStringLength - 1)).Build();
+        var parameters = new QueryParametersBuilder().WithMetricName(CreateTooShortMetricName()).Build();
         var request = GetAsync(MetricsControllerConstants.MetricDataRangeEndpoint, parameters);
 
         return DoRequestAndAssertBadRequest(request);
@@ -94,7 +80,7 @@ public sealed class GetMetricDataRangeTests : SpawnMetricsStorageTestsBase
     [Test]
     public Task TooLongMetricNameParameterReturnsError()
     {
-        var parameters = new QueryParametersBuilder().WithMetricName(CreateTestString(MetricRecordConstants.MaxMetricNameLength + 1)).Build();
+        var parameters = new QueryParametersBuilder().WithMetricName(CreateTooLongMetricName()).Build();
         var request = GetAsync(MetricsControllerConstants.MetricDataRangeEndpoint, parameters);
 
         return DoRequestAndAssertBadRequest(request);
@@ -103,13 +89,7 @@ public sealed class GetMetricDataRangeTests : SpawnMetricsStorageTestsBase
     [Test]
     public Task NoRangeStartParameterReturnsError()
     {
-        var parameters = new Dictionary<string, string>
-        {
-            { nameof(GetMetricDataRangeRequestParameters.ProjectName), SpawnMetricsStorageTestsConstants.TestProjectName },
-            { nameof(GetMetricDataRangeRequestParameters.MetricName), SpawnMetricsStorageTestsConstants.TestMetricName },
-            { nameof(GetMetricDataRangeRequestParameters.RangeEnd), (DateTime.UtcNow + TimeSpan.FromHours(1)).ToString("O") }
-        };
-
+        var parameters = new QueryParametersBuilder().WithoutRangeStart().Build();
         var request = GetAsync(MetricsControllerConstants.MetricDataRangeEndpoint, parameters);
 
         return DoRequestAndAssertBadRequest(request);
@@ -118,14 +98,7 @@ public sealed class GetMetricDataRangeTests : SpawnMetricsStorageTestsBase
     [Test]
     public Task RangeStartParameterLaterThanRangeEndReturnsError()
     {
-        var parameters = new Dictionary<string, string>
-        {
-            { nameof(GetMetricDataRangeRequestParameters.ProjectName), SpawnMetricsStorageTestsConstants.TestProjectName },
-            { nameof(GetMetricDataRangeRequestParameters.MetricName), SpawnMetricsStorageTestsConstants.TestMetricName },
-            { nameof(GetMetricDataRangeRequestParameters.RangeStart), (DateTime.UtcNow + TimeSpan.FromHours(1)).ToString("O") },
-            { nameof(GetMetricDataRangeRequestParameters.RangeEnd), DateTime.UtcNow.ToString("O") }
-        };
-
+        var parameters = new QueryParametersBuilder().WithRangeStart(DateTime.UtcNow + TimeSpan.FromHours(1)).WithRangeEnd(DateTime.UtcNow).Build();
         var request = GetAsync(MetricsControllerConstants.MetricDataRangeEndpoint, parameters);
 
         return DoRequestAndAssertBadRequest(request);
@@ -134,13 +107,7 @@ public sealed class GetMetricDataRangeTests : SpawnMetricsStorageTestsBase
     [Test]
     public Task NoRangeEndParameterReturnsError()
     {
-        var parameters = new Dictionary<string, string>
-        {
-            { nameof(GetMetricDataRangeRequestParameters.ProjectName), SpawnMetricsStorageTestsConstants.TestProjectName },
-            { nameof(GetMetricDataRangeRequestParameters.MetricName), SpawnMetricsStorageTestsConstants.TestMetricName },
-            { nameof(GetMetricDataRangeRequestParameters.RangeStart), DateTime.UtcNow.ToString("O") }
-        };
-
+        var parameters = new QueryParametersBuilder().WithoutRangeEnd().Build();
         var request = GetAsync(MetricsControllerConstants.MetricDataRangeEndpoint, parameters);
 
         return DoRequestAndAssertBadRequest(request);
@@ -149,14 +116,7 @@ public sealed class GetMetricDataRangeTests : SpawnMetricsStorageTestsBase
     [Test]
     public Task RangeEndParameterEarlierThanRangeStartReturnsError()
     {
-        var parameters = new Dictionary<string, string>
-        {
-            { nameof(GetMetricDataRangeRequestParameters.ProjectName), SpawnMetricsStorageTestsConstants.TestProjectName },
-            { nameof(GetMetricDataRangeRequestParameters.MetricName), SpawnMetricsStorageTestsConstants.TestMetricName },
-            { nameof(GetMetricDataRangeRequestParameters.RangeStart), DateTime.UtcNow.ToString("O") },
-            { nameof(GetMetricDataRangeRequestParameters.RangeEnd), (DateTime.UtcNow - TimeSpan.FromHours(1)).ToString("O") }
-        };
-
+        var parameters = new QueryParametersBuilder().WithRangeStart(DateTime.UtcNow).WithRangeEnd(DateTime.UtcNow - TimeSpan.FromHours(1)).Build();
         var request = GetAsync(MetricsControllerConstants.MetricDataRangeEndpoint, parameters);
 
         return DoRequestAndAssertBadRequest(request);
@@ -174,92 +134,80 @@ public sealed class GetMetricDataRangeTests : SpawnMetricsStorageTestsBase
     [NonParallelizable]
     public async Task SingleMetricReturnsSingleMetric()
     {
-        var testMetric = CreateDefaultTestMetricRecord();
+        const int metricsCount = 1;
+        var timeNow = DateTime.UtcNow;
+        var createdMetrics = await CreateMultipleMetricsWithLogTimeShift(metricsCount, timeNow);
 
-        await SurrealDbClient.Create(SpawnMetricsStorageTestsConstants.TestProjectName, testMetric);
-
-        var parameters = new QueryParametersBuilder().WithRangeStart(DateTime.UtcNow - TimeSpan.FromMinutes(1)).WithRangeEnd(DateTime.UtcNow + TimeSpan.FromMinutes(1)).Build();
-        await RequestMetricDataRangeAndCheckResults([testMetric], parameters);
+        var parameters = new QueryParametersBuilder().WithRangeStart(timeNow - TimeSpan.FromMinutes(1)).WithRangeEnd(timeNow + TimeSpan.FromMinutes(metricsCount)).Build();
+        await RequestMetricDataRangeAndCheckResults(createdMetrics, parameters);
     }
 
     [Test]
     [NonParallelizable]
     public async Task MultipleMetricsReturnsMultipleMetrics()
     {
+        const int metricsCount = 3;
         var timeNow = DateTime.UtcNow;
+        var createdMetrics = await CreateMultipleMetricsWithLogTimeShift(metricsCount, timeNow);
 
-        var testMetric = CreateTestMetricRecord(SpawnMetricsStorageTestsConstants.TestMetricName, timeNow);
-        var anotherMetric = CreateTestMetricRecord(SpawnMetricsStorageTestsConstants.TestMetricName, timeNow + TimeSpan.FromMinutes(1));
-        var anotherMetric2 = CreateTestMetricRecord(SpawnMetricsStorageTestsConstants.TestMetricName, timeNow + TimeSpan.FromMinutes(2));
-
-        await SurrealDbClient.Create(SpawnMetricsStorageTestsConstants.TestProjectName, testMetric);
-        await SurrealDbClient.Create(SpawnMetricsStorageTestsConstants.TestProjectName, anotherMetric);
-        await SurrealDbClient.Create(SpawnMetricsStorageTestsConstants.TestProjectName, anotherMetric2);
-
-        var parameters = new QueryParametersBuilder().WithRangeStart(timeNow - TimeSpan.FromMinutes(1)).WithRangeEnd(timeNow + TimeSpan.FromMinutes(3)).Build();
-        await RequestMetricDataRangeAndCheckResults([testMetric, anotherMetric, anotherMetric2], parameters);
+        var parameters = new QueryParametersBuilder().WithRangeStart(timeNow - TimeSpan.FromMinutes(1)).WithRangeEnd(timeNow + TimeSpan.FromMinutes(metricsCount)).Build();
+        await RequestMetricDataRangeAndCheckResults(createdMetrics, parameters);
     }
 
     [Test]
     [NonParallelizable]
     public async Task MultipleMetricsOnRangeBordersReturnsMultipleMetrics()
     {
+        const int metricsCount = 3;
         var timeNow = DateTime.UtcNow;
+        var createdMetrics = await CreateMultipleMetricsWithLogTimeShift(metricsCount, timeNow);
 
-        var testMetric = CreateTestMetricRecord(SpawnMetricsStorageTestsConstants.TestMetricName, timeNow);
-        var anotherMetric = CreateTestMetricRecord(SpawnMetricsStorageTestsConstants.TestMetricName, timeNow + TimeSpan.FromMinutes(1));
-        var anotherMetric2 = CreateTestMetricRecord(SpawnMetricsStorageTestsConstants.TestMetricName, timeNow + TimeSpan.FromMinutes(2));
-
-        await SurrealDbClient.Create(SpawnMetricsStorageTestsConstants.TestProjectName, testMetric);
-        await SurrealDbClient.Create(SpawnMetricsStorageTestsConstants.TestProjectName, anotherMetric);
-        await SurrealDbClient.Create(SpawnMetricsStorageTestsConstants.TestProjectName, anotherMetric2);
-
-        var parameters = new QueryParametersBuilder().WithRangeStart(timeNow).WithRangeEnd(timeNow + TimeSpan.FromMinutes(2)).Build();
-        await RequestMetricDataRangeAndCheckResults([testMetric, anotherMetric, anotherMetric2], parameters);
+        var parameters = new QueryParametersBuilder().WithRangeStart(timeNow).WithRangeEnd(timeNow + TimeSpan.FromMinutes(metricsCount - 1)).Build();
+        await RequestMetricDataRangeAndCheckResults(createdMetrics, parameters);
     }
 
     [Test]
     [NonParallelizable]
     public async Task MultipleDifferentMetricsReturnsMultipleMetrics()
     {
+        const int metricsCount = 3;
         var timeNow = DateTime.UtcNow;
 
-        var testMetric = CreateTestMetricRecord(SpawnMetricsStorageTestsConstants.TestMetricName, timeNow);
-        var anotherMetric = CreateTestMetricRecord(SpawnMetricsStorageTestsConstants.TestMetricName, timeNow + TimeSpan.FromMinutes(1));
-        var anotherMetric2 = CreateTestMetricRecord(SpawnMetricsStorageTestsConstants.TestMetricName, timeNow + TimeSpan.FromMinutes(2));
+        var createdMetrics = await CreateMultipleMetricsWithLogTimeShift(metricsCount, timeNow);
+        await CreateMultipleMetricsWithLogTimeShift(metricsCount, timeNow, SpawnMetricsStorageTestsConstants.AnotherMetricName);
 
-        await SurrealDbClient.Create(SpawnMetricsStorageTestsConstants.TestProjectName, testMetric);
-        await SurrealDbClient.Create(SpawnMetricsStorageTestsConstants.TestProjectName, anotherMetric);
-        await SurrealDbClient.Create(SpawnMetricsStorageTestsConstants.TestProjectName, anotherMetric2);
-
-        await SurrealDbClient.Create(SpawnMetricsStorageTestsConstants.TestProjectName, CreateTestMetricRecord(SpawnMetricsStorageTestsConstants.AnotherMetricName, timeNow));
-        await SurrealDbClient.Create(SpawnMetricsStorageTestsConstants.TestProjectName, CreateTestMetricRecord(SpawnMetricsStorageTestsConstants.AnotherMetricName, timeNow + TimeSpan.FromMinutes(1)));
-        await SurrealDbClient.Create(SpawnMetricsStorageTestsConstants.TestProjectName, CreateTestMetricRecord(SpawnMetricsStorageTestsConstants.AnotherMetricName, timeNow + TimeSpan.FromMinutes(2)));
-
-        var parameters = new QueryParametersBuilder().WithRangeStart(timeNow).WithRangeEnd(timeNow + TimeSpan.FromMinutes(2)).Build();
-        await RequestMetricDataRangeAndCheckResults([testMetric, anotherMetric, anotherMetric2], parameters);
+        var parameters = new QueryParametersBuilder().WithRangeStart(timeNow).WithRangeEnd(timeNow + TimeSpan.FromMinutes(metricsCount)).Build();
+        await RequestMetricDataRangeAndCheckResults(createdMetrics, parameters);
     }
 
     [Test]
     [NonParallelizable]
     public async Task MultipleMetricsInDifferentProjectsReturnsMultipleMetrics()
     {
+        const int metricsCount = 3;
         var timeNow = DateTime.UtcNow;
 
-        var testMetric = CreateTestMetricRecord(SpawnMetricsStorageTestsConstants.TestMetricName, timeNow);
-        var anotherMetric = CreateTestMetricRecord(SpawnMetricsStorageTestsConstants.TestMetricName, timeNow + TimeSpan.FromMinutes(1));
-        var anotherMetric2 = CreateTestMetricRecord(SpawnMetricsStorageTestsConstants.TestMetricName, timeNow + TimeSpan.FromMinutes(2));
+        var createdMetrics = await CreateMultipleMetricsWithLogTimeShift(metricsCount, timeNow);
+        await CreateMultipleMetricsWithLogTimeShift(metricsCount, timeNow, projectName: SpawnMetricsStorageTestsConstants.AnotherProjectName);
 
-        await SurrealDbClient.Create(SpawnMetricsStorageTestsConstants.TestProjectName, testMetric);
-        await SurrealDbClient.Create(SpawnMetricsStorageTestsConstants.TestProjectName, anotherMetric);
-        await SurrealDbClient.Create(SpawnMetricsStorageTestsConstants.TestProjectName, anotherMetric2);
+        var parameters = new QueryParametersBuilder().WithRangeStart(timeNow).WithRangeEnd(timeNow + TimeSpan.FromMinutes(metricsCount)).Build();
+        await RequestMetricDataRangeAndCheckResults(createdMetrics, parameters);
+    }
 
-        await SurrealDbClient.Create(SpawnMetricsStorageTestsConstants.AnotherProjectName, testMetric);
-        await SurrealDbClient.Create(SpawnMetricsStorageTestsConstants.AnotherProjectName, anotherMetric);
-        await SurrealDbClient.Create(SpawnMetricsStorageTestsConstants.AnotherProjectName, anotherMetric2);
+    private async Task<List<MetricRecord>> CreateMultipleMetricsWithLogTimeShift(int countOfMetrics, DateTime currentTime, string metricName = SpawnMetricsStorageTestsConstants.TestMetricName,
+        string projectName = SpawnMetricsStorageTestsConstants.TestProjectName)
+    {
+        var metrics = new List<MetricRecord>();
 
-        var parameters = new QueryParametersBuilder().WithRangeStart(timeNow).WithRangeEnd(timeNow + TimeSpan.FromMinutes(2)).Build();
-        await RequestMetricDataRangeAndCheckResults([testMetric, anotherMetric, anotherMetric2], parameters);
+        for (var i = 0; i < countOfMetrics; i++)
+        {
+            var metric = CreateTestMetricRecord(metricName, currentTime + TimeSpan.FromMinutes(i));
+            await SurrealDbClient.Create(projectName, metric);
+
+            metrics.Add(metric);
+        }
+
+        return metrics;
     }
 
     private async Task RequestMetricDataRangeAndCheckResults(List<MetricRecord>? expectedMetric, Dictionary<string, string>? queryParameters)

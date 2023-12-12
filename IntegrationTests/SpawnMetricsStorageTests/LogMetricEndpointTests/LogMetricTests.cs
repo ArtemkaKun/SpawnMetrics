@@ -2,7 +2,6 @@ using JetBrains.Annotations;
 using SpawnMetricsStorage.Controllers;
 using SpawnMetricsStorage.Models;
 using SpawnMetricsStorage.Models.MetricRecordFiles;
-using SpawnMetricsStorage.Models.ProjectName;
 
 namespace IntegrationTests.SpawnMetricsStorageTests.LogMetricEndpointTests;
 
@@ -69,13 +68,13 @@ public sealed class LogMetricTests : SpawnMetricsStorageTestsBase
     [Test]
     public Task TooShortProjectNameReturnsBadRequest()
     {
-        return TestLogMetricRequestWithBadProjectName(CreateTestString(ProjectNameConstants.MinProjectNameLength - 1));
+        return TestLogMetricRequestWithBadProjectName(CreateTooShortProjectName());
     }
 
     [Test]
     public Task TooLongProjectNameReturnsBadRequest()
     {
-        return TestLogMetricRequestWithBadProjectName(CreateTestString(ProjectNameConstants.MaxProjectNameLength + 1));
+        return TestLogMetricRequestWithBadProjectName(CreateTooLongProjectName());
     }
 
     private Task TestLogMetricRequestWithBadProjectName(string? projectName)
@@ -110,7 +109,7 @@ public sealed class LogMetricTests : SpawnMetricsStorageTestsBase
     [Test]
     public Task TooShortMetricNameReturnsBadRequest()
     {
-        var metric = new InvalidableMetricRecordBuilder().WithName(CreateTestString(MetricRecordConstants.MinMetricNameLength - 1)).Build();
+        var metric = new InvalidableMetricRecordBuilder().WithName(CreateTooShortMetricName()).Build();
 
         return TestLogMetricRequestWithBadMetricRecord(metric);
     }
@@ -118,7 +117,7 @@ public sealed class LogMetricTests : SpawnMetricsStorageTestsBase
     [Test]
     public Task TooLongMetricNameReturnsBadRequest()
     {
-        var metric = new InvalidableMetricRecordBuilder().WithName(CreateTestString(MetricRecordConstants.MaxMetricNameLength + 1)).Build();
+        var metric = new InvalidableMetricRecordBuilder().WithName(CreateTooLongMetricName()).Build();
 
         return TestLogMetricRequestWithBadMetricRecord(metric);
     }
