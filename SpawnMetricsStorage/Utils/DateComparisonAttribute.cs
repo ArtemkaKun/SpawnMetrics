@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace SpawnMetricsStorage.Models;
+namespace SpawnMetricsStorage.Utils;
 
 public sealed class DateComparisonAttribute(string dateTimePropertyToCompare, DateComparisonRule comparisonRule) : ValidationAttribute
 {
