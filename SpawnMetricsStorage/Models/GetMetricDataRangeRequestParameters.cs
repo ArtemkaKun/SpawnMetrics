@@ -1,10 +1,12 @@
 using System.ComponentModel.DataAnnotations;
+using JetBrains.Annotations;
 using SpawnMetricsStorage.Models.MetricRecordFiles;
 using SpawnMetricsStorage.Models.ProjectName;
 using SpawnMetricsStorage.Utils;
 
 namespace SpawnMetricsStorage.Models;
 
+[UsedImplicitly]
 public sealed class GetMetricDataRangeRequestParameters
 {
     private const string RangeStartPropertyName = nameof(RangeStart);
