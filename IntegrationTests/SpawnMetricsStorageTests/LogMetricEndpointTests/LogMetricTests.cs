@@ -375,9 +375,11 @@ public sealed class LogMetricTests : SpawnMetricsStorageTestsBase
 
     private readonly struct InvalidableLogMetricRequestBody(string? projectName, InvalidableMetricRecord? metric)
     {
+        // NOTE: Used as structure for request, so this field serialized by JSON serializers.
         [UsedImplicitly]
         public readonly string? ProjectName = projectName;
 
+        // NOTE: Used as structure for request, so this field serialized by JSON serializers.
         [UsedImplicitly]
         public readonly InvalidableMetricRecord? Metric = metric;
     }
