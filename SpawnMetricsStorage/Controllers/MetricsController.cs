@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using SpawnMetricsStorage.Models;
-using SpawnMetricsStorage.Models.MetricRecordFiles;
 using SpawnMetricsStorage.Services;
 using SpawnMetricsStorage.Utils;
 
