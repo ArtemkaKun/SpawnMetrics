@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
+using JetBrains.Annotations;
 
 namespace SpawnMetricsStorage.Models.MetricRecordFiles;
 
@@ -20,19 +21,23 @@ public readonly struct MetricRecord(string name, DateTime logTimeUtc, string com
     [MaxLength(MetricRecordConstants.MaxCommitGitHubUrlLength)]
     [Url]
     [RegularExpression(@"https:\/\/github\.com\/[^\/]+\/[^\/]+\/commit\/[\da-fA-F]{8}", ErrorMessage = "Invalid GitHub commit URL")]
+    [UsedImplicitly]
     public string CommitGitHubUrl { get; } = commitGitHubUrl;
 
     [Required]
     [MinLength(MetricRecordConstants.MinStringLength)]
     [MaxLength(MetricRecordConstants.MaxCommitMessageLength)]
+    [UsedImplicitly]
     public string CommitMessage { get; } = commitMessage;
 
     [Required]
     [MinLength(MetricRecordConstants.MinStringLength)]
+    [UsedImplicitly]
     public string Value { get; } = value;
 
     [Required]
     [MinLength(MetricRecordConstants.MinStringLength)]
     [MaxLength(MetricRecordConstants.MaxUnitsLength)]
+    [UsedImplicitly]
     public string Units { get; } = units;
 }
