@@ -1,5 +1,7 @@
 ﻿@page "/"
 @using SpawnMetricsView.DataCollectorFiles
+@using MetricRecordModel
+@using Humanizer
 
 <PageTitle>Spawn Metrics</PageTitle>
 
@@ -12,7 +14,7 @@
             {
                 foreach (var projectName in _projectNames)
                 {
-                    <RadzenButton Icon="dashboard" IconPosition="IconPosition.Left" Text="@projectName"/>
+                    <RadzenButton Icon="dashboard" IconPosition="IconPosition.Left" Text="@projectName" Click="@(() => TryShowMetrics(projectName))"/>
                 }
             }
             else
@@ -28,6 +30,58 @@
         </RadzenPanelMenu>
     </RadzenSidebar>
     <RadzenBody>
+        @if (_rawCommitMetrics != null && _rawDataColumns != null)
+        {
+            <RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="50" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
+                            Data="@_rawCommitMetrics" TItem="Dictionary<string, object>" LogicalFilterOperator="LogicalFilterOperator.Or">
+                <Columns>
+                    @foreach (var column in _rawDataColumns)
+                    {
+                        switch (column.Key)
+                        {
+                            case nameof(MetricRecord.LogTimeUtc):
+                                <RadzenDataGridColumn TItem="Dictionary<string, object>" Property="@column.Key" Type="@column.Value" Filterable="true" Title="Commit time (UTC)" Frozen="false" Sortable="true" Width="5em" Resizable="false" Reorderable="false" TextAlign="TextAlign.Center">
+                                    <Template Context="metric">
+                                        @(((DateTime)metric[column.Key]).ToString("dd-MM-yyyy HH:mm"))
+                                    </Template>
+                                </RadzenDataGridColumn>
+
+                                break;
+                            case nameof(MetricRecord.CommitGitHubUrl):
+                                <RadzenDataGridColumn TItem="Dictionary<string, object>" Type="@column.Value" Filterable="false" Title="Commit" Frozen="false" Sortable="false" Width="5em" Resizable="false" Reorderable="false" TextAlign="TextAlign.Center">
+                                    <Template Context="metric">
+                                        <RadzenLink Text="@GetCommitHashFromGitHubUrl(metric[column.Key] as string)" Path="@(metric[column.Key] as string)"/>
+                                    </Template>
+                                </RadzenDataGridColumn>
+                            
+                                break;
+                            case nameof(MetricRecord.CommitMessage):
+                                <RadzenDataGridColumn TItem="Dictionary<string, object>" Property="@column.Key" Type="@column.Value" Filterable="false" Title="Commit message" Frozen="false" Sortable="false" Width="30em" Resizable="true" Reorderable="false" TextAlign="TextAlign.Center">
+                                    <Template Context="metric">
+                                        @metric[@column.Key]
+                                    </Template>
+                                </RadzenDataGridColumn>
+                            
+                                break;
+                            
+                            default:
+                                <RadzenDataGridColumn TItem="Dictionary<string, object>" Property="@column.Key" Type="@column.Value" Filterable="false" Title="@_metricPropertyNameToTitle[column.Key]" Frozen="false" Sortable="true" Width="5em" Resizable="false" Reorderable="false" TextAlign="TextAlign.Center">
+                                    <Template Context="metric">
+                                        @metric[@column.Key]
+                                    </Template>
+                                </RadzenDataGridColumn>
+                            
+                                break;
+                        }
+                    }
+                </Columns>
+            </RadzenDataGrid>
+        }
+        else
+        {
+            <RadzenLabel Text="No data found for the project"/>
+        }
+
         @* <RadzenRow AlignItems="AlignItems.Start"> *@
         @*     <RadzenColumn Size="3" Style="min-width: 450px; max-width: 450px"> *@
         @*         <RadzenCard> *@
@@ -68,22 +122,92 @@
 </RadzenLayout>
 
 @code {
+    private readonly DataCollector _dataCollector = new();
+
     private List<string>? _projectNames;
     private bool _isSidebarExpanded;
-    private readonly DataCollector _dataCollector = new();
+    private List<MetricRecord>? _metrics;
+    private List<Dictionary<string, object>>? _rawCommitMetrics;
+    private Dictionary<string, Type>? _rawDataColumns;
+    private readonly Dictionary<string, string> _metricPropertyNameToTitle = new();
 
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
 
-        var projectNames = await _dataCollector.GetProjectNames();
+        _projectNames = await _dataCollector.GetProjectNames();
+    }
 
-        if (projectNames == null || projectNames.Count == 0)
+    private async Task TryShowMetrics(string projectName)
+    {
+        if (_projectNames == null || _projectNames.Contains(projectName) == false)
         {
             return;
         }
 
-        _projectNames = projectNames;
+        _metrics = await _dataCollector.GetMetricDataRange(projectName);
+
+        if (_metrics != null)
+        {
+            var groupedMetrics = _metrics.GroupBy(x => x.LogTimeUtc).ToDictionary(x => x.Key, x => x.ToList());
+
+            _rawCommitMetrics = new List<Dictionary<string, object>>();
+
+            foreach (var (logTimeUtc, metricRecords) in groupedMetrics)
+            {
+                var commitGitHubUrl = metricRecords.First().CommitGitHubUrl;
+                var commitMessage = metricRecords.First().CommitMessage;
+
+                var metrics = metricRecords.DistinctBy(x => x.Name).Select(x => new CommitMetric(x.Name, x.Value, x.Units)).ToList();
+
+                var flat = new Dictionary<string, object>
+                {
+                    { nameof(MetricRecord.LogTimeUtc), logTimeUtc },
+                    { nameof(MetricRecord.CommitGitHubUrl), commitGitHubUrl },
+                    { nameof(MetricRecord.CommitMessage), commitMessage }
+                };
+
+                foreach (var metric in metrics)
+                {
+                    if (int.TryParse(metric.Value, out var valueInt))
+                    {
+                        flat.Add($"{metric.Name}".Camelize(), valueInt);
+                    }
+                    else if (float.TryParse(metric.Value, out var valueFloat))
+                    {
+                        flat.Add($"{metric.Name}".Camelize(), valueFloat);
+                    }
+                    else
+                    {
+                        flat.Add($"{metric.Name}".Camelize(), metric.Value);
+                    }
+
+                    _metricPropertyNameToTitle.TryAdd($"{metric.Name}".Camelize(), $"{metric.Name} ({metric.Units})");
+                }
+
+                _rawCommitMetrics.Add(flat);
+            }
+
+            _rawDataColumns = new Dictionary<string, Type>
+            {
+                { nameof(MetricRecord.LogTimeUtc), _rawCommitMetrics.First()[nameof(MetricRecord.LogTimeUtc)].GetType() },
+                { nameof(MetricRecord.CommitGitHubUrl), _rawCommitMetrics.First()[nameof(MetricRecord.CommitGitHubUrl)].GetType() },
+                { nameof(MetricRecord.CommitMessage), _rawCommitMetrics.First()[nameof(MetricRecord.CommitMessage)].GetType() }
+            };
+
+            var metricsNames = _rawCommitMetrics.First().Where(x => x.Key != nameof(MetricRecord.LogTimeUtc) && x.Key != nameof(MetricRecord.CommitGitHubUrl) && x.Key != nameof(MetricRecord.CommitMessage)).ToList();
+
+            foreach (var metric in metricsNames)
+            {
+                _rawDataColumns.Add(metric.Key, metric.Value.GetType());
+            }
+        }
+    }
+
+    private static string GetCommitHashFromGitHubUrl(string url)
+    {
+        var split = url.Split('/');
+        return split.Last();
     }
 
 }
