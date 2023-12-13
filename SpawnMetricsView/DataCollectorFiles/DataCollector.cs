@@ -1,5 +1,7 @@
 using System.Text.Json;
+using MetricRecordModel;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using SharedConstants;
 
 namespace SpawnMetricsView.DataCollectorFiles;
 
@@ -16,10 +18,21 @@ public sealed class DataCollector
 
     public async Task<List<string>?> GetProjectNames()
     {
-        var response = await _httpClient.GetAsync("/ProjectNames");
-        var responseContent = response.Content.ReadAsStringAsync().Result;
-        
-        return JsonSerializer.Deserialize<List<string>>(responseContent);
+        var response = await _httpClient.GetAsync(EndpointsConstants.ProjectNamesEndpoint);
+        var responseContent = await response.Content.ReadAsStringAsync();
+
+        return JsonSerializer.Deserialize<List<string>?>(responseContent);
+    }
+
+    public async Task<List<MetricRecord>?> GetMetricDataRange(string projectName)
+    {
+        var response = await _httpClient.GetAsync($"{EndpointsConstants.GetAllMetricsEndpoint}?ProjectName={projectName}");
+        var responseContent = await response.Content.ReadAsStringAsync();
+
+        return JsonSerializer.Deserialize<List<MetricRecord>?>(responseContent, new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true
+        });
     }
 
     private static IConfigurationRoot BuildConfiguration()
