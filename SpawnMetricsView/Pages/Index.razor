@@ -40,7 +40,7 @@
                         switch (column.Key)
                         {
                             case nameof(MetricRecord.LogTimeUtc):
-                                <RadzenDataGridColumn TItem="Dictionary<string, object>" Property="@column.Key" Type="@column.Value" Filterable="true" Title="Commit time (UTC)" Frozen="false" Sortable="true" Width="5em" Resizable="false" Reorderable="false" TextAlign="TextAlign.Center">
+                                <RadzenDataGridColumn TItem="Dictionary<string, object>" Property="@GetColumnPropertyExpression(column.Key, column.Value)" Type="@column.Value" Filterable="true" Title="Commit time (UTC)" Frozen="false" Sortable="true" Width="5em" Resizable="false" Reorderable="false" TextAlign="TextAlign.Center">
                                     <Template Context="metric">
                                         @(((DateTime)metric[column.Key]).ToString("dd-MM-yyyy HH:mm"))
                                     </Template>
@@ -48,29 +48,29 @@
 
                                 break;
                             case nameof(MetricRecord.CommitGitHubUrl):
-                                <RadzenDataGridColumn TItem="Dictionary<string, object>" Type="@column.Value" Filterable="false" Title="Commit" Frozen="false" Sortable="false" Width="5em" Resizable="false" Reorderable="false" TextAlign="TextAlign.Center">
+                                <RadzenDataGridColumn TItem="Dictionary<string, object>" Property="@GetColumnPropertyExpression(column.Key, column.Value)" Type="@column.Value" Filterable="true" Title="Commit" Frozen="false" Sortable="false" Width="5em" Resizable="false" Reorderable="false" TextAlign="TextAlign.Center">
                                     <Template Context="metric">
                                         <RadzenLink Text="@GetCommitHashFromGitHubUrl(metric[column.Key] as string)" Path="@(metric[column.Key] as string)"/>
                                     </Template>
                                 </RadzenDataGridColumn>
-                            
+
                                 break;
                             case nameof(MetricRecord.CommitMessage):
-                                <RadzenDataGridColumn TItem="Dictionary<string, object>" Property="@column.Key" Type="@column.Value" Filterable="false" Title="Commit message" Frozen="false" Sortable="false" Width="30em" Resizable="true" Reorderable="false" TextAlign="TextAlign.Center">
+                                <RadzenDataGridColumn TItem="Dictionary<string, object>" Property="@GetColumnPropertyExpression(column.Key, column.Value)" Type="@column.Value" Filterable="true" Title="Commit message" Frozen="false" Sortable="false" Width="30em" Resizable="true" Reorderable="false" TextAlign="TextAlign.Center">
                                     <Template Context="metric">
-                                        @metric[@column.Key]
+                                        @metric[column.Key]
                                     </Template>
                                 </RadzenDataGridColumn>
-                            
+
                                 break;
-                            
+
                             default:
-                                <RadzenDataGridColumn TItem="Dictionary<string, object>" Property="@column.Key" Type="@column.Value" Filterable="false" Title="@_metricPropertyNameToTitle[column.Key]" Frozen="false" Sortable="true" Width="5em" Resizable="false" Reorderable="false" TextAlign="TextAlign.Center">
+                                <RadzenDataGridColumn TItem="Dictionary<string, object>" Property="@GetColumnPropertyExpression(column.Key, column.Value)" Type="@column.Value" Filterable="true" Title="@_metricPropertyNameToTitle[column.Key]" Frozen="false" Sortable="true" Width="5em" Resizable="false" Reorderable="false" TextAlign="TextAlign.Center">
                                     <Template Context="metric">
-                                        @metric[@column.Key]
+                                        @metric[column.Key]
                                     </Template>
                                 </RadzenDataGridColumn>
-                            
+
                                 break;
                         }
                     }
@@ -208,6 +208,28 @@
     {
         var split = url.Split('/');
         return split.Last();
+    }
+
+    public string GetColumnPropertyExpression(string name, Type type)
+    {
+        var expression = $"""it["{name}"].ToString()""";
+
+        if (type == typeof(int))
+        {
+            return $"int.Parse({expression})";
+        }
+
+        if (type == typeof(float))
+        {
+            return $"float.Parse({expression})";
+        }
+
+        if (type == typeof(DateTime))
+        {
+            return $"DateTime.Parse({expression})";
+        }
+
+        return expression;
     }
 
 }
