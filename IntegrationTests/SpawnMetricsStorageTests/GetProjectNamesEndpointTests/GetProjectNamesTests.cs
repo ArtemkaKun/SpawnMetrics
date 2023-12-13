@@ -1,4 +1,5 @@
 using System.Text.Json;
+using SharedConstants;
 using SpawnMetricsStorage.Controllers;
 
 namespace IntegrationTests.SpawnMetricsStorageTests.GetProjectNamesEndpointTests;
@@ -38,7 +39,7 @@ public sealed class GetProjectNamesTests : SpawnMetricsStorageTestsBase
 
     private async Task RequestProjectNamesAndCheckResults(List<string> expectedNames)
     {
-        var request = GetAsync(MetricsControllerConstants.ProjectNamesEndpoint, null);
+        var request = GetAsync(EndpointsConstants.ProjectNamesEndpoint, null);
 
         await DoRequestAndAssertOk(request);
 

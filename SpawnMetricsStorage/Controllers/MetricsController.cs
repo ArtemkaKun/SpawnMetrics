@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using SharedConstants;
 using SpawnMetricsStorage.Models;
 using SpawnMetricsStorage.Services;
 using SpawnMetricsStorage.Utils;
@@ -12,11 +13,11 @@ public sealed class MetricsController(MetricsService metricsService, IConfigurat
 
     public void RegisterEndpoints(WebApplication app)
     {
-        app.MapPut(MetricsControllerConstants.MetricEndpoint, HandleLogMetricRequest);
+        app.MapPut(EndpointsConstants.MetricEndpoint, HandleLogMetricRequest);
 
-        app.MapGet(MetricsControllerConstants.ProjectNamesEndpoint, HandleGetProjectNames);
+        app.MapGet(EndpointsConstants.ProjectNamesEndpoint, HandleGetProjectNames);
 
-        app.MapGet(MetricsControllerConstants.GetAllMetricsEndpoint, HandleGetAllMetrics);
+        app.MapGet(EndpointsConstants.GetAllMetricsEndpoint, HandleGetAllMetrics);
     }
 
     private async Task<IResult> HandleLogMetricRequest([FromBody(EmptyBodyBehavior = EmptyBodyBehavior.Disallow)] LogMetricRequestBody newMetricData, HttpContext context)

@@ -1,5 +1,6 @@
 using System.Text.Json;
 using MetricRecordModel;
+using SharedConstants;
 using SpawnMetricsStorage.Controllers;
 
 namespace IntegrationTests.SpawnMetricsStorageTests.GetAllMetricsEndpointTests;
@@ -9,7 +10,7 @@ public sealed class GetAllMetricsTests : SpawnMetricsStorageTestsBase
     [Test]
     public Task NoParametersReturnsError()
     {
-        var request = GetAsync(MetricsControllerConstants.GetAllMetricsEndpoint, null);
+        var request = GetAsync(EndpointsConstants.GetAllMetricsEndpoint, null);
 
         return DoRequestAndAssertBadRequest(request);
     }
@@ -18,7 +19,7 @@ public sealed class GetAllMetricsTests : SpawnMetricsStorageTestsBase
     public Task NoProjectNameParameterReturnsError()
     {
         var parameters = new QueryParametersBuilder().WithoutProjectName().Build();
-        var request = GetAsync(MetricsControllerConstants.GetAllMetricsEndpoint, parameters);
+        var request = GetAsync(EndpointsConstants.GetAllMetricsEndpoint, parameters);
 
         return DoRequestAndAssertBadRequest(request);
     }
@@ -27,7 +28,7 @@ public sealed class GetAllMetricsTests : SpawnMetricsStorageTestsBase
     public Task EmptyProjectNameParameterReturnsError()
     {
         var parameters = new QueryParametersBuilder().WithProjectName("").Build();
-        var request = GetAsync(MetricsControllerConstants.GetAllMetricsEndpoint, parameters);
+        var request = GetAsync(EndpointsConstants.GetAllMetricsEndpoint, parameters);
 
         return DoRequestAndAssertBadRequest(request);
     }
@@ -36,7 +37,7 @@ public sealed class GetAllMetricsTests : SpawnMetricsStorageTestsBase
     public Task TooShortProjectNameParameterReturnsError()
     {
         var parameters = new QueryParametersBuilder().WithProjectName(CreateTooShortProjectName()).Build();
-        var request = GetAsync(MetricsControllerConstants.GetAllMetricsEndpoint, parameters);
+        var request = GetAsync(EndpointsConstants.GetAllMetricsEndpoint, parameters);
 
         return DoRequestAndAssertBadRequest(request);
     }
@@ -45,7 +46,7 @@ public sealed class GetAllMetricsTests : SpawnMetricsStorageTestsBase
     public Task TooLongProjectNameParameterReturnsError()
     {
         var parameters = new QueryParametersBuilder().WithProjectName(CreateTooLongProjectName()).Build();
-        var request = GetAsync(MetricsControllerConstants.GetAllMetricsEndpoint, parameters);
+        var request = GetAsync(EndpointsConstants.GetAllMetricsEndpoint, parameters);
 
         return DoRequestAndAssertBadRequest(request);
     }
@@ -114,7 +115,7 @@ public sealed class GetAllMetricsTests : SpawnMetricsStorageTestsBase
 
     private async Task RequestMetricDataRangeAndCheckResults(List<MetricRecord>? expectedMetric, Dictionary<string, string>? queryParameters)
     {
-        var request = GetAsync(MetricsControllerConstants.GetAllMetricsEndpoint, queryParameters);
+        var request = GetAsync(EndpointsConstants.GetAllMetricsEndpoint, queryParameters);
 
         await DoRequestAndAssertOk(request);
 
