@@ -5,6 +5,8 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <Company>Artem Yurchenko</Company>
+        <IsPackable>false</IsPackable>
+        <NeutralLanguage>en</NeutralLanguage>
     </PropertyGroup>
 
     <ItemGroup>
