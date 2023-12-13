@@ -16,7 +16,7 @@ public sealed class MetricsController(MetricsService metricsService, IConfigurat
 
         app.MapGet(MetricsControllerConstants.ProjectNamesEndpoint, HandleGetProjectNames);
 
-        app.MapGet(MetricsControllerConstants.MetricDataRangeEndpoint, HandleGetMetricDataRange);
+        app.MapGet(MetricsControllerConstants.GetAllMetricsEndpoint, HandleGetAllMetrics);
     }
 
     private async Task<IResult> HandleLogMetricRequest([FromBody(EmptyBodyBehavior = EmptyBodyBehavior.Disallow)] LogMetricRequestBody newMetricData, HttpContext context)
@@ -55,7 +55,7 @@ public sealed class MetricsController(MetricsService metricsService, IConfigurat
         return metricsService.GetProjectNames();
     }
 
-    private async Task<IResult> HandleGetMetricDataRange([AsParameters] GetMetricDataRangeRequestParameters parameters)
+    private async Task<IResult> HandleGetAllMetrics([AsParameters] GetAllMetricsRequestParameters parameters)
     {
         var validationError = ModelValidator.Validate(parameters);
 
@@ -64,7 +64,7 @@ public sealed class MetricsController(MetricsService metricsService, IConfigurat
             return validationError;
         }
 
-        var metrics = await metricsService.GetMetricDataRange(parameters.ProjectName, parameters.RangeStart, parameters.RangeEnd);
+        var metrics = await metricsService.GetAllMetrics(parameters.ProjectName);
 
         return Results.Ok(metrics);
     }

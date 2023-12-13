@@ -8,8 +8,6 @@ namespace SpawnMetricsStorage.Services;
 
 public sealed class MetricsService(ISurrealDbClient surrealDbClient)
 {
-    private readonly string _metricRecordLogTimeUtcDbFriendly = nameof(MetricRecord.LogTimeUtc).Underscore();
-
     public async Task WriteNewMetric(LogMetricRequestBody newMetricData)
     {
         await surrealDbClient.Create(newMetricData.ProjectName, newMetricData.Metric);
@@ -31,12 +29,10 @@ public sealed class MetricsService(ISurrealDbClient surrealDbClient)
         return tableNameToMetadataMap?.Keys.ToList();
     }
 
-    public async Task<List<MetricRecord>?> GetMetricDataRange(string projectName, DateTime rangeStart, DateTime rangeEnd)
+    public async Task<List<MetricRecord>?> GetAllMetrics(string projectName)
     {
-        var query =
-            $"SELECT * FROM {projectName} WHERE ({_metricRecordLogTimeUtcDbFriendly} >= \"{rangeStart:O}\" AND {_metricRecordLogTimeUtcDbFriendly} <= \"{rangeEnd:O}\") ORDER BY {_metricRecordLogTimeUtcDbFriendly} DESC;";
-
-        var queryResponse = await surrealDbClient.Query(query);
+        var metricRecordLogTimeUtcDbFriendly = nameof(MetricRecord.LogTimeUtc).Underscore();
+        var queryResponse = await surrealDbClient.Query($"SELECT * FROM {projectName} ORDER BY {metricRecordLogTimeUtcDbFriendly} DESC;");
 
         var list = queryResponse.GetValue<List<MetricRecord>>(0);
 

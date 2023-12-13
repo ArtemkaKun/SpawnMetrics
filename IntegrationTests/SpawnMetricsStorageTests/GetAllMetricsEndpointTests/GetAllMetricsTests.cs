@@ -2,14 +2,14 @@ using System.Text.Json;
 using MetricRecordModel;
 using SpawnMetricsStorage.Controllers;
 
-namespace IntegrationTests.SpawnMetricsStorageTests.GetMetricDataRangeEndpointTests;
+namespace IntegrationTests.SpawnMetricsStorageTests.GetAllMetricsEndpointTests;
 
-public sealed class GetMetricDataRangeTests : SpawnMetricsStorageTestsBase
+public sealed class GetAllMetricsTests : SpawnMetricsStorageTestsBase
 {
     [Test]
     public Task NoParametersReturnsError()
     {
-        var request = GetAsync(MetricsControllerConstants.MetricDataRangeEndpoint, null);
+        var request = GetAsync(MetricsControllerConstants.GetAllMetricsEndpoint, null);
 
         return DoRequestAndAssertBadRequest(request);
     }
@@ -18,7 +18,7 @@ public sealed class GetMetricDataRangeTests : SpawnMetricsStorageTestsBase
     public Task NoProjectNameParameterReturnsError()
     {
         var parameters = new QueryParametersBuilder().WithoutProjectName().Build();
-        var request = GetAsync(MetricsControllerConstants.MetricDataRangeEndpoint, parameters);
+        var request = GetAsync(MetricsControllerConstants.GetAllMetricsEndpoint, parameters);
 
         return DoRequestAndAssertBadRequest(request);
     }
@@ -27,7 +27,7 @@ public sealed class GetMetricDataRangeTests : SpawnMetricsStorageTestsBase
     public Task EmptyProjectNameParameterReturnsError()
     {
         var parameters = new QueryParametersBuilder().WithProjectName("").Build();
-        var request = GetAsync(MetricsControllerConstants.MetricDataRangeEndpoint, parameters);
+        var request = GetAsync(MetricsControllerConstants.GetAllMetricsEndpoint, parameters);
 
         return DoRequestAndAssertBadRequest(request);
     }
@@ -36,7 +36,7 @@ public sealed class GetMetricDataRangeTests : SpawnMetricsStorageTestsBase
     public Task TooShortProjectNameParameterReturnsError()
     {
         var parameters = new QueryParametersBuilder().WithProjectName(CreateTooShortProjectName()).Build();
-        var request = GetAsync(MetricsControllerConstants.MetricDataRangeEndpoint, parameters);
+        var request = GetAsync(MetricsControllerConstants.GetAllMetricsEndpoint, parameters);
 
         return DoRequestAndAssertBadRequest(request);
     }
@@ -45,43 +45,7 @@ public sealed class GetMetricDataRangeTests : SpawnMetricsStorageTestsBase
     public Task TooLongProjectNameParameterReturnsError()
     {
         var parameters = new QueryParametersBuilder().WithProjectName(CreateTooLongProjectName()).Build();
-        var request = GetAsync(MetricsControllerConstants.MetricDataRangeEndpoint, parameters);
-
-        return DoRequestAndAssertBadRequest(request);
-    }
-
-    [Test]
-    public Task NoRangeStartParameterReturnsError()
-    {
-        var parameters = new QueryParametersBuilder().WithoutRangeStart().Build();
-        var request = GetAsync(MetricsControllerConstants.MetricDataRangeEndpoint, parameters);
-
-        return DoRequestAndAssertBadRequest(request);
-    }
-
-    [Test]
-    public Task RangeStartParameterLaterThanRangeEndReturnsError()
-    {
-        var parameters = new QueryParametersBuilder().WithRangeStart(DateTime.UtcNow + TimeSpan.FromHours(1)).WithRangeEnd(DateTime.UtcNow).Build();
-        var request = GetAsync(MetricsControllerConstants.MetricDataRangeEndpoint, parameters);
-
-        return DoRequestAndAssertBadRequest(request);
-    }
-
-    [Test]
-    public Task NoRangeEndParameterReturnsError()
-    {
-        var parameters = new QueryParametersBuilder().WithoutRangeEnd().Build();
-        var request = GetAsync(MetricsControllerConstants.MetricDataRangeEndpoint, parameters);
-
-        return DoRequestAndAssertBadRequest(request);
-    }
-
-    [Test]
-    public Task RangeEndParameterEarlierThanRangeStartReturnsError()
-    {
-        var parameters = new QueryParametersBuilder().WithRangeStart(DateTime.UtcNow).WithRangeEnd(DateTime.UtcNow - TimeSpan.FromHours(1)).Build();
-        var request = GetAsync(MetricsControllerConstants.MetricDataRangeEndpoint, parameters);
+        var request = GetAsync(MetricsControllerConstants.GetAllMetricsEndpoint, parameters);
 
         return DoRequestAndAssertBadRequest(request);
     }
@@ -102,7 +66,7 @@ public sealed class GetMetricDataRangeTests : SpawnMetricsStorageTestsBase
         var timeNow = DateTime.UtcNow;
         var createdMetrics = await CreateMultipleMetricsWithLogTimeShift(metricsCount, timeNow);
 
-        var parameters = new QueryParametersBuilder().WithRangeStart(timeNow - TimeSpan.FromMinutes(1)).WithRangeEnd(timeNow + TimeSpan.FromMinutes(metricsCount)).Build();
+        var parameters = new QueryParametersBuilder().Build();
         await RequestMetricDataRangeAndCheckResults(createdMetrics, parameters);
     }
 
@@ -114,19 +78,7 @@ public sealed class GetMetricDataRangeTests : SpawnMetricsStorageTestsBase
         var timeNow = DateTime.UtcNow;
         var createdMetrics = await CreateMultipleMetricsWithLogTimeShift(metricsCount, timeNow);
 
-        var parameters = new QueryParametersBuilder().WithRangeStart(timeNow - TimeSpan.FromMinutes(1)).WithRangeEnd(timeNow + TimeSpan.FromMinutes(metricsCount)).Build();
-        await RequestMetricDataRangeAndCheckResults(createdMetrics, parameters);
-    }
-
-    [Test]
-    [NonParallelizable]
-    public async Task MultipleMetricsOnRangeBordersReturnsMultipleMetrics()
-    {
-        const int metricsCount = 3;
-        var timeNow = DateTime.UtcNow;
-        var createdMetrics = await CreateMultipleMetricsWithLogTimeShift(metricsCount, timeNow);
-
-        var parameters = new QueryParametersBuilder().WithRangeStart(timeNow).WithRangeEnd(timeNow + TimeSpan.FromMinutes(metricsCount - 1)).Build();
+        var parameters = new QueryParametersBuilder().Build();
         await RequestMetricDataRangeAndCheckResults(createdMetrics, parameters);
     }
 
@@ -140,7 +92,7 @@ public sealed class GetMetricDataRangeTests : SpawnMetricsStorageTestsBase
         var createdMetrics = await CreateMultipleMetricsWithLogTimeShift(metricsCount, timeNow);
         await CreateMultipleMetricsWithLogTimeShift(metricsCount, timeNow, projectName: SpawnMetricsStorageTestsConstants.AnotherProjectName);
 
-        var parameters = new QueryParametersBuilder().WithRangeStart(timeNow).WithRangeEnd(timeNow + TimeSpan.FromMinutes(metricsCount)).Build();
+        var parameters = new QueryParametersBuilder().Build();
         await RequestMetricDataRangeAndCheckResults(createdMetrics, parameters);
     }
 
@@ -162,7 +114,7 @@ public sealed class GetMetricDataRangeTests : SpawnMetricsStorageTestsBase
 
     private async Task RequestMetricDataRangeAndCheckResults(List<MetricRecord>? expectedMetric, Dictionary<string, string>? queryParameters)
     {
-        var request = GetAsync(MetricsControllerConstants.MetricDataRangeEndpoint, queryParameters);
+        var request = GetAsync(MetricsControllerConstants.GetAllMetricsEndpoint, queryParameters);
 
         await DoRequestAndAssertOk(request);
 
