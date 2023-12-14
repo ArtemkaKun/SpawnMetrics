@@ -4,10 +4,6 @@ namespace SpawnMetricsView.RawDataMetrics;
 
 public sealed class RawDataMetricsCalculator
 {
-    private const string LogTimePropertyName = nameof(MetricRecord.LogTimeUtc);
-    private const string CommitGitHubUrlPropertyName = nameof(MetricRecord.CommitGitHubUrl);
-    private const string CommitMessagePropertyName = nameof(MetricRecord.CommitMessage);
-
     private readonly Dictionary<string, Type> _rawDataColumns = CreateDefaultColumns();
     private readonly List<Dictionary<string, object>> _rawDataRows = [];
 
@@ -23,9 +19,9 @@ public sealed class RawDataMetricsCalculator
 
             var dataRow = new Dictionary<string, object>
             {
-                { LogTimePropertyName, logTime },
-                { CommitGitHubUrlPropertyName, firstMetric.CommitGitHubUrl },
-                { CommitMessagePropertyName, firstMetric.CommitMessage }
+                { RawDataConstants.LogTimePropertyName, logTime },
+                { RawDataConstants.CommitGitHubUrlPropertyName, firstMetric.CommitGitHubUrl },
+                { RawDataConstants.CommitMessagePropertyName, firstMetric.CommitMessage }
             };
 
             foreach (var metric in metrics)
@@ -46,13 +42,13 @@ public sealed class RawDataMetricsCalculator
         return new Dictionary<string, Type>
         {
             {
-                LogTimePropertyName, metricRecordType.GetProperty(LogTimePropertyName)?.PropertyType ?? typeof(DateTime)
+                RawDataConstants.LogTimePropertyName, metricRecordType.GetProperty(RawDataConstants.LogTimePropertyName)?.PropertyType ?? typeof(DateTime)
             },
             {
-                CommitGitHubUrlPropertyName, metricRecordType.GetProperty(CommitGitHubUrlPropertyName)?.PropertyType ?? typeof(string)
+                RawDataConstants.CommitGitHubUrlPropertyName, metricRecordType.GetProperty(RawDataConstants.CommitGitHubUrlPropertyName)?.PropertyType ?? typeof(string)
             },
             {
-                CommitMessagePropertyName, metricRecordType.GetProperty(CommitMessagePropertyName)?.PropertyType ?? typeof(string)
+                RawDataConstants.CommitMessagePropertyName, metricRecordType.GetProperty(RawDataConstants.CommitMessagePropertyName)?.PropertyType ?? typeof(string)
             }
         };
     }
