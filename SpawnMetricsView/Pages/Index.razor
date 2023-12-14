@@ -24,48 +24,54 @@
     </RadzenHeader>
     <RadzenSidebar @bind-Expanded="@_isSidebarExpanded">
         <RadzenPanelMenu>
-            <RadzenPanelMenuItem Text="Fancy data" Icon="grade"/>
-            <RadzenPanelMenuItem Text="Raw data" Icon="code"/>
+            <RadzenPanelMenuItem Text="Fancy data" Icon="grade" Click="@(() => _isShowFancyData = true)"/>
+            <RadzenPanelMenuItem Text="Raw data" Icon="code" Click="@(() => _isShowFancyData = false)"/>
         </RadzenPanelMenu>
     </RadzenSidebar>
     <RadzenBody>
-        @if (_rawDataColumns != null && _rawDataColumns.Count > 0 && _rawDataRows != null && _rawDataRows.Count > 0)
+        @if (_isShowFancyData)
         {
-            <RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="50" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
-                            Data="@_rawDataRows" TItem="Dictionary<string, object>" LogicalFilterOperator="LogicalFilterOperator.And">
-                <Columns>
-                    <RadzenDataGridColumn TItem="Dictionary<string, object>" Property="@RawDataHelpers.GetColumnPropertyExpression(RawDataConstants.LogTimePropertyName, _rawDataColumns[RawDataConstants.LogTimePropertyName])" Type="@_rawDataColumns[RawDataConstants.LogTimePropertyName]" Filterable="true" Title="Commit time (UTC)" Frozen="false" Sortable="true" Width="5em" Resizable="false" Reorderable="false" TextAlign="TextAlign.Center">
-                        <Template Context="metric">
-                            @(((DateTime)metric[RawDataConstants.LogTimePropertyName]).ToString("dd-MM-yyyy HH:mm"))
-                        </Template>
-                    </RadzenDataGridColumn>
-
-                    <RadzenDataGridColumn TItem="Dictionary<string, object>" Property="@RawDataHelpers.GetColumnPropertyExpression(RawDataConstants.CommitGitHubUrlPropertyName, _rawDataColumns[RawDataConstants.CommitGitHubUrlPropertyName])" Type="@_rawDataColumns[RawDataConstants.CommitGitHubUrlPropertyName]" Filterable="true" Title="Commit" Frozen="false" Sortable="false" Width="5em" Resizable="false" Reorderable="false" TextAlign="TextAlign.Center">
-                        <Template Context="metric">
-                            <RadzenLink Text="@RawDataHelpers.GetCommitHashFromGitHubUrl(metric[RawDataConstants.CommitGitHubUrlPropertyName] as string)" Path="@(metric[RawDataConstants.CommitGitHubUrlPropertyName] as string)"/>
-                        </Template>
-                    </RadzenDataGridColumn>
-
-                    <RadzenDataGridColumn TItem="Dictionary<string, object>" Property="@RawDataHelpers.GetColumnPropertyExpression(RawDataConstants.CommitMessagePropertyName, _rawDataColumns[RawDataConstants.CommitMessagePropertyName])" Type="@_rawDataColumns[RawDataConstants.CommitMessagePropertyName]" Filterable="true" Title="Commit message" Frozen="false" Sortable="false" Width="30em" Resizable="true" Reorderable="false" TextAlign="TextAlign.Center">
-                        <Template Context="metric">
-                            @metric[RawDataConstants.CommitMessagePropertyName]
-                        </Template>
-                    </RadzenDataGridColumn>
-
-                    @foreach (var column in _rawDataColumns.Skip(3))
-                    {
-                        <RadzenDataGridColumn TItem="Dictionary<string, object>" Property="@RawDataHelpers.GetColumnPropertyExpression(column.Key, column.Value)" Type="@column.Value" Filterable="true" Title="@column.Key" Frozen="false" Sortable="true" Width="5em" Resizable="false" Reorderable="false" TextAlign="TextAlign.Center">
-                            <Template Context="metric">
-                                @metric[column.Key]
-                            </Template>
-                        </RadzenDataGridColumn>
-                    }
-                </Columns>
-            </RadzenDataGrid>
         }
         else
         {
-            <RadzenLabel Text="No data found for the project"/>
+            @if (_rawDataColumns != null && _rawDataColumns.Count > 0 && _rawDataRows != null && _rawDataRows.Count > 0)
+            {
+                <RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="50" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
+                                Data="@_rawDataRows" TItem="Dictionary<string, object>" LogicalFilterOperator="LogicalFilterOperator.And">
+                    <Columns>
+                        <RadzenDataGridColumn TItem="Dictionary<string, object>" Property="@RawDataHelpers.GetColumnPropertyExpression(RawDataConstants.LogTimePropertyName, _rawDataColumns[RawDataConstants.LogTimePropertyName])" Type="@_rawDataColumns[RawDataConstants.LogTimePropertyName]" Filterable="true" Title="Commit time (UTC)" Frozen="false" Sortable="true" Width="5em" Resizable="false" Reorderable="false" TextAlign="TextAlign.Center">
+                            <Template Context="metric">
+                                @(((DateTime)metric[RawDataConstants.LogTimePropertyName]).ToString("dd-MM-yyyy HH:mm"))
+                            </Template>
+                        </RadzenDataGridColumn>
+
+                        <RadzenDataGridColumn TItem="Dictionary<string, object>" Property="@RawDataHelpers.GetColumnPropertyExpression(RawDataConstants.CommitGitHubUrlPropertyName, _rawDataColumns[RawDataConstants.CommitGitHubUrlPropertyName])" Type="@_rawDataColumns[RawDataConstants.CommitGitHubUrlPropertyName]" Filterable="true" Title="Commit" Frozen="false" Sortable="false" Width="5em" Resizable="false" Reorderable="false" TextAlign="TextAlign.Center">
+                            <Template Context="metric">
+                                <RadzenLink Text="@RawDataHelpers.GetCommitHashFromGitHubUrl(metric[RawDataConstants.CommitGitHubUrlPropertyName] as string)" Path="@(metric[RawDataConstants.CommitGitHubUrlPropertyName] as string)"/>
+                            </Template>
+                        </RadzenDataGridColumn>
+
+                        <RadzenDataGridColumn TItem="Dictionary<string, object>" Property="@RawDataHelpers.GetColumnPropertyExpression(RawDataConstants.CommitMessagePropertyName, _rawDataColumns[RawDataConstants.CommitMessagePropertyName])" Type="@_rawDataColumns[RawDataConstants.CommitMessagePropertyName]" Filterable="true" Title="Commit message" Frozen="false" Sortable="false" Width="30em" Resizable="true" Reorderable="false" TextAlign="TextAlign.Center">
+                            <Template Context="metric">
+                                @metric[RawDataConstants.CommitMessagePropertyName]
+                            </Template>
+                        </RadzenDataGridColumn>
+
+                        @foreach (var column in _rawDataColumns.Skip(3))
+                        {
+                            <RadzenDataGridColumn TItem="Dictionary<string, object>" Property="@RawDataHelpers.GetColumnPropertyExpression(column.Key, column.Value)" Type="@column.Value" Filterable="true" Title="@column.Key" Frozen="false" Sortable="true" Width="5em" Resizable="false" Reorderable="false" TextAlign="TextAlign.Center">
+                                <Template Context="metric">
+                                    @metric[column.Key]
+                                </Template>
+                            </RadzenDataGridColumn>
+                        }
+                    </Columns>
+                </RadzenDataGrid>
+            }
+            else
+            {
+                <RadzenLabel Text="No data found for the project"/>
+            }
         }
 
         @* <RadzenRow AlignItems="AlignItems.Start"> *@
@@ -112,6 +118,8 @@
 
     private List<string>? _projectNames;
     private bool _isSidebarExpanded;
+
+    private bool _isShowFancyData = true;
 
     private readonly RawDataMetricsCalculator _rawDataCalculator = new();
     private Dictionary<string, Type>? _rawDataColumns;
