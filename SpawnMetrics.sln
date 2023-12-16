@@ -10,6 +10,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MetricRecordModel", "Metric
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedConstants", "SharedConstants\SharedConstants.csproj", "{5E4573FE-11DA-4F1F-8965-88597A6773D4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpawnMetricsLogger", "SpawnMetricsLogger\SpawnMetricsLogger.csproj", "{06B31761-C042-47E5-BB41-077A841700A2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -36,5 +38,9 @@ Global
 		{5E4573FE-11DA-4F1F-8965-88597A6773D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5E4573FE-11DA-4F1F-8965-88597A6773D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5E4573FE-11DA-4F1F-8965-88597A6773D4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{06B31761-C042-47E5-BB41-077A841700A2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{06B31761-C042-47E5-BB41-077A841700A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{06B31761-C042-47E5-BB41-077A841700A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{06B31761-C042-47E5-BB41-077A841700A2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
