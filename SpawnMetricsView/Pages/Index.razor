@@ -31,6 +31,61 @@
     <RadzenBody>
         @if (_isShowFancyData)
         {
+            @if (_fancyData != null)
+            {
+                <RadzenStack Orientation="Orientation.Vertical" AlignItems="AlignItems.Start" Wrap="FlexWrap.Wrap">
+
+                    @foreach (var data in _fancyData)
+                    {
+                        <RadzenCard>
+                            <RadzenStack Orientation="Orientation.Vertical" AlignItems="AlignItems.Center" Wrap="FlexWrap.Wrap">
+                                <RadzenText TextStyle="TextStyle.H3" TextAlign="TextAlign.Center">@data.Key</RadzenText>
+
+                                <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Wrap="FlexWrap.Wrap">
+                                    <RadzenCard Style="width: 20em; height: 20em">
+                                        <RadzenStack Orientation="Orientation.Vertical" AlignItems="AlignItems.Center">
+                                            <RadzenStack Orientation="Orientation.Vertical" AlignItems="AlignItems.Center">
+                                                <RadzenStack Orientation="Orientation.Vertical" AlignItems="AlignItems.Center">
+                                                    <RadzenText TextStyle="TextStyle.H4">@data.Value.currentValue</RadzenText>
+                                                    <RadzenText>Current</RadzenText>
+                                                </RadzenStack>
+
+                                                <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center">
+                                                    <RadzenStack Orientation="Orientation.Vertical" AlignItems="AlignItems.Center">
+                                                        <RadzenText TextStyle="TextStyle.H5">@data.Value.averageValue.ToString("F2")</RadzenText>
+                                                        <RadzenText>Average</RadzenText>
+                                                    </RadzenStack>
+
+                                                    <RadzenStack Orientation="Orientation.Vertical" AlignItems="AlignItems.Center">
+                                                        <RadzenText TextStyle="TextStyle.H5">@data.Value.medianValue.ToString("F2")</RadzenText>
+                                                        <RadzenText>Median</RadzenText>
+                                                    </RadzenStack>
+                                                </RadzenStack>
+                                            </RadzenStack>
+                                        </RadzenStack>
+                                    </RadzenCard>
+
+                                    <RadzenCard Style="min-width: 1000px; width: 100em; height: 20em;">
+                                        <RadzenChart ColorScheme="ColorScheme.Palette">
+                                            <RadzenLineSeries Data="@data.Value.graphData" Title="@data.Key" CategoryProperty="Date" ValueProperty="Value">
+                                                <RadzenMarkers MarkerType="MarkerType.None"/>
+                                            </RadzenLineSeries>
+                                            <RadzenCategoryAxis Padding="20" FormatString="{0:dd-MM-yyyy}"/>
+                                            <RadzenValueAxis>
+                                                <RadzenGridLines Visible="true"/>
+                                            </RadzenValueAxis>
+                                        </RadzenChart>
+                                    </RadzenCard>
+                                </RadzenStack>
+                            </RadzenStack>
+                        </RadzenCard>
+                    }
+                </RadzenStack>
+            }
+            else
+            {
+                <RadzenLabel Text="No data found for the project"/>
+            }
         }
         else
         {
@@ -73,43 +128,6 @@
                 <RadzenLabel Text="No data found for the project"/>
             }
         }
-
-        @* <RadzenRow AlignItems="AlignItems.Start"> *@
-        @*     <RadzenColumn Size="3" Style="min-width: 450px; max-width: 450px"> *@
-        @*         <RadzenCard> *@
-        @*             <RadzenStack Orientation="Orientation.Vertical"> *@
-        @*                 <RadzenStack Orientation="Orientation.Vertical" AlignItems="AlignItems.Center"> *@
-        @*                     <RadzenText TextStyle="TextStyle.H1">10000</RadzenText> *@
-        @*                     <RadzenText>Lines of code</RadzenText> *@
-        @*                 </RadzenStack> *@
-        @*                 <RadzenRow Style="border-top: solid 1px gray;"> *@
-        @*                     <RadzenStack Orientation="Orientation.Vertical" AlignItems="AlignItems.Center" Style="margin: 1em"> *@
-        @*                         <RadzenText TextStyle="TextStyle.H3">10000</RadzenText> *@
-        @*                         <RadzenText>Lines of code (AVG)</RadzenText> *@
-        @*                     </RadzenStack> *@
-        @*                     <RadzenStack Orientation="Orientation.Vertical" AlignItems="AlignItems.Center" Style="margin: 1em"> *@
-        @*                         <RadzenText TextStyle="TextStyle.H3">10000</RadzenText> *@
-        @*                         <RadzenText>Lines of code (Median)</RadzenText> *@
-        @*                     </RadzenStack> *@
-        @*                 </RadzenRow> *@
-        @*             </RadzenStack> *@
-        @*         </RadzenCard> *@
-        @*     </RadzenColumn> *@
-        @*     <RadzenColumn> *@
-        @*         <RadzenCard Style="min-width: 1000px; max-width: 1500px; min-height: 348px;"> *@
-        @*             <RadzenChart ColorScheme="ColorScheme.Palette"> *@
-        @*                 <RadzenLineSeries Data="@revenue2020" Title="Spawn compiler (LOC)" CategoryProperty="Date" ValueProperty="Revenue"> *@
-        @*                     <RadzenMarkers MarkerType="MarkerType.Circle"/> *@
-        @*                 </RadzenLineSeries> *@
-        @*                 <RadzenCategoryAxis Padding="20"/> *@
-        @*                 <RadzenValueAxis> *@
-        @*                     <RadzenGridLines Visible="true"/> *@
-        @*                     <RadzenAxisTitle Text="Lines of code"/> *@
-        @*                 </RadzenValueAxis> *@
-        @*             </RadzenChart> *@
-        @*         </RadzenCard> *@
-        @*     </RadzenColumn> *@
-        @* </RadzenRow> *@
     </RadzenBody>
 </RadzenLayout>
 
@@ -124,6 +142,14 @@
     private readonly RawDataMetricsCalculator _rawDataCalculator = new();
     private Dictionary<string, Type>? _rawDataColumns;
     private List<Dictionary<string, object>>? _rawDataRows;
+
+    private Dictionary<string, (object currentValue, float averageValue, float medianValue, List<ChartData> graphData)>? _fancyData;
+
+    private class ChartData
+    {
+        public DateTime Date { get; set; }
+        public float Value { get; set; }
+    }
 
     protected override async Task OnInitializedAsync()
     {
@@ -143,7 +169,56 @@
 
         if (metrics != null)
         {
-            (_rawDataColumns, _rawDataRows) = _rawDataCalculator.RecalculateRawData(metrics);
+            if (_isShowFancyData)
+            {
+                var metricNameToMetricRecordsMap = metrics.GroupBy(m => m.Name).ToDictionary(g => g.Key, g => g.ToList());
+
+                _fancyData = new Dictionary<string, (object, float, float, List<ChartData> graphData)>();
+
+                foreach (var (metricName, metricRecords) in metricNameToMetricRecordsMap)
+                {
+                    var orderedByDescending = metricRecords.OrderByDescending(x => x.LogTimeUtc).ToList();
+
+                    object currentValue = orderedByDescending.First().Value;
+
+                    if (int.TryParse(orderedByDescending.First().Value, out var valueInt))
+                    {
+                        currentValue = valueInt;
+                    }
+                    else if (float.TryParse(orderedByDescending.First().Value, out var valueFloat))
+                    {
+                        currentValue = valueFloat;
+                    }
+
+                    var metricAverage = metricRecords.Average(x => float.Parse(x.Value));
+                    var metricMedian = metricRecords.Select(x => float.Parse(x.Value)).Order().ElementAt(metricRecords.Count / 2);
+
+                    var last3MonthsRecords = orderedByDescending.TakeWhile(x => x.LogTimeUtc >= DateTime.UtcNow - TimeSpan.FromDays(90)).ToList();
+
+                    var orderedByAscending = last3MonthsRecords.OrderBy(x => x.LogTimeUtc).ToList();
+
+                    var graphX = orderedByAscending.Select(x => x.LogTimeUtc).ToList();
+
+                    var graphY = orderedByAscending.Select(x => float.Parse(x.Value)).ToList();
+
+                    var chartData = new List<ChartData>();
+
+                    for (var i = 0; i < graphX.Count; i++)
+                    {
+                        chartData.Add(new ChartData
+                        {
+                            Date = graphX[i],
+                            Value = graphY[i]
+                        });
+                    }
+
+                    _fancyData.Add(metricName, (currentValue, metricAverage, metricMedian, chartData));
+                }
+            }
+            else
+            {
+                (_rawDataColumns, _rawDataRows) = _rawDataCalculator.RecalculateRawData(metrics);
+            }
         }
     }
 
