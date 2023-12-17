@@ -142,7 +142,7 @@ public sealed class LogMetricTests : SpawnMetricsStorageTestsBase
     [Test]
     public Task TooShortCommitGitHubUrlReturnsBadRequest()
     {
-        var metric = new InvalidableMetricRecordBuilder().WithCommitGitHubUrl(CreateTestString(MetricRecordConstants.MinCommitGitHubUrlLength - 1)).Build();
+        var metric = new InvalidableMetricRecordBuilder().WithCommitGitHubUrl(CreateTestString(GitConstants.MinCommitGitHubUrlLength - 1)).Build();
 
         return TestLogMetricRequestWithBadMetricRecord(metric);
     }
@@ -150,7 +150,7 @@ public sealed class LogMetricTests : SpawnMetricsStorageTestsBase
     [Test]
     public Task TooLongCommitGitHubUrlReturnsBadRequest()
     {
-        var metric = new InvalidableMetricRecordBuilder().WithCommitGitHubUrl(CreateTestString(MetricRecordConstants.MaxCommitGitHubUrlLength + 1)).Build();
+        var metric = new InvalidableMetricRecordBuilder().WithCommitGitHubUrl(CreateTestString(GitConstants.MaxCommitGitHubUrlLength + 1)).Build();
 
         return TestLogMetricRequestWithBadMetricRecord(metric);
     }
@@ -158,7 +158,7 @@ public sealed class LogMetricTests : SpawnMetricsStorageTestsBase
     [Test]
     public Task NotALinkCommitGitHubUrlReturnsBadRequest()
     {
-        var metric = new InvalidableMetricRecordBuilder().WithCommitGitHubUrl(CreateTestString(MetricRecordConstants.MaxCommitGitHubUrlLength)).Build();
+        var metric = new InvalidableMetricRecordBuilder().WithCommitGitHubUrl(CreateTestString(GitConstants.MaxCommitGitHubUrlLength)).Build();
 
         return TestLogMetricRequestWithBadMetricRecord(metric);
     }
@@ -182,7 +182,7 @@ public sealed class LogMetricTests : SpawnMetricsStorageTestsBase
     [Test]
     public Task CommitGitHubUrlTooShortShortCommitHashReturnsBadRequest()
     {
-        var metric = new InvalidableMetricRecordBuilder().WithCommitGitHubUrl($"https://github.com/spawn/spawn/commit/{CreateTestString(MetricRecordConstants.ShortCommitHashLength - 1)}").Build();
+        var metric = new InvalidableMetricRecordBuilder().WithCommitGitHubUrl($"https://github.com/spawn/spawn/commit/{CreateTestString(GitConstants.ShortCommitHashLength - 1)}").Build();
 
         return TestLogMetricRequestWithBadMetricRecord(metric);
     }
@@ -190,7 +190,7 @@ public sealed class LogMetricTests : SpawnMetricsStorageTestsBase
     [Test]
     public Task CommitGitHubUrlTooLongShortCommitHashReturnsBadRequest()
     {
-        var metric = new InvalidableMetricRecordBuilder().WithCommitGitHubUrl($"https://github.com/spawn/spawn/commit/{CreateTestString(MetricRecordConstants.ShortCommitHashLength + 1)}").Build();
+        var metric = new InvalidableMetricRecordBuilder().WithCommitGitHubUrl($"https://github.com/spawn/spawn/commit/{CreateTestString(GitConstants.ShortCommitHashLength + 1)}").Build();
 
         return TestLogMetricRequestWithBadMetricRecord(metric);
     }
@@ -198,7 +198,7 @@ public sealed class LogMetricTests : SpawnMetricsStorageTestsBase
     [Test]
     public Task CommitGitHubUrlInvalidShortCommitHashReturnsBadRequest()
     {
-        var metric = new InvalidableMetricRecordBuilder().WithCommitGitHubUrl($"https://github.com/spawn/spawn/commit/{CreateTestString(MetricRecordConstants.ShortCommitHashLength, '_')}").Build();
+        var metric = new InvalidableMetricRecordBuilder().WithCommitGitHubUrl($"https://github.com/spawn/spawn/commit/{CreateTestString(GitConstants.ShortCommitHashLength, '_')}").Build();
 
         return TestLogMetricRequestWithBadMetricRecord(metric);
     }

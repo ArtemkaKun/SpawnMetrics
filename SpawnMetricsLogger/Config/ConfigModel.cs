@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 using MetricRecordModel;
+using SharedConstants;
 using SpawnMetricsStorage.Models.ProjectName;
 
 namespace SpawnMetricsLogger.Config;
@@ -28,10 +29,10 @@ public sealed class ConfigModel(string dataServerUrl, string branchName, string 
     public string projectName { get; } = projectName;
 
     [Required]
-    [MinLength(MetricRecordConstants.MinCommitGitHubUrlLength, ErrorMessage = MetricRecordConstants.CommitGitHubUrlShorterErrorMessage)]
-    [MaxLength(MetricRecordConstants.MaxCommitGitHubUrlLength)]
+    [MinLength(GitConstants.MinBaseCommitGitHubUrlLength, ErrorMessage = GitConstants.BaseCommitGitHubUrlShorterErrorMessage)]
+    [MaxLength(GitConstants.MaxCommitGitHubUrlLength)]
     [Url]
-    [RegularExpression(@"https:\/\/github\.com\/[^\/]+\/[^\/]+\/commit\/", ErrorMessage = "Invalid base GitHub commit URL")]
+    [RegularExpression(GitConstants.BaseGitHubUrlCheckRegex, ErrorMessage = "Invalid base GitHub commit URL")]
     public string baseCommitGitHubUrl { get; } = baseCommitGitHubUrl;
 
     [Required]

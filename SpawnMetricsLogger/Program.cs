@@ -50,7 +50,7 @@ rootCommand.SetHandler((repoPath, configPath, adminApiKey, isLogEveryCommit) =>
             Commands.Checkout(repo, commit, new CheckoutOptions { CheckoutModifiers = CheckoutModifiers.Force, CheckoutNotifyFlags = CheckoutNotifyFlags.None });
 
             var commitLogTimeUtc = commit.Committer.When.UtcDateTime;
-            var commitGitHubUrl = $"{config.baseCommitGitHubUrl}{commit.Sha[..MetricRecordConstants.ShortCommitHashLength]}";
+            var commitGitHubUrl = $"{config.baseCommitGitHubUrl}{commit.Sha[..GitConstants.ShortCommitHashLength]}";
 
             foreach (var metricOperation in config.metricOperations)
             {
@@ -120,7 +120,7 @@ rootCommand.SetHandler((repoPath, configPath, adminApiKey, isLogEveryCommit) =>
         var currentCommit = repo.Head.Tip;
 
         var commitLogTimeUtc = currentCommit.Committer.When.UtcDateTime;
-        var commitGitHubUrl = $"{config.baseCommitGitHubUrl}{currentCommit.Sha[..MetricRecordConstants.ShortCommitHashLength]}";
+        var commitGitHubUrl = $"{config.baseCommitGitHubUrl}{currentCommit.Sha[..GitConstants.ShortCommitHashLength]}";
 
         foreach (var metricOperation in config.metricOperations)
         {
