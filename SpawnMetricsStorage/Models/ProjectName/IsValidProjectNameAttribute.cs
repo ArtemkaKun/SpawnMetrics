@@ -2,4 +2,4 @@ using MetricRecordModel;
 
 namespace SpawnMetricsStorage.Models.ProjectName;
 
-public sealed class IsValidProjectNameAttribute() : NameValidationAttributeBase(ProjectNameConstants.MinProjectNameLength, ProjectNameConstants.MaxProjectNameLength);
+public sealed class IsValidProjectNameAttribute() : StringLengthValidationAttributeBase(ProjectNameConstants.MinProjectNameLength, ProjectNameConstants.MaxProjectNameLength);

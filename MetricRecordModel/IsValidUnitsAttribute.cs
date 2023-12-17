@@ -1,0 +1,3 @@
+namespace MetricRecordModel;
+
+public class IsValidUnitsAttribute() : StringLengthValidationAttributeBase(MetricRecordConstants.MinStringLength, MetricRecordConstants.MaxUnitsLength);

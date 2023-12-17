@@ -1,3 +1,3 @@
 namespace MetricRecordModel;
 
-public sealed class IsValidMetricNameAttribute() : NameValidationAttributeBase(MetricRecordConstants.MinMetricNameLength, MetricRecordConstants.MaxMetricNameLength);
+public sealed class IsValidMetricNameAttribute() : StringLengthValidationAttributeBase(MetricRecordConstants.MinMetricNameLength, MetricRecordConstants.MaxMetricNameLength);

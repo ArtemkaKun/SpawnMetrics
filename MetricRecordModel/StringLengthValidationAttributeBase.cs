@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace MetricRecordModel;
 
-public abstract class NameValidationAttributeBase(int minLength, int maxLength) : ValidationAttribute
+public abstract class StringLengthValidationAttributeBase(int minLength, int maxLength) : ValidationAttribute
 {
     protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
     {
@@ -23,6 +23,6 @@ public abstract class NameValidationAttributeBase(int minLength, int maxLength) 
 
     private static string GetErrorMessage(int minLength, int maxLength)
     {
-        return $"The name must be at least {minLength} characters and at most {maxLength} characters long.";
+        return $"The string must be at least {minLength} characters and at most {maxLength} characters long.";
     }
 }

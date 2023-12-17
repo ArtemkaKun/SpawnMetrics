@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 using MetricRecordModel;
 using SpawnMetricsStorage.Models.ProjectName;
 
-namespace SpawnMetricsLogger;
+namespace SpawnMetricsLogger.Config;
 
 // NOTE: This class can be readonly structure instead of class, which will be more convenient dues to the logic.
 // Unfortunately, MiniValidation lib, that used to validate this structure, doesn't support validation of value types.
@@ -53,7 +53,6 @@ public readonly struct MetricOperationModel(string name, string command, string 
     public string command { get; } = command;
 
     [Required]
-    [MinLength(MetricRecordConstants.MinStringLength)]
-    [MaxLength(MetricRecordConstants.MaxUnitsLength)]
+    [IsValidUnits]
     public string units { get; } = units;
 }

@@ -41,8 +41,7 @@ public readonly struct MetricRecord(string name, DateTime logTimeUtc, string com
     public string Value { get; } = value;
 
     [Required]
-    [MinLength(MetricRecordConstants.MinStringLength)]
-    [MaxLength(MetricRecordConstants.MaxUnitsLength)]
+    [IsValidUnits]
     // NOTE: Used as structure for request/DB data, so this field serialized by JSON serializers.
     [UsedImplicitly]
     public string Units { get; } = units;

@@ -4,9 +4,8 @@ using System.Text;
 using System.Text.Json;
 using LibGit2Sharp;
 using MetricRecordModel;
-using MiniValidation;
 using SharedConstants;
-using SpawnMetricsLogger;
+using SpawnMetricsLogger.Config;
 using SpawnMetricsStorage.Controllers;
 using SpawnMetricsStorage.Models;
 
@@ -25,30 +24,10 @@ var rootCommand = new RootCommand
 
 rootCommand.SetHandler((repoPath, configPath, adminApiKey, isLogEveryCommit) =>
 {
-    var config = JsonSerializer.Deserialize<ConfigModel>(File.ReadAllText(configPath), new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+    var config = ConfigManager.TryReadConfigFromFile(configPath);
 
     if (config == null)
     {
-        Console.WriteLine("Failed to deserialize config");
-        return;
-    }
-
-    var isValid = MiniValidator.TryValidate(config, out var errors);
-
-    if (!isValid)
-    {
-        Console.WriteLine("Config is invalid:");
-
-        foreach (var error in errors)
-        {
-            Console.WriteLine(error.Key);
-
-            foreach (var errorMessage in error.Value)
-            {
-                Console.WriteLine(errorMessage);
-            }
-        }
-
         return;
     }
 
