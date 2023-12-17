@@ -7,4 +7,21 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
+    <ItemGroup>
+      <PackageReference Include="LibGit2Sharp" Version="0.29.0" />
+      <PackageReference Include="MiniValidation" Version="0.9.0" />
+      <PackageReference Include="System.CommandLine" Version="2.0.0-beta4.22272.1" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\MetricRecordModel\MetricRecordModel.csproj" />
+      <ProjectReference Include="..\SpawnMetricsStorage\SpawnMetricsStorage.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Update="config.json">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+    </ItemGroup>
+
 </Project>
