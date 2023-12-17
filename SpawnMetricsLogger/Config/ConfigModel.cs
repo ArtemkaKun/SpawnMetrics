@@ -49,7 +49,8 @@ public readonly struct MetricOperationModel(string name, string command, string 
     public string name { get; } = name;
 
     [Required]
-    [MinLength(5)]
+    [MinLength(3)]
+    [MaxLength(2048)]
     public string command { get; } = command;
 
     [Required]
