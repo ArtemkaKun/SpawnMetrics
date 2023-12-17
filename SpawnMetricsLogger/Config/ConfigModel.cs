@@ -46,14 +46,14 @@ public readonly struct MetricOperationModel(string name, string command, string 
 {
     [Required]
     [IsValidMetricName]
-    public string name { get; } = name;
+    public string Name { get; } = name;
 
     [Required]
     [MinLength(3)]
     [MaxLength(2048)]
-    public string command { get; } = command;
+    public string Command { get; } = command;
 
     [Required]
     [IsValidUnits]
-    public string units { get; } = units;
+    public string Units { get; } = units;
 }

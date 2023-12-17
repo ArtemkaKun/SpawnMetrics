@@ -58,7 +58,7 @@ rootCommand.SetHandler((repoPath, configPath, adminApiKey, isLogEveryCommit) =>
                 {
                     FileName = "bash",
                     WorkingDirectory = repoPath,
-                    Arguments = $"-c \"{metricOperation.command}\"",
+                    Arguments = $"-c \"{metricOperation.Command}\"",
                     RedirectStandardOutput = true,
                     UseShellExecute = false,
                     CreateNoWindow = true
@@ -66,7 +66,7 @@ rootCommand.SetHandler((repoPath, configPath, adminApiKey, isLogEveryCommit) =>
 
                 if (process == null)
                 {
-                    Console.WriteLine($"Failed to start process for metric {metricOperation.name}");
+                    Console.WriteLine($"Failed to start process for metric {metricOperation.Name}");
                     return;
                 }
 
@@ -74,7 +74,7 @@ rootCommand.SetHandler((repoPath, configPath, adminApiKey, isLogEveryCommit) =>
 
                 if (process.ExitCode != 0)
                 {
-                    Console.WriteLine($"Failed to get metric {metricOperation.name}");
+                    Console.WriteLine($"Failed to get metric {metricOperation.Name}");
                     return;
                 }
 
@@ -82,11 +82,11 @@ rootCommand.SetHandler((repoPath, configPath, adminApiKey, isLogEveryCommit) =>
 
                 if (string.IsNullOrWhiteSpace(output))
                 {
-                    Console.WriteLine($"Failed to get metric {metricOperation.name}");
+                    Console.WriteLine($"Failed to get metric {metricOperation.Name}");
                     return;
                 }
 
-                var metric = new MetricRecord(metricOperation.name, commitLogTimeUtc, commitGitHubUrl, commit.Message.Trim(), output.Trim(), metricOperation.units);
+                var metric = new MetricRecord(metricOperation.Name, commitLogTimeUtc, commitGitHubUrl, commit.Message.Trim(), output.Trim(), metricOperation.Units);
 
                 var requestBody = new LogMetricRequestBody
                 {
@@ -100,7 +100,7 @@ rootCommand.SetHandler((repoPath, configPath, adminApiKey, isLogEveryCommit) =>
 
                 if (response.IsSuccessStatusCode == false)
                 {
-                    Console.WriteLine($"Failed to log metric {metricOperation.name}");
+                    Console.WriteLine($"Failed to log metric {metricOperation.Name}");
                 }
                 else
                 {
@@ -128,7 +128,7 @@ rootCommand.SetHandler((repoPath, configPath, adminApiKey, isLogEveryCommit) =>
             {
                 FileName = "bash",
                 WorkingDirectory = repoPath,
-                Arguments = $"-c \"{metricOperation.command}\"",
+                Arguments = $"-c \"{metricOperation.Command}\"",
                 RedirectStandardOutput = true,
                 UseShellExecute = false,
                 CreateNoWindow = true
@@ -136,7 +136,7 @@ rootCommand.SetHandler((repoPath, configPath, adminApiKey, isLogEveryCommit) =>
 
             if (process == null)
             {
-                Console.WriteLine($"Failed to start process for metric {metricOperation.name}");
+                Console.WriteLine($"Failed to start process for metric {metricOperation.Name}");
                 return;
             }
 
@@ -144,7 +144,7 @@ rootCommand.SetHandler((repoPath, configPath, adminApiKey, isLogEveryCommit) =>
 
             if (process.ExitCode != 0)
             {
-                Console.WriteLine($"Failed to get metric {metricOperation.name}");
+                Console.WriteLine($"Failed to get metric {metricOperation.Name}");
                 return;
             }
 
@@ -152,11 +152,11 @@ rootCommand.SetHandler((repoPath, configPath, adminApiKey, isLogEveryCommit) =>
 
             if (string.IsNullOrWhiteSpace(output))
             {
-                Console.WriteLine($"Failed to get metric {metricOperation.name}");
+                Console.WriteLine($"Failed to get metric {metricOperation.Name}");
                 return;
             }
 
-            var metric = new MetricRecord(metricOperation.name, commitLogTimeUtc, commitGitHubUrl, currentCommit.Message.Trim(), output.Trim(), metricOperation.units);
+            var metric = new MetricRecord(metricOperation.Name, commitLogTimeUtc, commitGitHubUrl, currentCommit.Message.Trim(), output.Trim(), metricOperation.Units);
 
             var requestBody = new LogMetricRequestBody
             {
@@ -170,7 +170,7 @@ rootCommand.SetHandler((repoPath, configPath, adminApiKey, isLogEveryCommit) =>
 
             if (response.IsSuccessStatusCode == false)
             {
-                Console.WriteLine($"Failed to log metric {metricOperation.name}");
+                Console.WriteLine($"Failed to log metric {metricOperation.Name}");
             }
             else
             {
