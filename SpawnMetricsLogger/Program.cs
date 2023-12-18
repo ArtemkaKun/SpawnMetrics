@@ -6,14 +6,14 @@ using SpawnMetricsLogger.Config;
 var repoPathOption = new Option<string>("--repo-path", description: "The path to the repository");
 var configPathOption = new Option<string>("--config-path", description: "The path to the config file");
 var adminApiKeyOption = new Option<string>("--admin-api-key", description: "The admin API key");
-var logEveryCommitOption = new Option<bool>("--log-every-commit", getDefaultValue: () => false, description: "Log every commit if set");
+var logOnlyLatestCommitOption = new Option<bool>("--log-only-latest-commit", getDefaultValue: () => false, description: "Log only the latest commit if set, otherwise log every commit in the branch");
 
 var rootCommand = new RootCommand
 {
     repoPathOption,
     configPathOption,
     adminApiKeyOption,
-    logEveryCommitOption
+    logOnlyLatestCommitOption
 };
 
 rootCommand.SetHandler((repoPath, configPath, adminApiKey, isLogEveryCommit) =>
@@ -49,6 +49,6 @@ rootCommand.SetHandler((repoPath, configPath, adminApiKey, isLogEveryCommit) =>
         var currentCommit = repo.Head.Tip;
         metricsLogger.LogMetrics(currentCommit, repoPath);
     }
-}, repoPathOption, configPathOption, adminApiKeyOption, logEveryCommitOption);
+}, repoPathOption, configPathOption, adminApiKeyOption, logOnlyLatestCommitOption);
 
 return rootCommand.Invoke(args);
