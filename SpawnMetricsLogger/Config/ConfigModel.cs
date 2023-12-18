@@ -18,34 +18,34 @@ public sealed class ConfigModel(string dataServerUrl, string branchName, string 
     [Required]
     [MinLength(16, ErrorMessage = "Data server URL can't be shorter than 21 characters since it's always at least \'http://localhost\'")]
     [Url]
-    public string dataServerUrl { get; } = dataServerUrl;
+    public string DataServerUrl { get; } = dataServerUrl;
 
     [Required]
     [MinLength(MinGitBranchNameLength)]
     [MaxLength(MaxGitBranchNameLength)]
     [RegularExpression(GitBranchValidationRegex, ErrorMessage = "Invalid branch name")]
-    public string branchName { get; } = branchName;
+    public string BranchName { get; } = branchName;
 
     [Required]
     [MinLength(MinGitBranchNameLength)]
     [MaxLength(MaxGitBranchNameLength)]
     [RegularExpression(GitBranchValidationRegex, ErrorMessage = "Invalid remote name")]
-    public string remoteName { get; } = remoteName;
+    public string RemoteName { get; } = remoteName;
 
     [Required]
     [IsValidProjectName]
-    public string projectName { get; } = projectName;
+    public string ProjectName { get; } = projectName;
 
     [Required]
     [MinLength(GitConstants.MinBaseCommitGitHubUrlLength, ErrorMessage = GitConstants.BaseCommitGitHubUrlShorterErrorMessage)]
     [MaxLength(GitConstants.MaxCommitGitHubUrlLength)]
     [Url]
     [RegularExpression(GitConstants.BaseGitHubUrlCheckRegex, ErrorMessage = "Invalid base GitHub commit URL")]
-    public string baseCommitGitHubUrl { get; } = baseCommitGitHubUrl;
+    public string BaseCommitGitHubUrl { get; } = baseCommitGitHubUrl;
 
     [Required]
     [MinLength(1)]
-    public List<MetricOperationModel> metricOperations { get; } = metricOperations;
+    public List<MetricOperationModel> MetricOperations { get; } = metricOperations;
 }
 
 // NOTE: This structure can have readonly fields instead of readonly properties, which will be more convenient and easier to read.

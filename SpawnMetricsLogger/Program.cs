@@ -32,27 +32,27 @@ rootCommand.SetHandler((repoPath, configPath, adminApiKey, isLogEveryCommit) =>
     }
 
     var httpClient = new HttpClient();
-    httpClient.BaseAddress = new Uri(config.dataServerUrl);
+    httpClient.BaseAddress = new Uri(config.DataServerUrl);
     httpClient.DefaultRequestHeaders.Add(MetricsControllerConstants.ApiKeyParameter, adminApiKey);
 
     if (isLogEveryCommit)
     {
         using var repo = new Repository(repoPath);
 
-        Commands.Checkout(repo, config.branchName);
+        Commands.Checkout(repo, config.BranchName);
 
-        var remote = repo.Network.Remotes[config.remoteName];
+        var remote = repo.Network.Remotes[config.RemoteName];
         var refSpecs = remote.FetchRefSpecs.Select(x => x.Specification);
-        Commands.Fetch(repo, config.remoteName, refSpecs, null, "Ref was updated");
+        Commands.Fetch(repo, config.RemoteName, refSpecs, null, "Ref was updated");
 
-        foreach (var commit in repo.Branches[config.branchName].Commits)
+        foreach (var commit in repo.Branches[config.BranchName].Commits)
         {
             Commands.Checkout(repo, commit, new CheckoutOptions { CheckoutModifiers = CheckoutModifiers.Force, CheckoutNotifyFlags = CheckoutNotifyFlags.None });
 
             var commitLogTimeUtc = commit.Committer.When.UtcDateTime;
-            var commitGitHubUrl = $"{config.baseCommitGitHubUrl}{commit.Sha[..GitConstants.ShortCommitHashLength]}";
+            var commitGitHubUrl = $"{config.BaseCommitGitHubUrl}{commit.Sha[..GitConstants.ShortCommitHashLength]}";
 
-            foreach (var metricOperation in config.metricOperations)
+            foreach (var metricOperation in config.MetricOperations)
             {
                 var process = Process.Start(new ProcessStartInfo
                 {
@@ -90,7 +90,7 @@ rootCommand.SetHandler((repoPath, configPath, adminApiKey, isLogEveryCommit) =>
 
                 var requestBody = new LogMetricRequestBody
                 {
-                    ProjectName = config.projectName,
+                    ProjectName = config.ProjectName,
                     Metric = metric
                 };
 
@@ -109,20 +109,20 @@ rootCommand.SetHandler((repoPath, configPath, adminApiKey, isLogEveryCommit) =>
             }
         }
 
-        Commands.Checkout(repo, config.branchName);
+        Commands.Checkout(repo, config.BranchName);
     }
     else
     {
         using var repo = new Repository(repoPath);
 
-        Commands.Checkout(repo, config.branchName);
+        Commands.Checkout(repo, config.BranchName);
 
         var currentCommit = repo.Head.Tip;
 
         var commitLogTimeUtc = currentCommit.Committer.When.UtcDateTime;
-        var commitGitHubUrl = $"{config.baseCommitGitHubUrl}{currentCommit.Sha[..GitConstants.ShortCommitHashLength]}";
+        var commitGitHubUrl = $"{config.BaseCommitGitHubUrl}{currentCommit.Sha[..GitConstants.ShortCommitHashLength]}";
 
-        foreach (var metricOperation in config.metricOperations)
+        foreach (var metricOperation in config.MetricOperations)
         {
             var process = Process.Start(new ProcessStartInfo
             {
@@ -160,7 +160,7 @@ rootCommand.SetHandler((repoPath, configPath, adminApiKey, isLogEveryCommit) =>
 
             var requestBody = new LogMetricRequestBody
             {
-                ProjectName = config.projectName,
+                ProjectName = config.ProjectName,
                 Metric = metric
             };
 
