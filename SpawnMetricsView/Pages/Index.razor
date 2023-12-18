@@ -135,6 +135,7 @@
     private readonly DataCollector _dataCollector = new();
 
     private List<string>? _projectNames;
+    private string? _selectedProjectName;
     private bool _isSidebarExpanded;
 
     private bool _isShowFancyData = true;
@@ -165,6 +166,13 @@
 
     private async Task TryShowMetrics(string projectName)
     {
+        if (_selectedProjectName == projectName)
+        {
+            return;
+        }
+
+        _selectedProjectName = projectName;
+
         var metrics = await _dataCollector.GetMetricDataRange(projectName);
 
         if (metrics != null)
