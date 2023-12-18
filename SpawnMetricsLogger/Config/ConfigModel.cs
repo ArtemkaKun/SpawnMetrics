@@ -11,21 +11,25 @@ namespace SpawnMetricsLogger.Config;
 [method: JsonConstructor]
 public sealed class ConfigModel(string dataServerUrl, string branchName, string remoteName, string projectName, string baseCommitGitHubUrl, List<MetricOperationModel> metricOperations)
 {
+    private const string GitBranchValidationRegex = @"^(?!\/|\.|\-|.*[\x00-\x1F\x7F]|.*[~^:?*\[\]\\ ]|.*@{|\.\.|\@|.*\/{2,}|.*\/$|.*\.lock$|.*\.\.)[a-zA-Z0-9\/_\-\.]+$";
+    private const int MinGitBranchNameLength = 3;
+    private const int MaxGitBranchNameLength = 244; // NOTE: this is a limit of GitHub
+
     [Required]
     [MinLength(16, ErrorMessage = "Data server URL can't be shorter than 21 characters since it's always at least \'http://localhost\'")]
     [Url]
     public string dataServerUrl { get; } = dataServerUrl;
 
     [Required]
-    [MinLength(3)]
-    [MaxLength(244)]
-    [RegularExpression(@"^(?!\/|\.|\-|.*[\x00-\x1F\x7F]|.*[~^:?*\[\]\\ ]|.*@{|\.\.|\@|.*\/{2,}|.*\/$|.*\.lock$|.*\.\.)[a-zA-Z0-9\/_\-\.]+$", ErrorMessage = "Invalid branch name")]
+    [MinLength(MinGitBranchNameLength)]
+    [MaxLength(MaxGitBranchNameLength)]
+    [RegularExpression(GitBranchValidationRegex, ErrorMessage = "Invalid branch name")]
     public string branchName { get; } = branchName;
 
     [Required]
-    [MinLength(3)]
-    [MaxLength(244)]
-    [RegularExpression(@"^(?!\/|\.|\-|.*[\x00-\x1F\x7F]|.*[~^:?*\[\]\\ ]|.*@{|\.\.|\@|.*\/{2,}|.*\/$|.*\.lock$|.*\.\.)[a-zA-Z0-9\/_\-\.]+$", ErrorMessage = "Invalid remote name")]
+    [MinLength(MinGitBranchNameLength)]
+    [MaxLength(MaxGitBranchNameLength)]
+    [RegularExpression(GitBranchValidationRegex, ErrorMessage = "Invalid remote name")]
     public string remoteName { get; } = remoteName;
 
     [Required]
