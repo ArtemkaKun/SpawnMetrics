@@ -9,7 +9,7 @@ namespace SpawnMetricsLogger.Config;
 // NOTE: This class can be readonly structure instead of class, which will be more convenient dues to the logic.
 // Unfortunately, MiniValidation lib, that used to validate this structure, doesn't support validation of value types.
 [method: JsonConstructor]
-public sealed class ConfigModel(string dataServerUrl, string branchName, string remoteName, string projectName, string baseCommitGitHubUrl, List<MetricOperationModel> metricOperations)
+public sealed class ConfigModel(string dataServerUrl, string branchName, string projectName, string baseCommitGitHubUrl, List<MetricOperationModel> metricOperations)
 {
     private const string GitBranchValidationRegex = @"^(?!\/|\.|\-|.*[\x00-\x1F\x7F]|.*[~^:?*\[\]\\ ]|.*@{|\.\.|\@|.*\/{2,}|.*\/$|.*\.lock$|.*\.\.)[a-zA-Z0-9\/_\-\.]+$";
     private const int MinGitBranchNameLength = 3;
@@ -25,12 +25,6 @@ public sealed class ConfigModel(string dataServerUrl, string branchName, string 
     [MaxLength(MaxGitBranchNameLength)]
     [RegularExpression(GitBranchValidationRegex, ErrorMessage = "Invalid branch name")]
     public string BranchName { get; } = branchName;
-
-    [Required]
-    [MinLength(MinGitBranchNameLength)]
-    [MaxLength(MaxGitBranchNameLength)]
-    [RegularExpression(GitBranchValidationRegex, ErrorMessage = "Invalid remote name")]
-    public string RemoteName { get; } = remoteName;
 
     [Required]
     [IsValidProjectName]

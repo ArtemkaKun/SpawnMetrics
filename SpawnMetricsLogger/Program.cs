@@ -37,10 +37,6 @@ rootCommand.SetHandler((repoPath, configPath, adminApiKey, isLogOnlyLatestCommit
     }
     else
     {
-        var remote = repo.Network.Remotes[config.RemoteName];
-        var refSpecs = remote.FetchRefSpecs.Select(x => x.Specification);
-        Commands.Fetch(repo, config.RemoteName, refSpecs, null, "Ref was updated");
-
         foreach (var commit in repo.Branches[config.BranchName].Commits)
         {
             Commands.Checkout(repo, commit, new CheckoutOptions { CheckoutModifiers = CheckoutModifiers.Force, CheckoutNotifyFlags = CheckoutNotifyFlags.None });
