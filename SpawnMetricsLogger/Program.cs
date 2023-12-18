@@ -16,7 +16,7 @@ var rootCommand = new RootCommand
     logOnlyLatestCommitOption
 };
 
-rootCommand.SetHandler((repoPath, configPath, adminApiKey, isLogEveryCommit) =>
+rootCommand.SetHandler((repoPath, configPath, adminApiKey, isLogOnlyLatestCommit) =>
 {
     var config = ConfigManager.TryReadConfigFromFile(configPath);
 
@@ -30,7 +30,12 @@ rootCommand.SetHandler((repoPath, configPath, adminApiKey, isLogEveryCommit) =>
     using var repo = new Repository(repoPath);
     Commands.Checkout(repo, config.BranchName);
 
-    if (isLogEveryCommit)
+    if (isLogOnlyLatestCommit)
+    {
+        var currentCommit = repo.Head.Tip;
+        metricsLogger.LogMetrics(currentCommit, repoPath);
+    }
+    else
     {
         var remote = repo.Network.Remotes[config.RemoteName];
         var refSpecs = remote.FetchRefSpecs.Select(x => x.Specification);
@@ -43,11 +48,6 @@ rootCommand.SetHandler((repoPath, configPath, adminApiKey, isLogEveryCommit) =>
         }
 
         Commands.Checkout(repo, config.BranchName);
-    }
-    else
-    {
-        var currentCommit = repo.Head.Tip;
-        metricsLogger.LogMetrics(currentCommit, repoPath);
     }
 }, repoPathOption, configPathOption, adminApiKeyOption, logOnlyLatestCommitOption);
 
