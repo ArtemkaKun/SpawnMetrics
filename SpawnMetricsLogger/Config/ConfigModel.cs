@@ -12,7 +12,7 @@ namespace SpawnMetricsLogger.Config;
 public sealed class ConfigModel(string dataServerUrl, string branchName, string remoteName, string projectName, string baseCommitGitHubUrl, List<MetricOperationModel> metricOperations)
 {
     [Required]
-    [MinLength(21)]
+    [MinLength(16, ErrorMessage = "Data server URL can't be shorter than 21 characters since it's always at least \'http://localhost\'")]
     [Url]
     public string dataServerUrl { get; } = dataServerUrl;
 
