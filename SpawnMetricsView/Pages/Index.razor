@@ -1,6 +1,7 @@
 ﻿@page "/"
 @using SpawnMetricsView.DataCollectorFiles
 @using SpawnMetricsView.RawDataMetrics
+@using MetricRecordModel
 
 <PageTitle>Spawn Metrics</PageTitle>
 
@@ -13,7 +14,7 @@
             {
                 foreach (var projectName in _projectNames)
                 {
-                    <RadzenButton Icon="dashboard" IconPosition="IconPosition.Left" Text="@projectName.Trim('`')" Click="@(() => TryShowMetrics(projectName))"/>
+                    <RadzenButton Icon="dashboard" IconPosition="IconPosition.Left" Text="@projectName.Trim('`')" Click="@(() => LoadMetricsFromDataServer(projectName))"/>
                 }
             }
             else
@@ -24,8 +25,8 @@
     </RadzenHeader>
     <RadzenSidebar @bind-Expanded="@_isSidebarExpanded">
         <RadzenPanelMenu>
-            <RadzenPanelMenuItem Text="Fancy data" Icon="grade" Click="@(() => _isShowFancyData = true)"/>
-            <RadzenPanelMenuItem Text="Raw data" Icon="code" Click="@(() => _isShowFancyData = false)"/>
+            <RadzenPanelMenuItem Text="Fancy data" Icon="grade" Click="@(() => SwitchDataView(true))"/>
+            <RadzenPanelMenuItem Text="Raw data" Icon="code" Click="@(() => SwitchDataView(false))"/>
         </RadzenPanelMenu>
     </RadzenSidebar>
     <RadzenBody>
@@ -140,6 +141,8 @@
 
     private bool _isShowFancyData = true;
 
+    private List<MetricRecord>? _metrics;
+
     private readonly RawDataMetricsCalculator _rawDataCalculator = new();
     private Dictionary<string, Type>? _rawDataColumns;
     private List<Dictionary<string, object>>? _rawDataRows;
@@ -160,26 +163,42 @@
 
         if (_projectNames != null && _projectNames.Count > 0)
         {
-            await TryShowMetrics(_projectNames[0]);
+            await LoadMetricsFromDataServer(_projectNames[0]);
+            PrepareVisualizationData();
         }
     }
 
-    private async Task TryShowMetrics(string projectName)
+    private async Task LoadMetricsFromDataServer(string? projectName)
     {
-        if (_selectedProjectName == projectName)
+        if (string.IsNullOrWhiteSpace(projectName) || _selectedProjectName == projectName)
         {
             return;
         }
 
         _selectedProjectName = projectName;
 
-        var metrics = await _dataCollector.GetMetricDataRange(projectName);
+        _metrics = await _dataCollector.GetMetricDataRange(projectName);
+    }
 
-        if (metrics != null)
+    private void SwitchDataView(bool isShowFancyData)
+    {
+        if (_isShowFancyData == isShowFancyData)
+        {
+            return;
+        }
+
+        _isShowFancyData = isShowFancyData;
+
+        PrepareVisualizationData();
+    }
+
+    private void PrepareVisualizationData()
+    {
+        if (_metrics != null)
         {
             if (_isShowFancyData)
             {
-                var metricNameToMetricRecordsMap = metrics.GroupBy(m => m.Name).ToDictionary(g => g.Key, g => g.ToList());
+                var metricNameToMetricRecordsMap = _metrics.GroupBy(m => m.Name).ToDictionary(g => g.Key, g => g.ToList());
 
                 _fancyData = new Dictionary<string, (object, float, float, List<ChartData> graphData)>();
 
@@ -225,7 +244,7 @@
             }
             else
             {
-                (_rawDataColumns, _rawDataRows) = _rawDataCalculator.RecalculateRawData(metrics);
+                (_rawDataColumns, _rawDataRows) = _rawDataCalculator.RecalculateRawData(_metrics);
             }
         }
     }
