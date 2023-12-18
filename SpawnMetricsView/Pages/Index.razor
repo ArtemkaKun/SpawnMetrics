@@ -13,7 +13,7 @@
             {
                 foreach (var projectName in _projectNames)
                 {
-                    <RadzenButton Icon="dashboard" IconPosition="IconPosition.Left" Text="@projectName" Click="@(() => TryShowMetrics(projectName))"/>
+                    <RadzenButton Icon="dashboard" IconPosition="IconPosition.Left" Text="@projectName.Trim('`')" Click="@(() => TryShowMetrics(projectName))"/>
                 }
             }
             else
