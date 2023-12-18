@@ -27,12 +27,11 @@ rootCommand.SetHandler((repoPath, configPath, adminApiKey, isLogEveryCommit) =>
 
     var metricsLogger = new MetricsLogger(config, adminApiKey);
 
+    using var repo = new Repository(repoPath);
+    Commands.Checkout(repo, config.BranchName);
+
     if (isLogEveryCommit)
     {
-        using var repo = new Repository(repoPath);
-
-        Commands.Checkout(repo, config.BranchName);
-
         var remote = repo.Network.Remotes[config.RemoteName];
         var refSpecs = remote.FetchRefSpecs.Select(x => x.Specification);
         Commands.Fetch(repo, config.RemoteName, refSpecs, null, "Ref was updated");
@@ -47,10 +46,6 @@ rootCommand.SetHandler((repoPath, configPath, adminApiKey, isLogEveryCommit) =>
     }
     else
     {
-        using var repo = new Repository(repoPath);
-
-        Commands.Checkout(repo, config.BranchName);
-
         var currentCommit = repo.Head.Tip;
         metricsLogger.LogMetrics(currentCommit, repoPath);
     }
