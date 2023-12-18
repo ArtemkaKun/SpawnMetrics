@@ -18,10 +18,14 @@ public sealed class ConfigModel(string dataServerUrl, string branchName, string 
 
     [Required]
     [MinLength(3)]
+    [MaxLength(244)]
+    [RegularExpression(@"^(?!\/|\.|\-|.*[\x00-\x1F\x7F]|.*[~^:?*\[\]\\ ]|.*@{|\.\.|\@|.*\/{2,}|.*\/$|.*\.lock$|.*\.\.)[a-zA-Z0-9\/_\-\.]+$", ErrorMessage = "Invalid branch name")]
     public string branchName { get; } = branchName;
 
     [Required]
     [MinLength(3)]
+    [MaxLength(244)]
+    [RegularExpression(@"^(?!\/|\.|\-|.*[\x00-\x1F\x7F]|.*[~^:?*\[\]\\ ]|.*@{|\.\.|\@|.*\/{2,}|.*\/$|.*\.lock$|.*\.\.)[a-zA-Z0-9\/_\-\.]+$", ErrorMessage = "Invalid remote name")]
     public string remoteName { get; } = remoteName;
 
     [Required]
